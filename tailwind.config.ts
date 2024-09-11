@@ -13,6 +13,15 @@ const config: Config = {
         foreground: "var(--foreground)",
       },
     },
+    animation: {
+      ripple: 'ripple 0.5s linear',
+    },
+    keyframes: {
+      ripple: {
+        '0%': { transform: 'scale(0)', opacity: '0.5' },
+        '100%': { transform: 'scale(4)', opacity: '0' },
+      },
+    },
   },
   plugins: [],
 };
