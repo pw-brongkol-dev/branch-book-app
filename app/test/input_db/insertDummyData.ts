@@ -36,7 +36,6 @@ export const generateDummyData = () => {
       location: `Depan Rumah`,
       planting_date: new Date(),
       user_id: userId,
-      fertilization_history: '',
     },
     fertilization: {
       id: uuidv4(),

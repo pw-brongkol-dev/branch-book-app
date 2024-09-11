@@ -25,7 +25,6 @@ export interface Tree {
   accession: string;
   location: string;
   planting_date: Date;
-  fertilization_history: string; // This might be better as an array of Fertilization objects
   user_id: string; // Foreign key to User
 }
 
