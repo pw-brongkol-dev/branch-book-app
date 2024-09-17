@@ -28,14 +28,14 @@ export default function Home() {
         </div>
         <div className="flex flex-col gap-4">
           <Link href="/tree/scan-qr" className="w-full">
-            <RippleButton className="w-full bg-card hover:bg-card/90 text-card-foreground border-2 border-slate-200 shadow-sm rounded-lg p-6 flex flex-col items-center transition-colors">
-              <PastelIcon Icon={History} bgColor="bg-blue-100" iconColor="text-blue-600" />
+            <RippleButton className="w-full bg-neutral-50 active:bg-green-50 active:border-green-500 text-card-foreground border-2 border-slate-200 shadow-sm rounded-3xl p-6 flex flex-col items-center transition-colors">
+              <PastelIcon Icon={History} bgColor="bg-green-100" iconColor="text-green-600" />
               <span className="text-lg font-medium">Riwayat Pemeliharaan</span>
             </RippleButton>
           </Link>
           <Link href="/digital-book" className="w-full">
-            <RippleButton className="w-full bg-card hover:bg-card/90 text-card-foreground border-2 border-slate-200 shadow-sm rounded-lg p-6 flex flex-col items-center transition-colors">
-              <PastelIcon Icon={BookOpen} bgColor="bg-green-100" iconColor="text-green-600" />
+            <RippleButton className="w-full bg-neutral-50 active:bg-blue-50 active:border-blue-500 text-card-foreground border-2 border-slate-200 shadow-sm rounded-3xl p-6 flex flex-col items-center transition-colors">
+              <PastelIcon Icon={BookOpen} bgColor="bg-blue-100" iconColor="text-blue-600" />
               <span className="text-lg font-medium">Pembukuan Digital</span>
             </RippleButton>
           </Link>
