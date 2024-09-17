@@ -12,6 +12,7 @@ import {
   deleteDoc,
   query,
   where,
+  limit,
   Timestamp,
   DocumentData,
 } from "firebase/firestore";
@@ -54,7 +55,7 @@ export const useFirestore = () => {
     }
   };
 
-  const getById = async <T>(
+  const getByDocumentId = async <T>(
     collectionName: CollectionName,
     id: string
   ): Promise<T | null> => {
@@ -65,6 +66,30 @@ export const useFirestore = () => {
       setLoading(false);
       if (docSnap.exists()) {
         return { id: docSnap.id, ...docSnap.data() } as T;
+      } else {
+        return null;
+      }
+    } catch (err) {
+      setError("Failed to fetch document");
+      setLoading(false);
+      throw err;
+    }
+  };
+
+  const getById = async <T>(
+    collectionName: CollectionName,
+    id: string,
+    idField: string = 'id'
+  ): Promise<T | null> => {
+    setLoading(true);
+    try {
+      const q = query(collection(db, collectionName), where(idField, '==', id), limit(1));
+      const querySnapshot = await getDocs(q);
+      setLoading(false);
+      
+      if (!querySnapshot.empty) {
+        const doc = querySnapshot.docs[0];
+        return { id: doc.id, ...doc.data() } as T;
       } else {
         return null;
       }
@@ -124,6 +149,27 @@ export const useFirestore = () => {
     }
   };
 
+  const getTreeByCode = async (code: string): Promise<Tree | null> => {
+    setLoading(true);
+    try {
+      const treeQuery = query(collection(db, "trees"), where("code", "==", code));
+      const querySnapshot = await getDocs(treeQuery);
+      
+      if (querySnapshot.empty) {
+        setLoading(false);
+        return null;
+      }
+
+      const treeDoc = querySnapshot.docs[0];
+      setLoading(false);
+      return { id: treeDoc.id, ...treeDoc.data() } as Tree;
+    } catch (err) {
+      setError("Failed to fetch tree by code");
+      setLoading(false);
+      throw err;
+    }
+  };
+
   // Specific methods for each interface
   const groupMethods = {
     getAllGroups: () => getAll<Group>("groups"),
@@ -152,6 +198,7 @@ export const useFirestore = () => {
   const treeMethods = {
     getAllTrees: () => getAll<Tree>("trees"),
     getTreeById: (id: string) => getById<Tree>("trees", id),
+    getTreeByCode, // Add this line
     addTree: (tree: Omit<Tree, "id">) => add<Tree>("trees", tree),
     updateTree: (id: string, tree: Partial<Tree>) => update<Tree>("trees", id, tree),
     deleteTree: (id: string) => remove("trees", id),
@@ -172,6 +219,7 @@ export const useFirestore = () => {
     updateTransaction: (id: string, transaction: Partial<Transaction>) => update<Transaction>("transactions", id, transaction),
     deleteTransaction: (id: string) => remove("transactions", id),
   };
+
 
   return {
     loading,
