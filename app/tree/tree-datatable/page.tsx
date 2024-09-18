@@ -1,18 +1,19 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Table, Button, Typography, Input, Space, message } from 'antd';
-import { PlusOutlined, SearchOutlined } from '@ant-design/icons';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useFirestore } from '@/app/hooks/useFirestore';
 import { Tree } from '@/app/db/interfaces';
-import { Timestamp } from 'firebase/firestore'; // Tambahkan import ini
-
-const { Title, Paragraph } = Typography;
+import { Timestamp } from 'firebase/firestore';
+import { useToast } from '@/hooks/use-toast';
 
 const TreeDataTablePage = () => {
   const [searchName, setSearchName] = useState('');
   const [trees, setTrees] = useState<Tree[]>([]);
   const { loading, error, getTreesByOwnerName, getTreesWithOwners } = useFirestore();
+  const { toast } = useToast();
 
   useEffect(() => {
     console.log('Component mounted');
@@ -26,13 +27,21 @@ const TreeDataTablePage = () => {
       setTrees(treesWithOwners);
     } catch (err) {
       console.error('Error loading trees:', err);
-      message.error('Failed to load trees');
+      toast({
+        title: 'Error',
+        description: 'Failed to load trees',
+        variant: 'destructive',
+      });
     }
   };
 
   const handleSearch = async () => {
     if (!searchName.trim()) {
-      message.warning('Silakan masukkan nama petani');
+      toast({
+        title: 'Peringatan',
+        description: 'Silakan masukkan nama petani',
+        variant: 'destructive',
+      });
       return;
     }
     try {
@@ -40,11 +49,18 @@ const TreeDataTablePage = () => {
 
       setTrees(filteredTrees);
       if (filteredTrees.length === 0) {
-        message.info('Tidak ada pohon yang ditemukan untuk petani ini');
+        toast({
+          title: 'Info',
+          description: 'Tidak ada pohon yang ditemukan untuk petani ini',
+        });
       }
     } catch (err) {
       console.error('Error searching trees:', err);
-      message.error('Gagal mencari pohon');
+      toast({
+        title: 'Error',
+        description: 'Gagal mencari pohon',
+        variant: 'destructive',
+      });
     }
   };
 
@@ -81,30 +97,47 @@ const TreeDataTablePage = () => {
   ];
 
   const handleAddTree = () => {
-    message.info('Fitur tambah pohon akan segera hadir!');
+    toast({
+      title: 'Info',
+      description: 'Fitur tambah pohon akan segera hadir!',
+    });
   };
 
   return (
-    <div style={{ padding: '16px' }}>
-      <Title level={3}>Laporan Data Pohon</Title>
-      <Paragraph>Tabel ini menampilkan data pohon kopi dan durian yang ditanam oleh para petani.</Paragraph>
-      <Space direction="vertical" size="middle" style={{ width: '100%', marginBottom: '16px' }}>
-        <Input placeholder="Masukkan Nama Petani" value={searchName} onChange={(e) => setSearchName(e.target.value)} style={{ width: '100%', maxWidth: '300px' }} />
-        <Space wrap>
-          <Button type="primary" icon={<SearchOutlined />} onClick={handleSearch}>
-            Cari
-          </Button>
-          <Button type="default" onClick={loadTrees}>
+    <div className="p-4">
+      <h2 className="text-2xl font-bold mb-2">Laporan Data Pohon</h2>
+      <p className="mb-4">Tabel ini menampilkan data pohon kopi dan durian yang ditanam oleh para petani.</p>
+      <div className="space-y-4 mb-4">
+        <Input placeholder="Masukkan Nama Petani" value={searchName} onChange={(e) => setSearchName(e.target.value)} className="max-w-sm" />
+        <div className="space-x-2">
+          <Button onClick={handleSearch}>Cari</Button>
+          <Button variant="outline" onClick={loadTrees}>
             Tampilkan Semua
           </Button>
-        </Space>
-      </Space>
-      <Button type="primary" icon={<PlusOutlined />} onClick={handleAddTree} style={{ marginBottom: '16px', float: 'right' }}>
+        </div>
+      </div>
+      <Button onClick={handleAddTree} className="mb-4 float-right">
         Tambah Data Pohon
       </Button>
-      <Table columns={columns} dataSource={trees.map((tree, index) => ({ ...tree, no: index + 1 }))} rowKey="id" loading={loading} scroll={{ x: true }} size="middle" pagination={{ pageSize: 10, showSizeChanger: true }} />
-      {error && <Paragraph type="danger">{error}</Paragraph>}
-      {/* <pre>{JSON.stringify({ loading, error, treesCount: trees.length }, null, 2)}</pre> */}
+      <Table>
+        <TableHeader>
+          <TableRow>
+            {columns.map((column) => (
+              <TableHead key={column.key}>{column.title}</TableHead>
+            ))}
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {trees.map((tree, index) => (
+            <TableRow key={tree.id}>
+              {columns.map((column) => (
+                <TableCell key={`${tree.id}-${column.key}`}>{column.render ? column.render(tree[column.dataIndex as keyof Tree] as any, tree) : String(tree[column.dataIndex as keyof Tree] ?? '')}</TableCell>
+              ))}
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+      {error && <p className="text-red-500 mt-4">{error}</p>}
     </div>
   );
 };
