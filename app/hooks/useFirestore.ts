@@ -1,39 +1,13 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { db } from "../db/firebase"; // Ensure this path is correct
-import {
-  collection,
-  doc,
-  getDocs,
-  getDoc,
-  addDoc,
-  updateDoc,
-  deleteDoc,
-  query,
-  where,
-  limit,
-  Timestamp,
-  DocumentData,
-} from "firebase/firestore";
+import { useState, useEffect } from 'react';
+import { db } from '../db/firebase'; // Ensure this path is correct
+import { collection, doc, getDocs, getDoc, addDoc, updateDoc, deleteDoc, query, where, limit, Timestamp, DocumentData } from 'firebase/firestore';
 
 // Import your interfaces here
-import {
-  Group,
-  User,
-  Account,
-  Tree,
-  Fertilization,
-  Transaction,
-} from "../db/interfaces";
+import { Group, User, Account, Tree, Fertilization, Transaction } from '../db/interfaces';
 
-type CollectionName =
-  | "groups"
-  | "users"
-  | "accounts"
-  | "trees"
-  | "fertilizations"
-  | "transactions";
+type CollectionName = 'groups' | 'users' | 'accounts' | 'trees' | 'fertilizations' | 'transactions';
 
 export const useFirestore = () => {
   const [loading, setLoading] = useState(false);
@@ -43,22 +17,17 @@ export const useFirestore = () => {
     setLoading(true);
     try {
       const querySnapshot = await getDocs(collection(db, collectionName));
-      const data = querySnapshot.docs.map(
-        (doc) => ({ id: doc.id, ...doc.data() } as T)
-      );
+      const data = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as T));
       setLoading(false);
       return data;
     } catch (err) {
-      setError("Failed to fetch data");
+      setError('Failed to fetch data');
       setLoading(false);
       throw err;
     }
   };
 
-  const getByDocumentId = async <T>(
-    collectionName: CollectionName,
-    id: string
-  ): Promise<T | null> => {
+  const getByDocumentId = async <T>(collectionName: CollectionName, id: string): Promise<T | null> => {
     setLoading(true);
     try {
       const docRef = doc(db, collectionName, id);
@@ -70,23 +39,19 @@ export const useFirestore = () => {
         return null;
       }
     } catch (err) {
-      setError("Failed to fetch document");
+      setError('Failed to fetch document');
       setLoading(false);
       throw err;
     }
   };
 
-  const getById = async <T>(
-    collectionName: CollectionName,
-    id: string,
-    idField: string = 'id'
-  ): Promise<T | null> => {
+  const getById = async <T>(collectionName: CollectionName, id: string, idField: string = 'id'): Promise<T | null> => {
     setLoading(true);
     try {
       const q = query(collection(db, collectionName), where(idField, '==', id), limit(1));
       const querySnapshot = await getDocs(q);
       setLoading(false);
-      
+
       if (!querySnapshot.empty) {
         const doc = querySnapshot.docs[0];
         return { id: doc.id, ...doc.data() } as T;
@@ -94,56 +59,46 @@ export const useFirestore = () => {
         return null;
       }
     } catch (err) {
-      setError("Failed to fetch document");
+      setError('Failed to fetch document');
       setLoading(false);
       throw err;
     }
   };
 
-  const add = async <T extends DocumentData>(
-    collectionName: CollectionName,
-    data: Omit<T, "id">
-  ): Promise<string> => {
+  const add = async <T extends DocumentData>(collectionName: CollectionName, data: Omit<T, 'id'>): Promise<string> => {
     setLoading(true);
     try {
       const docRef = await addDoc(collection(db, collectionName), data);
       setLoading(false);
       return docRef.id;
     } catch (err) {
-      setError("Failed to add document");
+      setError('Failed to add document');
       setLoading(false);
       throw err;
     }
   };
 
-  const update = async <T extends { id: string }>(
-    collectionName: CollectionName,
-    id: string,
-    data: Partial<T>
-  ): Promise<void> => {
+  const update = async <T extends { id: string }>(collectionName: CollectionName, id: string, data: Partial<T>): Promise<void> => {
     setLoading(true);
     try {
       const docRef = doc(db, collectionName, id);
       await updateDoc(docRef, data);
       setLoading(false);
     } catch (err) {
-      setError("Failed to update document");
+      setError('Failed to update document');
       setLoading(false);
       throw err;
     }
   };
 
-  const remove = async (
-    collectionName: CollectionName,
-    id: string
-  ): Promise<void> => {
+  const remove = async (collectionName: CollectionName, id: string): Promise<void> => {
     setLoading(true);
     try {
       const docRef = doc(db, collectionName, id);
       await deleteDoc(docRef);
       setLoading(false);
     } catch (err) {
-      setError("Failed to delete document");
+      setError('Failed to delete document');
       setLoading(false);
       throw err;
     }
@@ -152,9 +107,9 @@ export const useFirestore = () => {
   const getTreeByCode = async (code: string): Promise<Tree | null> => {
     setLoading(true);
     try {
-      const treeQuery = query(collection(db, "trees"), where("code", "==", code));
+      const treeQuery = query(collection(db, 'trees'), where('code', '==', code));
       const querySnapshot = await getDocs(treeQuery);
-      
+
       if (querySnapshot.empty) {
         setLoading(false);
         return null;
@@ -164,7 +119,51 @@ export const useFirestore = () => {
       setLoading(false);
       return { id: treeDoc.id, ...treeDoc.data() } as Tree;
     } catch (err) {
-      setError("Failed to fetch tree by code");
+      setError('Failed to fetch tree by code');
+      setLoading(false);
+      throw err;
+    }
+  };
+
+  const getTreesWithOwners = async (): Promise<Tree[]> => {
+    setLoading(true);
+    try {
+      const trees = await getAll<Tree>('trees');
+      const treesWithOwners = await Promise.all(
+        trees.map(async (tree) => {
+          if (tree.user_id) {
+            const owner = await getById<User>('users', tree.user_id);
+            return { ...tree, ownerName: owner?.name || 'Unknown' };
+          }
+          return { ...tree, ownerName: 'Unknown' };
+        })
+      );
+      setLoading(false);
+      return treesWithOwners;
+    } catch (err) {
+      setError('Failed to fetch trees with owners');
+      setLoading(false);
+      throw err;
+    }
+  };
+
+  const getTreesByOwnerName = async (ownerName: string): Promise<Tree[]> => {
+    setLoading(true);
+    try {
+      const users = await getDocs(query(collection(db, 'users'), where('name', '==', ownerName)));
+      const userIds = users.docs.map((doc) => doc.id);
+
+      const trees = await getDocs(query(collection(db, 'trees'), where('user_id', 'in', userIds)));
+      const treesWithOwners = trees.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+        ownerName: ownerName,
+      })) as Tree[];
+
+      setLoading(false);
+      return treesWithOwners;
+    } catch (err) {
+      setError('Failed to fetch trees by owner name');
       setLoading(false);
       throw err;
     }
@@ -172,54 +171,55 @@ export const useFirestore = () => {
 
   // Specific methods for each interface
   const groupMethods = {
-    getAllGroups: () => getAll<Group>("groups"),
-    getGroupById: (id: string) => getById<Group>("groups", id),
-    addGroup: (group: Omit<Group, "id">) => add<Group>("groups", group),
-    updateGroup: (id: string, group: Partial<Group>) => update<Group>("groups", id, group),
-    deleteGroup: (id: string) => remove("groups", id),
+    getAllGroups: () => getAll<Group>('groups'),
+    getGroupById: (id: string) => getById<Group>('groups', id),
+    addGroup: (group: Omit<Group, 'id'>) => add<Group>('groups', group),
+    updateGroup: (id: string, group: Partial<Group>) => update<Group>('groups', id, group),
+    deleteGroup: (id: string) => remove('groups', id),
   };
 
   const userMethods = {
-    getAllUsers: () => getAll<User>("users"),
-    getUserById: (id: string) => getById<User>("users", id),
-    addUser: (user: Omit<User, "id">) => add<User>("users", user),
-    updateUser: (id: string, user: Partial<User>) => update<User>("users", id, user),
-    deleteUser: (id: string) => remove("users", id),
+    getAllUsers: () => getAll<User>('users'),
+    getUserById: (id: string) => getById<User>('users', id),
+    addUser: (user: Omit<User, 'id'>) => add<User>('users', user),
+    updateUser: (id: string, user: Partial<User>) => update<User>('users', id, user),
+    deleteUser: (id: string) => remove('users', id),
   };
 
   const accountMethods = {
-    getAllAccounts: () => getAll<Account>("accounts"),
-    getAccountById: (id: string) => getById<Account>("accounts", id),
-    addAccount: (account: Omit<Account, "id">) => add<Account>("accounts", account),
-    updateAccount: (id: string, account: Partial<Account>) => update<Account>("accounts", id, account),
-    deleteAccount: (id: string) => remove("accounts", id),
+    getAllAccounts: () => getAll<Account>('accounts'),
+    getAccountById: (id: string) => getById<Account>('accounts', id),
+    addAccount: (account: Omit<Account, 'id'>) => add<Account>('accounts', account),
+    updateAccount: (id: string, account: Partial<Account>) => update<Account>('accounts', id, account),
+    deleteAccount: (id: string) => remove('accounts', id),
   };
 
   const treeMethods = {
-    getAllTrees: () => getAll<Tree>("trees"),
-    getTreeById: (id: string) => getById<Tree>("trees", id),
+    getAllTrees: () => getAll<Tree>('trees'),
+    getTreeById: (id: string) => getById<Tree>('trees', id),
     getTreeByCode, // Add this line
-    addTree: (tree: Omit<Tree, "id">) => add<Tree>("trees", tree),
-    updateTree: (id: string, tree: Partial<Tree>) => update<Tree>("trees", id, tree),
-    deleteTree: (id: string) => remove("trees", id),
+    addTree: (tree: Omit<Tree, 'id'>) => add<Tree>('trees', tree),
+    updateTree: (id: string, tree: Partial<Tree>) => update<Tree>('trees', id, tree),
+    deleteTree: (id: string) => remove('trees', id),
+    getTreesWithOwners,
+    getTreesByOwnerName,
   };
 
   const fertilizationMethods = {
-    getAllFertilizations: () => getAll<Fertilization>("fertilizations"),
-    getFertilizationById: (id: string) => getById<Fertilization>("fertilizations", id),
-    addFertilization: (fertilization: Omit<Fertilization, "id">) => add<Fertilization>("fertilizations", fertilization),
-    updateFertilization: (id: string, fertilization: Partial<Fertilization>) => update<Fertilization>("fertilizations", id, fertilization),
-    deleteFertilization: (id: string) => remove("fertilizations", id),
+    getAllFertilizations: () => getAll<Fertilization>('fertilizations'),
+    getFertilizationById: (id: string) => getById<Fertilization>('fertilizations', id),
+    addFertilization: (fertilization: Omit<Fertilization, 'id'>) => add<Fertilization>('fertilizations', fertilization),
+    updateFertilization: (id: string, fertilization: Partial<Fertilization>) => update<Fertilization>('fertilizations', id, fertilization),
+    deleteFertilization: (id: string) => remove('fertilizations', id),
   };
 
   const transactionMethods = {
-    getAllTransactions: () => getAll<Transaction>("transactions"),
-    getTransactionById: (id: string) => getById<Transaction>("transactions", id),
-    addTransaction: (transaction: Omit<Transaction, "id">) => add<Transaction>("transactions", transaction),
-    updateTransaction: (id: string, transaction: Partial<Transaction>) => update<Transaction>("transactions", id, transaction),
-    deleteTransaction: (id: string) => remove("transactions", id),
+    getAllTransactions: () => getAll<Transaction>('transactions'),
+    getTransactionById: (id: string) => getById<Transaction>('transactions', id),
+    addTransaction: (transaction: Omit<Transaction, 'id'>) => add<Transaction>('transactions', transaction),
+    updateTransaction: (id: string, transaction: Partial<Transaction>) => update<Transaction>('transactions', id, transaction),
+    deleteTransaction: (id: string) => remove('transactions', id),
   };
-
 
   return {
     loading,

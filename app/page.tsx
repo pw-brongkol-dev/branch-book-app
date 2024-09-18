@@ -1,6 +1,6 @@
-import Link from "next/link";
-import { History, BookOpen, Sprout } from "lucide-react";
-import RippleButton from "./components/RippleButton";
+import Link from 'next/link';
+import { History, BookOpen, Sprout, Trees } from 'lucide-react';
+import RippleButton from './components/RippleButton';
 
 import { LucideIcon } from 'lucide-react';
 
@@ -27,6 +27,12 @@ export default function Home() {
           <h1 className="text-3xl font-bold">Halo Haryadi</h1>
         </div>
         <div className="flex flex-col gap-4">
+          <Link href="/tree/tree-datatable" className="w-full">
+            <RippleButton className="w-full bg-neutral-50 active:bg-green-50 active:border-green-500 text-card-foreground border-2 border-slate-200 shadow-sm rounded-3xl p-6 flex flex-col items-center transition-colors">
+              <PastelIcon Icon={Trees} bgColor="bg-green-100" iconColor="text-green-600" />
+              <span className="text-lg font-medium">Data Pohon</span>
+            </RippleButton>
+          </Link>
           <Link href="/tree/scan-qr" className="w-full">
             <RippleButton className="w-full bg-neutral-50 active:bg-green-50 active:border-green-500 text-card-foreground border-2 border-slate-200 shadow-sm rounded-3xl p-6 flex flex-col items-center transition-colors">
               <PastelIcon Icon={History} bgColor="bg-green-100" iconColor="text-green-600" />
@@ -44,5 +50,3 @@ export default function Home() {
     </main>
   );
 }
-
-

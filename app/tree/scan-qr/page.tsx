@@ -1,19 +1,19 @@
 // "use client";
 
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { useZxing } from "react-zxing";
+import { useState, useEffect } from 'react';
+import { useZxing } from 'react-zxing';
 
-import Image from "next/image";
-import QRPictogram from "@/app/images/qr-pictogram.png";
-import { useRouter } from "next/navigation";
-import BackButton from "@/app/components/BackButton";
+import Image from 'next/image';
+import QRPictogram from '@/app/images/qr-pictogram.png';
+import { useRouter } from 'next/navigation';
+import BackButton from '@/app/components/BackButton';
 
 const ScanQRPage = () => {
   const router = useRouter();
 
-  const [result, setResult] = useState("");
+  const [result, setResult] = useState('');
   const { ref } = useZxing({
     onDecodeResult(result) {
       setResult(result.getText());
@@ -21,13 +21,12 @@ const ScanQRPage = () => {
   });
 
   useEffect(() => {
-    if (result.trim() !== "") {
+    if (result.trim() !== '') {
       console.log(result);
       // alert(result);
-      router.push(`/tree/${result}`)
+      router.push(`/tree/${result}`);
     }
   }, [result, router]);
-
 
   return (
     <div className="flex flex-col items-center justify-center h-dvh bg-gray-200">
@@ -47,16 +46,9 @@ const ScanQRPage = () => {
           <p className="text-lg font-semibold">Scan QR Code</p>
           <p className="text-sm text-gray-600 mb-4">pada Pohon</p>
           <div className="block rounded-xl">
-            <Image
-              src={QRPictogram} // Replace with your actual QR code icon
-              alt="QR Code Icon"
-              width={64}
-              height={64}
-            />
+            <Image src={QRPictogram} alt="QR Code Icon" width={64} height={64} />
           </div>
-          <span className="text-sm text-gray-600 overflow-hidden mt-4">
-            {result}
-          </span>
+          <span className="text-sm text-gray-600 overflow-hidden mt-4">{result}</span>
         </div>
       </div>
     </div>

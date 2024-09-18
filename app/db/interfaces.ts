@@ -26,6 +26,8 @@ export interface Tree {
   location: string;
   planting_date: Date;
   user_id: string; // Foreign key to User
+  ownerId: string;
+  ownerName?: string;
 }
 
 export interface Fertilization {
