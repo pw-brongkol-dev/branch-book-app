@@ -8,6 +8,8 @@ import { useFirestore } from '@/app/hooks/useFirestore';
 import { Tree } from '@/app/db/interfaces';
 import { Timestamp } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
+import BackButton from '@/app/components/BackButton';
+import { Search } from 'lucide-react';
 
 const TreeDataTablePage = () => {
   const [searchName, setSearchName] = useState('');
@@ -100,43 +102,67 @@ const TreeDataTablePage = () => {
     toast({
       title: 'Info',
       description: 'Fitur tambah pohon akan segera hadir!',
+      variant: 'default',
+      duration: 3000,
+      action: (
+        <Button variant="outline" size="sm" onClick={() => console.log('Action clicked')}>
+          Oke
+        </Button>
+      ),
     });
   };
 
   return (
-    <div className="p-4">
-      <h2 className="text-2xl font-bold mb-2">Laporan Data Pohon</h2>
-      <p className="mb-4">Tabel ini menampilkan data pohon kopi dan durian yang ditanam oleh para petani.</p>
-      <div className="space-y-4 mb-4">
-        <Input placeholder="Masukkan Nama Petani" value={searchName} onChange={(e) => setSearchName(e.target.value)} className="max-w-sm" />
-        <div className="space-x-2">
-          <Button onClick={handleSearch}>Cari</Button>
-          <Button variant="outline" onClick={loadTrees}>
-            Tampilkan Semua
+    <div className="container mx-auto px-6 py-12 space-y-6">
+      <BackButton />
+      <div className="space-y-4">
+        <h2 className="text-2xl font-bold">Laporan Data Pohon</h2>
+        <p className="text-muted-foreground">Tabel ini menampilkan data pohon kopi dan durian yang ditanam oleh para petani.</p>
+      </div>
+
+      <div className="mb-6">
+        <div className="relative">
+          <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Masukkan Nama Petani"
+            value={searchName}
+            onChange={(e) => setSearchName(e.target.value)}
+            className="pl-8 w-full pr-24" // Added pr-24 for button space
+          />
+          <Button onClick={handleSearch} className="absolute right-0 top-0 bottom-0 rounded-l-none">
+            Cari
           </Button>
         </div>
       </div>
-      <Button onClick={handleAddTree} className="mb-4 float-right">
-        Tambah Data Pohon
-      </Button>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            {columns.map((column) => (
-              <TableHead key={column.key}>{column.title}</TableHead>
-            ))}
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {trees.map((tree, index) => (
-            <TableRow key={tree.id}>
+
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-lg font-semibold">Daftar Pohon</h3>
+        <Button onClick={handleAddTree}>Tambah Data Pohon</Button>
+      </div>
+
+      <div className="rounded-md border overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow>
               {columns.map((column) => (
-                <TableCell key={`${tree.id}-${column.key}`}>{column.render ? column.render(tree[column.dataIndex as keyof Tree] as any, tree) : String(tree[column.dataIndex as keyof Tree] ?? '')}</TableCell>
+                <TableHead key={column.key} className="font-semibold">
+                  {column.title}
+                </TableHead>
               ))}
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {trees.map((tree, index) => (
+              <TableRow key={tree.id}>
+                {columns.map((column) => (
+                  <TableCell key={`${tree.id}-${column.key}`}>{column.render ? column.render(tree[column.dataIndex as keyof Tree] as any, tree) : String(tree[column.dataIndex as keyof Tree] ?? '')}</TableCell>
+                ))}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+
       {error && <p className="text-red-500 mt-4">{error}</p>}
     </div>
   );

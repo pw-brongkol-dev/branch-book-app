@@ -4,7 +4,8 @@ import React, { useState, useEffect } from 'react';
 // import { useRouter } from "next/navigation";
 // import { FiEdit, FiArrowLeft, FiMoreVertical } from "react-icons/fi";
 import BackButton from '@/app/components/BackButton';
-
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Button } from '@/components/ui/button';
 import { useFirestore } from '@/app/hooks/useFirestore';
 import { differenceInYears, differenceInMonths, differenceInDays } from 'date-fns';
 
@@ -133,9 +134,28 @@ const TreeDetailsPage = ({ params }: { params: { tree_id: string } }) => {
           </div>
         </div>
 
-        <div className="flex items-center justify-between mt-4">
-          <h2 className="text-lg font-semibold pl-2">Riwayat Pemupukan</h2>
-        </div>
+        <Accordion type="single" collapsible className="w-full px-2 mt-4">
+          <AccordionItem value="item-1">
+            <AccordionTrigger>Riwayat Pemupukan</AccordionTrigger>
+            <AccordionContent>
+              <div className="flex flex-col gap-2">
+                <div className="flex justify-between items-center">
+                  <p className="text-sm font-semibold">Pemupukan 1</p>
+                  <p className="text-sm text-gray-600">2024-01-01</p>
+                </div>
+                <p className="text-sm text-gray-600">Pemupukan 1</p>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+          <AccordionItem value="item-2">
+            <AccordionTrigger>Buat Barcode</AccordionTrigger>
+            <AccordionContent>
+              <div className="flex justify-center">
+                <Button>Buat Barcode</Button>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
         {/* <div className="space-y-4 px-4">
           {history.map(item => (
             <div key={item.id} className="flex items-start">

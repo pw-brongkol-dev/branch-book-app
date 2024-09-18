@@ -15,6 +15,8 @@ export const metadata: Metadata = {
   description: 'Hello',
 };
 
+import { Toaster } from '@/components/ui/toaster';
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -24,6 +26,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${inter.variable} antialiased`} suppressHydrationWarning={true}>
         {children}
+        <Toaster />
       </body>
     </html>
   );
