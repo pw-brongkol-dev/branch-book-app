@@ -1,18 +1,20 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-// import { useRouter } from "next/navigation";
+import { useRouter } from 'next/navigation';
 // import { FiEdit, FiArrowLeft, FiMoreVertical } from "react-icons/fi";
 import BackButton from '@/app/components/BackButton';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import { useFirestore } from '@/app/hooks/useFirestore';
 import { differenceInYears, differenceInMonths, differenceInDays } from 'date-fns';
+import * as qrcode from 'qrcode';
+import { FiDownload } from 'react-icons/fi';
 
 const TreeDetailsPage = ({ params }: { params: { tree_id: string } }) => {
   const tree_code = params.tree_id;
   // console.log(params.tree_id);
-  // const router = useRouter();
+  const router = useRouter();
 
   // const { tree_id } = router.query;
   const { getTreeByCode, getUserById } = useFirestore();
@@ -24,6 +26,25 @@ const TreeDetailsPage = ({ params }: { params: { tree_id: string } }) => {
   }
   const [treeDetail, setTreeDetail] = useState<TreeDetail | undefined>();
   const [fetchStatus, setFetchStatus] = useState('idle');
+  const [qrCodeData, setQrCodeData] = useState<string | null>(null);
+
+  const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
+
+  const generateQRCode = async () => {
+    try {
+      const qrCode = await qrcode.toDataURL(currentUrl, {
+        width: 256,
+        margin: 2,
+        color: {
+          dark: '#000000',
+          light: '#FFFFFF',
+        },
+      });
+      setQrCodeData(qrCode);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const fetchData = async () => {
     try {
@@ -148,10 +169,27 @@ const TreeDetailsPage = ({ params }: { params: { tree_id: string } }) => {
             </AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-2">
-            <AccordionTrigger>Buat Barcode</AccordionTrigger>
+            <AccordionTrigger>Buat QR Code</AccordionTrigger>
             <AccordionContent>
-              <div className="flex justify-center">
-                <Button>Buat Barcode</Button>
+              <div className="flex flex-col items-center gap-4">
+                <Button onClick={generateQRCode}>Generate QR Code</Button>
+                {qrCodeData && (
+                  <>
+                    <img src={qrCodeData} alt="QR Code" className="w-64 h-64" />
+                    <Button
+                      onClick={() => {
+                        const link = document.createElement('a');
+                        link.href = qrCodeData as string;
+                        link.download = 'qrcode.png';
+                        link.click();
+                      }}
+                      className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white"
+                    >
+                      <FiDownload />
+                      Download QR Code
+                    </Button>
+                  </>
+                )}
               </div>
             </AccordionContent>
           </AccordionItem>
