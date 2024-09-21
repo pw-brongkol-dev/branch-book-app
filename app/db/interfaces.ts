@@ -9,15 +9,6 @@ export interface User {
   group_id: string; // Foreign key to Group
 }
 
-export interface Account {
-  id: string;
-  code: string;
-  name: string;
-  type: string;
-  db_cr: string; // Assuming this is for debit/credit
-  user_id: string; // Foreign key to User
-}
-
 export interface Tree {
   id: string;
   code: string;
@@ -26,21 +17,33 @@ export interface Tree {
   location: string;
   planting_date: Date;
   user_id: string; // Foreign key to User
-  ownerId: string;
-  ownerName?: string;
+}
+
+export interface RelTreeFertilization {
+  tree_id: string;
+  fertilization_id: string;
+  is_completed: boolean;
 }
 
 export interface Fertilization {
   id: string;
-  tree_id: string; // Foreign key to Tree
   date: Date;
+  title: string;
   description: string;
-  is_completed: boolean;
+}
+
+
+export interface Account {
+  id: string;
+  name: string;
+  type: string;
+  db_cr: string; // Assuming this is for debit/credit
 }
 
 export interface Transaction {
   id: string;
   account_id: string; // Foreign key to Account
+  user_id: string; // Foreign key to User
   date: Date;
   description: string;
   total_amount: number;
