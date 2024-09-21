@@ -1,35 +1,33 @@
 'use client';
 
-import Image from 'next/image';
 import React, { useState, useEffect } from 'react';
-// import { useRouter } from 'next/navigation';
-// import { FiEdit, FiArrowLeft, FiMoreVertical } from "react-icons/fi";
 import BackButton from '@/app/components/BackButton';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import { useFirestore } from '@/app/hooks/useFirestore';
 import { differenceInYears, differenceInMonths, differenceInDays } from 'date-fns';
 import * as qrcode from 'qrcode';
-import { FiDownload } from 'react-icons/fi';
+import { FiDownload, FiEdit } from 'react-icons/fi';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 const TreeDetailsPage = ({ params }: { params: { tree_id: string } }) => {
   const tree_code = params.tree_id;
-  // console.log(params.tree_id);
-  // const router = useRouter();
-
-  // const { tree_id } = router.query;
   const { getTreeByCode, getUserById } = useFirestore();
+  
   interface TreeDetail {
     owner: string;
     type: string;
     age: string;
     location: string;
   }
+  
   const [treeDetail, setTreeDetail] = useState<TreeDetail | undefined>();
   const [fetchStatus, setFetchStatus] = useState('idle');
   const [qrCodeData, setQrCodeData] = useState<string | null>(null);
-
-  // const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
 
   const generateQRCode = async () => {
     try {
@@ -50,30 +48,19 @@ const TreeDetailsPage = ({ params }: { params: { tree_id: string } }) => {
   const fetchData = async () => {
     try {
       setFetchStatus('loading');
-
       const tree = await getTreeByCode(tree_code);
-      if (!tree) {
-        throw 'fetch error: tree not found';
-      }
-      console.log(tree);
+      if (!tree) throw 'fetch error: tree not found';
 
       const user = await getUserById(tree.user_id);
-      // console.log(user);
-      if (!user) {
-        throw 'fetch error: user not found';
-      }
-
-      // console.log(user);
+      if (!user) throw 'fetch error: user not found';
 
       const plantingDate = tree.planting_date.toDate();
       const now = new Date();
-
       const years = differenceInYears(now, plantingDate);
       const months = differenceInMonths(now, plantingDate) % 12;
       const days = differenceInDays(now, plantingDate) % 30;
 
       const ageString = `${years} tahun ${months} bulan ${days} hari`;
-
       const data = {
         owner: user.name,
         type: `${tree.type} ${tree.accession}`,
@@ -82,7 +69,6 @@ const TreeDetailsPage = ({ params }: { params: { tree_id: string } }) => {
       };
 
       setTreeDetail(data);
-      // console.log(data);
       setFetchStatus('success');
     } catch (err) {
       setFetchStatus('error');
@@ -98,20 +84,23 @@ const TreeDetailsPage = ({ params }: { params: { tree_id: string } }) => {
     {
       id: 1,
       while: 'Setelah Panen',
-      description: 'pemupukan atas menggunakan NPK, top woking',
+      date: 'Sabtu, 28 Mei 2024 - 10.00',
+      description: 'Tabur: Organik 5 karung, NPK Mutiara 16-16-16 4kg, Karate Plus Boroni 1kg',
       completed: true,
     },
     {
       id: 2,
       while: 'Setelah Mata Ketam Keluar',
-      description: 'penyiraman, pemangkasan dahan, kondisi pohon sehat',
-      completed: true,
+      date: 'Sabtu, 28 Mei 2024 - 10.00',
+      description: 'Tabur: NPK Grower 15-09-20+TE 4kg, Karate Plus Boroni 1kg',
+      completed: false,
     },
     {
       id: 3,
-      while: 'Setelah 30-40 Hari',
-      description: 'penyiraman, pemangkasan dahan, top woking',
-      completed: true,
+      while: 'Umur 30-40 Hari Setelah Bunga Mekar',
+      date: 'Sabtu, 28 Mei 2024 - 10.00',
+      description: 'Tabur: NPK Grower 15-09-20+TE 4kg, Karate Plus Boroni 1kg',
+      completed: false,
     },
   ]);
 
@@ -124,58 +113,57 @@ const TreeDetailsPage = ({ params }: { params: { tree_id: string } }) => {
   };
 
   return (
-    <div className="min-h-screen p-4">
+    <div className="min-h-screen p-4 bg-gray-100">
       <BackButton />
-      <div className="bg-white max-w-md mx-auto pt-16">
-        <div className="flex flex-col gap-2">
-          <h2 className="text-lg font-semibold pl-2">Detail Pohon</h2>
-
-          <div className="bg-gray-100 p-4 rounded-2xl">
-            <div className="flex justify-between items-center mb-2">
-              <div>
-                <p className="text-xs text-gray-600">Pemilik</p>
-                <p className="text-sm font-semibold">{treeDetail?.owner}</p>
-              </div>
-              {/* <button className="text-green-600 flex items-center">
-                  <FiEdit className="mr-1" />
-                  Edit
-                </button> */}
-            </div>
-            <div className="mb-2">
-              <p className="text-xs text-gray-600">Jenis/Aksesi</p>
-              <p className="text-sm font-semibold">{treeDetail?.type}</p>
-            </div>
-            <div className="mb-2">
-              <p className="text-xs text-gray-600">Usia</p>
-              <p className="text-sm font-semibold">{treeDetail?.age}</p>
-            </div>
-            <div>
-              <p className="text-xs text-gray-600">Lokasi</p>
-              <p className="text-sm font-semibold">{treeDetail?.location}</p>
-            </div>
+      <div className="bg-white max-w-md mx-auto pt-4 pb-4 rounded-lg shadow-lg">
+        <h2 className="text-lg font-semibold text-center">Pohon Durian</h2>
+        <div className="p-4">
+          <div className="mb-4">
+            <p className="text-sm">Pemilik: <span className="font-semibold">{treeDetail?.owner}</span></p>
+            <p className="text-sm">Jenis/Aksesi: <span className="font-semibold">{treeDetail?.type}</span></p>
+            <p className="text-sm">Usia: <span className="font-semibold">{treeDetail?.age}</span></p>
+            <p className="text-sm">Lokasi: <span className="font-semibold">{treeDetail?.location}</span></p>
+            <button className="text-green-600 flex items-center mt-2">
+              <FiEdit className="mr-1" />
+              Edit
+            </button>
           </div>
-        </div>
 
-        <Accordion type="single" collapsible className="w-full px-2 mt-4">
-          <AccordionItem value="item-1">
-            <AccordionTrigger>Riwayat Pemupukan</AccordionTrigger>
-            <AccordionContent>
-              <div className="flex flex-col gap-2">
-                <div className="flex justify-between items-center">
-                  <p className="text-sm font-semibold">Pemupukan 1</p>
-                  <p className="text-sm text-gray-600">2024-01-01</p>
+          {/* Accordion for Riwayat */}
+          <Accordion type="single" collapsible className="w-full">
+            <AccordionItem value="riwayat">
+              <AccordionTrigger>Riwayat</AccordionTrigger>
+              <AccordionContent>
+                <div className="space-y-2">
+                  {history.map(item => (
+                    <div key={item.id} className="flex items-start p-2 rounded-md">
+                      <input
+                        type="checkbox"
+                        checked={item.completed}
+                        onChange={() => toggleCompleted(item.id)}
+                        className="h-6 w-6 flex-none"
+                        style={{ accentColor: '#38693C', width: '24px', height: '24px', marginRight: '10px' }}
+                      />
+                      <div>
+                        <p className="font-semibold text-[#38693C]">{item.while}</p>
+                        <p className="text-xs text-gray-600">{item.date}</p>
+                        <p className="text-sm">{item.description}</p>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-                <p className="text-sm text-gray-600">Pemupukan 1</p>
-              </div>
-            </AccordionContent>
-          </AccordionItem>
-          <AccordionItem value="item-2">
-            <AccordionTrigger>Buat QR Code</AccordionTrigger>
-            <AccordionContent>
-              <div className="flex flex-col items-center gap-4">
-                <Button onClick={generateQRCode}>Generate QR Code</Button>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+
+          {/* Accordion for QR Code */}
+          <Accordion type="single" collapsible className="w-full mt-4">
+            <AccordionItem value="qr-code">
+              <AccordionTrigger>Buat QR Code</AccordionTrigger>
+              <AccordionContent>
+                <Button onClick={generateQRCode} className="mt-2">Generate QR Code</Button>
                 {qrCodeData && (
-                  <>
+                  <div className="flex flex-col items-center mt-4">
                     <img src={qrCodeData} alt="QR Code" className="w-64 h-64" />
                     <Button
                       onClick={() => {
@@ -184,33 +172,17 @@ const TreeDetailsPage = ({ params }: { params: { tree_id: string } }) => {
                         link.download = `qrcode-${tree_code}.png`;
                         link.click();
                       }}
-                      className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white"
+                      className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white mt-2"
                     >
                       <FiDownload />
                       Download QR Code
                     </Button>
-                  </>
+                  </div>
                 )}
-              </div>
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-        {/* <div className="space-y-4 px-4">
-          {history.map(item => (
-            <div key={item.id} className="flex items-start">
-              <input
-                type="checkbox"
-                checked={item.completed}
-                onChange={() => toggleCompleted(item.id)}
-                className="h-6 w-6 text-green-600 mr-4"
-              />
-              <div>
-                <p className={`font-semibold ${item.completed ? 'text-green-600' : 'text-gray-600'}`}>{item.while}</p>
-                <p>{item.description}</p>
-              </div>
-            </div>
-          ))}
-        </div> */}
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </div>
       </div>
     </div>
   );
