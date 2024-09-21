@@ -1,7 +1,8 @@
 'use client';
 
+import Image from 'next/image';
 import React, { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+// import { useRouter } from 'next/navigation';
 // import { FiEdit, FiArrowLeft, FiMoreVertical } from "react-icons/fi";
 import BackButton from '@/app/components/BackButton';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
@@ -14,7 +15,7 @@ import { FiDownload } from 'react-icons/fi';
 const TreeDetailsPage = ({ params }: { params: { tree_id: string } }) => {
   const tree_code = params.tree_id;
   // console.log(params.tree_id);
-  const router = useRouter();
+  // const router = useRouter();
 
   // const { tree_id } = router.query;
   const { getTreeByCode, getUserById } = useFirestore();
@@ -28,11 +29,11 @@ const TreeDetailsPage = ({ params }: { params: { tree_id: string } }) => {
   const [fetchStatus, setFetchStatus] = useState('idle');
   const [qrCodeData, setQrCodeData] = useState<string | null>(null);
 
-  const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
+  // const currentUrl = typeof window !== 'undefined' ? window.location.href : '';
 
   const generateQRCode = async () => {
     try {
-      const qrCode = await qrcode.toDataURL(currentUrl, {
+      const qrCode = await qrcode.toDataURL(tree_code, {
         width: 256,
         margin: 2,
         color: {
@@ -175,12 +176,12 @@ const TreeDetailsPage = ({ params }: { params: { tree_id: string } }) => {
                 <Button onClick={generateQRCode}>Generate QR Code</Button>
                 {qrCodeData && (
                   <>
-                    <img src={qrCodeData} alt="QR Code" className="w-64 h-64" />
+                    <Image src={qrCodeData} alt="QR Code" className="w-64 h-64" />
                     <Button
                       onClick={() => {
                         const link = document.createElement('a');
                         link.href = qrCodeData as string;
-                        link.download = 'qrcode.png';
+                        link.download = `qrcode-${tree_code}.png`;
                         link.click();
                       }}
                       className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white"
