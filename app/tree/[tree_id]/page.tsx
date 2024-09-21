@@ -176,7 +176,7 @@ const TreeDetailsPage = ({ params }: { params: { tree_id: string } }) => {
                 <Button onClick={generateQRCode}>Generate QR Code</Button>
                 {qrCodeData && (
                   <>
-                    <Image src={qrCodeData} alt="QR Code" className="w-64 h-64" />
+                    <img src={qrCodeData} alt="QR Code" className="w-64 h-64" />
                     <Button
                       onClick={() => {
                         const link = document.createElement('a');
