@@ -6,7 +6,7 @@ export interface Group {
 export interface User {
   id: string;
   name: string;
-  group_id: string; // Foreign key to Group
+  group_id: string;
 }
 
 export interface Tree {
@@ -31,7 +31,6 @@ export interface Fertilization {
   title: string;
   description: string;
 }
-
 
 export interface Account {
   id: string;

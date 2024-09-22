@@ -13,11 +13,7 @@ export const useFirestore = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const getAll = async <T>(
-    collectionName: CollectionName, 
-    filterField?: string, 
-    filterValue?: any
-  ): Promise<T[]> => {
+  const getAll = async <T>(collectionName: CollectionName, filterField?: string, filterValue?: any): Promise<T[]> => {
     setLoading(true);
     try {
       let q = collection(db, collectionName);
@@ -235,12 +231,10 @@ export const useFirestore = () => {
     addRelTreeFertilization: (rel: Omit<RelTreeFertilization, 'id'>) => add<RelTreeFertilization>('rel_tree_fertilizations', rel),
     updateRelTreeFertilization: (id: string, rel: Partial<RelTreeFertilization>) => update<RelTreeFertilization>('rel_tree_fertilizations', id, rel),
     deleteRelTreeFertilization: (id: string) => remove('rel_tree_fertilizations', id),
-    
+
     // Additional methods specific to this relationship
-    getRelTreeFertilizationsByTreeId: (treeId: string) => 
-      getAll<RelTreeFertilization>('rel_tree_fertilizations', 'tree_id', treeId),
-    getRelTreeFertilizationsByFertilizationId: (fertilizationId: string) => 
-      getAll<RelTreeFertilization>('rel_tree_fertilizations', 'fertilization_id', fertilizationId),
+    getRelTreeFertilizationsByTreeId: (treeId: string) => getAll<RelTreeFertilization>('rel_tree_fertilizations', 'tree_id', treeId),
+    getRelTreeFertilizationsByFertilizationId: (fertilizationId: string) => getAll<RelTreeFertilization>('rel_tree_fertilizations', 'fertilization_id', fertilizationId),
     toggleFertilizationCompletion: async (id: string) => {
       const rel = await getById<RelTreeFertilization>('rel_tree_fertilizations', id);
       if (rel) {

@@ -10,6 +10,7 @@ import { Timestamp } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import BackButton from '@/app/components/BackButton';
 import { Search } from 'lucide-react';
+import Link from 'next/link';
 
 const TreeDataTablePage = () => {
   const [searchName, setSearchName] = useState('');
@@ -67,7 +68,7 @@ const TreeDataTablePage = () => {
   };
 
   const columns = [
-    { title: 'No', dataIndex: 'no', key: 'no', width: 50 },
+    { title: 'No', dataIndex: 'no', key: 'no', width: 50, render: (_: any, __: Tree, index: number) => index + 1 }, // Updated to show row number
     { title: 'Kode Pohon', dataIndex: 'code', key: 'code' },
     { title: 'Nama Petani', dataIndex: 'ownerName', key: 'ownerName', render: (ownerName: string) => ownerName || 'Unknown' },
     { title: 'Jenis Pohon', dataIndex: 'type', key: 'type' },
@@ -98,20 +99,6 @@ const TreeDataTablePage = () => {
     },
   ];
 
-  const handleAddTree = () => {
-    toast({
-      title: 'Info',
-      description: 'Fitur tambah pohon akan segera hadir!',
-      variant: 'default',
-      duration: 3000,
-      action: (
-        <Button variant="outline" size="sm" onClick={() => console.log('Action clicked')}>
-          Oke
-        </Button>
-      ),
-    });
-  };
-
   return (
     <div className="container mx-auto px-6 py-12 space-y-6">
       <BackButton />
@@ -137,7 +124,9 @@ const TreeDataTablePage = () => {
 
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-lg font-semibold">Daftar Pohon</h3>
-        <Button onClick={handleAddTree}>Tambah Data Pohon</Button>
+        <Link href="/tree/tree-datatable/add-tree">
+          <Button>Tambah Data Pohon</Button>
+        </Link>
       </div>
 
       <div className="rounded-md border overflow-hidden">
@@ -155,7 +144,7 @@ const TreeDataTablePage = () => {
             {trees.map((tree, index) => (
               <TableRow key={tree.id}>
                 {columns.map((column) => (
-                  <TableCell key={`${tree.id}-${column.key}`}>{column.render ? column.render(tree[column.dataIndex as keyof Tree] as any, tree) : String(tree[column.dataIndex as keyof Tree] ?? '')}</TableCell>
+                  <TableCell key={`${tree.id}-${column.key}`}>{column.render ? column.render(tree[column.dataIndex as keyof Tree] as any, tree, index) : String(tree[column.dataIndex as keyof Tree] ?? '')}</TableCell>
                 ))}
               </TableRow>
             ))}

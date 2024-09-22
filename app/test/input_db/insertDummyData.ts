@@ -1,19 +1,20 @@
-"use client";
+'use client';
 
 // utils/generateDummyData.ts
 
 import { v4 as uuidv4 } from 'uuid';
 // import { useFirestore } from '../../hooks/useFirestore';
 
-
 const group_all = [
   {
     id: uuidv4(),
     name: `Ajuning Tani`,
-  }
-]
-
-
+  },
+  {
+    id: uuidv4(),
+    name: `Karya Bakti I`,
+  },
+];
 
 const user_all = [
   {
@@ -141,13 +142,12 @@ const user_all = [
     name: `No Name`,
     group_id: group_all[0].id,
   },
-]
-
+];
 
 const tree_type = {
   durian: `Durian`,
   kopi: `Kopi`,
-}
+};
 
 const tree_all = [
   {
@@ -322,7 +322,7 @@ const tree_all = [
     user_id: user_all[9].id,
   },
   {
-    id: uuidv4(), 
+    id: uuidv4(),
     code: `DURIAN-20`,
     type: tree_type.durian,
     accession: `undefined`,
@@ -347,7 +347,7 @@ const tree_all = [
     location: `no_location`,
     planting_date: new Date(),
     user_id: user_all[10].id,
-  },  
+  },
   {
     id: uuidv4(),
     code: `DURIAN-23`,
@@ -574,7 +574,7 @@ const tree_all = [
     user_id: user_all[23].id,
   },
   {
-    id: uuidv4(), 
+    id: uuidv4(),
     code: `DURIAN-48`,
     type: tree_type.durian,
     accession: `undefined`,
@@ -600,8 +600,7 @@ const tree_all = [
     planting_date: new Date(),
     user_id: user_all[24].id,
   },
-]
-
+];
 
 const fertilization_all = [
   {
@@ -677,7 +676,7 @@ const fertilization_all = [
     title: `Umur 80 Hari Setelah Bunga Mekar`,
     description: `Semprot: MerokeVITAFLEX 50gram, MerokeZINC 20gram, MerokeMn 20gram, MerokeCu 20gram, MerokeMAG-S 500gram, MerokeSOP 500gram`,
   },
-]
+];
 
 const account_all = [
   {
@@ -797,9 +796,8 @@ const account_all = [
     name: `Beban Telp, Listrik, Air`,
     type: `Expense`,
     db_cr: `Db`,
-  }
-]
-
+  },
+];
 
 const transaction_all = [
   {
@@ -811,11 +809,7 @@ const transaction_all = [
     total_amount: 100000,
     ref: ``,
   },
-]
-
-
-
-
+];
 
 export const generateDummyData = () => {
   return {
@@ -825,7 +819,5 @@ export const generateDummyData = () => {
     tree: tree_all,
     fertilization: fertilization_all,
     transaction: transaction_all,
-  }
-
+  };
 };
-

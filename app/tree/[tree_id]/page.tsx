@@ -7,24 +7,19 @@ import { useFirestore } from '@/app/hooks/useFirestore';
 import { differenceInYears, differenceInMonths, differenceInDays } from 'date-fns';
 import * as qrcode from 'qrcode';
 import { FiDownload, FiEdit } from 'react-icons/fi';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 const TreeDetailsPage = ({ params }: { params: { tree_id: string } }) => {
   const tree_code = params.tree_id;
   const { getTreeByCode, getUserById } = useFirestore();
-  
+
   interface TreeDetail {
     owner: string;
     type: string;
     age: string;
     location: string;
   }
-  
+
   const [treeDetail, setTreeDetail] = useState<TreeDetail | undefined>();
   const [fetchStatus, setFetchStatus] = useState('idle');
   const [qrCodeData, setQrCodeData] = useState<string | null>(null);
@@ -115,14 +110,22 @@ const TreeDetailsPage = ({ params }: { params: { tree_id: string } }) => {
   return (
     <div className="min-h-screen p-4 bg-gray-100">
       <BackButton />
-      <div className="bg-white max-w-md mx-auto pt-4 pb-4 rounded-lg shadow-lg">
+      <div className="bg-white max-w-md mx-auto mt-12 pt-4 pb-4 rounded-lg shadow-lg">
         <h2 className="text-lg font-semibold text-center">Pohon Durian</h2>
         <div className="p-4">
           <div className="mb-4">
-            <p className="text-sm">Pemilik: <span className="font-semibold">{treeDetail?.owner}</span></p>
-            <p className="text-sm">Jenis/Aksesi: <span className="font-semibold">{treeDetail?.type}</span></p>
-            <p className="text-sm">Usia: <span className="font-semibold">{treeDetail?.age}</span></p>
-            <p className="text-sm">Lokasi: <span className="font-semibold">{treeDetail?.location}</span></p>
+            <p className="text-sm">
+              Pemilik: <span className="font-semibold">{treeDetail?.owner}</span>
+            </p>
+            <p className="text-sm">
+              Jenis/Aksesi: <span className="font-semibold">{treeDetail?.type}</span>
+            </p>
+            <p className="text-sm">
+              Usia: <span className="font-semibold">{treeDetail?.age}</span>
+            </p>
+            <p className="text-sm">
+              Lokasi: <span className="font-semibold">{treeDetail?.location}</span>
+            </p>
             <button className="text-green-600 flex items-center mt-2">
               <FiEdit className="mr-1" />
               Edit
@@ -135,15 +138,9 @@ const TreeDetailsPage = ({ params }: { params: { tree_id: string } }) => {
               <AccordionTrigger>Riwayat</AccordionTrigger>
               <AccordionContent>
                 <div className="space-y-2">
-                  {history.map(item => (
+                  {history.map((item) => (
                     <div key={item.id} className="flex items-start p-2 rounded-md">
-                      <input
-                        type="checkbox"
-                        checked={item.completed}
-                        onChange={() => toggleCompleted(item.id)}
-                        className="h-6 w-6 flex-none"
-                        style={{ accentColor: '#38693C', width: '24px', height: '24px', marginRight: '10px' }}
-                      />
+                      <input type="checkbox" checked={item.completed} onChange={() => toggleCompleted(item.id)} className="h-6 w-6 flex-none" style={{ accentColor: '#38693C', width: '24px', height: '24px', marginRight: '10px' }} />
                       <div>
                         <p className="font-semibold text-[#38693C]">{item.while}</p>
                         <p className="text-xs text-gray-600">{item.date}</p>
@@ -161,7 +158,9 @@ const TreeDetailsPage = ({ params }: { params: { tree_id: string } }) => {
             <AccordionItem value="qr-code">
               <AccordionTrigger>Buat QR Code</AccordionTrigger>
               <AccordionContent>
-                <Button onClick={generateQRCode} className="mt-2">Generate QR Code</Button>
+                <Button onClick={generateQRCode} className="mt-2">
+                  Generate QR Code
+                </Button>
                 {qrCodeData && (
                   <div className="flex flex-col items-center mt-4">
                     <img src={qrCodeData} alt="QR Code" className="w-64 h-64" />
