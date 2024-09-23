@@ -185,7 +185,7 @@ export const useFirestore = () => {
   const userMethods = {
     getAllUsers: () => getAll<User>('users'),
     getUserById: (id: string) => getById<User>('users', id),
-    addUser: (user: Omit<User, 'id'>) => add<User>('users', user),
+    addUser: (user: User) => add<User>('users', user),
     updateUser: (id: string, user: Partial<User>) => update<User>('users', id, user),
     deleteUser: (id: string) => remove('users', id),
   };

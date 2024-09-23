@@ -8,6 +8,7 @@ import { differenceInYears, differenceInMonths, differenceInDays } from 'date-fn
 import * as qrcode from 'qrcode';
 import { FiDownload, FiEdit } from 'react-icons/fi';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import Link from 'next/link';
 
 const TreeDetailsPage = ({ params }: { params: { tree_id: string } }) => {
   const tree_code = params.tree_id;
@@ -126,10 +127,12 @@ const TreeDetailsPage = ({ params }: { params: { tree_id: string } }) => {
             <p className="text-sm">
               Lokasi: <span className="font-semibold">{treeDetail?.location}</span>
             </p>
-            <button className="text-green-600 flex items-center mt-2">
-              <FiEdit className="mr-1" />
-              Edit
-            </button>
+            <Link href={`/tree/${tree_code}/edit-tree`}>
+              <button className="text-green-600 flex items-center mt-2">
+                <FiEdit className="mr-1" />
+                Edit
+              </button>
+            </Link>
           </div>
 
           {/* Accordion for Riwayat */}

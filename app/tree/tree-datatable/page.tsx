@@ -15,19 +15,30 @@ import Link from 'next/link';
 const TreeDataTablePage = () => {
   const [searchName, setSearchName] = useState('');
   const [trees, setTrees] = useState<Tree[]>([]);
-  const { loading, error, getTreesByOwnerName, getTreesWithOwners } = useFirestore();
+  const [filteredTrees, setFilteredTrees] = useState<Tree[]>([]); // State untuk pohon yang sudah difilter
+  const [usersMap, setUsersMap] = useState<{ [key: string]: string }>({});
+  const { loading, error, getTreesWithOwners, getTreesByOwnerName, getAllUsers } = useFirestore();
   const { toast } = useToast();
 
   useEffect(() => {
-    console.log('Component mounted');
     loadTrees();
+    loadUsers(); // Load users when component mounts
   }, []);
+
+  useEffect(() => {
+    // Trigger pencarian hanya jika nama yang diinput >= 3 karakter
+    if (searchName.length >= 3) {
+      searchTreesByName(searchName);
+    } else {
+      setFilteredTrees(trees); // Jika kurang dari 3 karakter, tampilkan semua data pohon
+    }
+  }, [searchName, trees]);
 
   const loadTrees = async () => {
     try {
       const treesWithOwners = await getTreesWithOwners();
-      //   console.log('treesWithOwners', treesWithOwners);
       setTrees(treesWithOwners);
+      setFilteredTrees(treesWithOwners); // Inisialisasi dengan semua data pohon
     } catch (err) {
       console.error('Error loading trees:', err);
       toast({
@@ -38,39 +49,47 @@ const TreeDataTablePage = () => {
     }
   };
 
-  const handleSearch = async () => {
-    if (!searchName.trim()) {
-      toast({
-        title: 'Peringatan',
-        description: 'Silakan masukkan nama petani',
-        variant: 'destructive',
-      });
-      return;
-    }
+  const loadUsers = async () => {
     try {
-      const filteredTrees = await getTreesByOwnerName(searchName);
-
-      setTrees(filteredTrees);
-      if (filteredTrees.length === 0) {
-        toast({
-          title: 'Info',
-          description: 'Tidak ada pohon yang ditemukan untuk petani ini',
-        });
-      }
+      const users = await getAllUsers();
+      const userMap: { [key: string]: string } = {};
+      users.forEach((user) => {
+        userMap[user.id] = user.name; // Map user ID to user name
+      });
+      setUsersMap(userMap);
     } catch (err) {
-      console.error('Error searching trees:', err);
+      console.error('Error loading users:', err);
       toast({
         title: 'Error',
-        description: 'Gagal mencari pohon',
+        description: 'Failed to load users',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const searchTreesByName = async (name: string) => {
+    try {
+      const filtered = await getTreesByOwnerName(name);
+      setFilteredTrees(filtered);
+    } catch (err) {
+      console.error('Error searching trees by owner name:', err);
+      toast({
+        title: 'Error',
+        description: 'Failed to search trees by owner name',
         variant: 'destructive',
       });
     }
   };
 
   const columns = [
-    { title: 'No', dataIndex: 'no', key: 'no', width: 50, render: (_: any, __: Tree, index: number) => index + 1 }, // Updated to show row number
+    { title: 'No', dataIndex: 'no', key: 'no', width: 50, render: (_: any, __: Tree, index: number) => index + 1 },
     { title: 'Kode Pohon', dataIndex: 'code', key: 'code' },
-    { title: 'Nama Petani', dataIndex: 'ownerName', key: 'ownerName', render: (ownerName: string) => ownerName || 'Unknown' },
+    {
+      title: 'Nama Petani',
+      dataIndex: 'user_id',
+      key: 'user_id',
+      render: (user_id: string) => usersMap[user_id] || 'Unknown',
+    },
     { title: 'Jenis Pohon', dataIndex: 'type', key: 'type' },
     { title: 'Aksesi', dataIndex: 'accession', key: 'accession' },
     {
@@ -84,8 +103,6 @@ const TreeDataTablePage = () => {
       dataIndex: 'planting_date',
       key: 'planting_date',
       render: (planting_date: Timestamp | null | undefined, record: Tree) => {
-        console.log('Full tree record:', record);
-        console.log('planting_date:', planting_date, typeof planting_date);
         if (planting_date && planting_date instanceof Timestamp) {
           const date = planting_date.toDate();
           return date.toLocaleDateString('id-ID', {
@@ -110,15 +127,8 @@ const TreeDataTablePage = () => {
       <div className="mb-6">
         <div className="relative">
           <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Masukkan Nama Petani"
-            value={searchName}
-            onChange={(e) => setSearchName(e.target.value)}
-            className="pl-8 w-full pr-24" // Added pr-24 for button space
-          />
-          <Button onClick={handleSearch} className="absolute right-0 top-0 bottom-0 rounded-l-none">
-            Cari
-          </Button>
+          <Input placeholder="Masukkan Nama Petani" value={searchName} onChange={(e) => setSearchName(e.target.value)} className="pl-8 w-full pr-24" />
+          <Button className="absolute right-0 top-0 bottom-0 rounded-l-none">Cari</Button>
         </div>
       </div>
 
@@ -141,7 +151,7 @@ const TreeDataTablePage = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {trees.map((tree, index) => (
+            {filteredTrees.map((tree, index) => (
               <TableRow key={tree.id}>
                 {columns.map((column) => (
                   <TableCell key={`${tree.id}-${column.key}`}>{column.render ? column.render(tree[column.dataIndex as keyof Tree] as any, tree, index) : String(tree[column.dataIndex as keyof Tree] ?? '')}</TableCell>

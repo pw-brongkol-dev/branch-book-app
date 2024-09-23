@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useFirestore } from '@/app/hooks/useFirestore';
 import { toast } from '@/hooks/use-toast';
 import { Group } from '@/app/db/interfaces';
+import { v4 as uuidv4 } from 'uuid';
 
 const AddTreeForm = () => {
   const { addTree, addUser, getAllGroups } = useFirestore();
@@ -69,13 +70,15 @@ const AddTreeForm = () => {
       return;
     }
 
+    console.log('ini form data:', formData.type);
+
     // Set group_id berdasarkan jenis pohon
-    if (formData.type === 'durian') {
+    if (formData.type === 'Durian') {
       const group = groups.find((group) => group.name === 'Ajuning Tani');
       if (group) {
         newUser.group_id = group.id;
       }
-    } else if (formData.type === 'kopi') {
+    } else if (formData.type === 'Kopi') {
       const group = groups.find((group) => group.name === 'Karya Bakti I');
       if (group) {
         newUser.group_id = group.id;
@@ -83,7 +86,9 @@ const AddTreeForm = () => {
     }
 
     try {
-      const userId = await addUser({
+      const userId = uuidv4();
+      await addUser({
+        id: userId,
         name: newUser.name,
         group_id: newUser.group_id,
       });
