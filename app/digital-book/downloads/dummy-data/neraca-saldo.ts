@@ -1,4 +1,4 @@
-const accounts = [
+export const accounts = [
     {
       NomorAkun: "1-0000",
       NamaAkun: "Aktiva",
