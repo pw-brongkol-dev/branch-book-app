@@ -206,6 +206,10 @@ const TableViewNota = () => {
             <Link href="/digital-book/input-nota">
               <Button className="bg-blue-600 text-white hover:bg-blue-700 transition duration-300 ease-in-out transform hover:scale-105">Input Nota Transaksi</Button>
             </Link>
+            <div className="mx-2" /> {/* Tambahkan padding di sini */}
+            <Link href="/digital-book/downloads">
+              <Button className="bg-green-600 text-white hover:bg-green-700 transition duration-300 ease-in-out transform hover:scale-105">Unduh Laporan</Button>
+            </Link>
           </div>
         </div>
         <div className="bg-white shadow-sm rounded-md p-3">

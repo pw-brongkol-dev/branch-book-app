@@ -109,7 +109,7 @@ const TreeDetailsPage = ({ params }: { params: { tree_id: string } }) => {
   };
 
   return (
-    <div className="min-h-screen p-4 bg-gray-100">
+    <div className="min-h-screen p-4 bg-gray-100" style={{ backgroundColor: '#f7fbf2' }}>
       <BackButton />
       <div className="bg-white max-w-md mx-auto mt-12 pt-4 pb-4 rounded-lg shadow-lg">
         <h2 className="text-lg font-semibold text-center">Pohon Durian</h2>
