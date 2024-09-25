@@ -1,10 +1,10 @@
 'use client';
 
-import { generateDummyData } from './input_db/insertDummyData';
+import { generateDummyData } from './input_db/insertDummyData2';
 import { useFirestore } from '../hooks/useFirestore';
 
 export default function Test() {
-  const { addGroup, addUser, addAccount, addTree, addFertilization, addTransaction, deleteAccount, deleteFertilization, deleteGroup, deleteRelTreeFertilization, deleteTransaction, deleteTree, deleteUser } = useFirestore();
+  const { addGroup, addUser, addAccount, addTree, addFertilization, addTransaction, addRelTreeFertilization, deleteAccount, deleteFertilization, deleteGroup, deleteRelTreeFertilization, deleteTransaction, deleteTree, deleteUser } = useFirestore();
 
   const insertDummyData = async () => {
     try {
@@ -40,6 +40,11 @@ export default function Test() {
       for (const transaction of dummyData.transaction) {
         await addTransaction(transaction);
         console.log('Transaction added:', transaction.description);
+      }
+
+      for (const rel_tree_fertilization of dummyData.rel_tree_fertilization) {
+        await addRelTreeFertilization(rel_tree_fertilization);
+        console.log('Rel Tree Fertilization added:', rel_tree_fertilization.id);
       }
 
       console.log('All dummy data inserted successfully!');

@@ -167,6 +167,33 @@ export const useFirestore = () => {
     }
   };
 
+  const getRelTreeFertilizationsByTreeCode = async (treeCode: string): Promise<RelTreeFertilization[]> => {
+    setLoading(true);
+    try {
+      const treeQuery = query(collection(db, 'trees'), where('code', '==', treeCode));
+      const treeSnapshot = await getDocs(treeQuery);
+
+      if (treeSnapshot.empty) {
+        setLoading(false);
+        return [];
+      }
+
+      const treeDoc = treeSnapshot.docs[0];
+      const treeId = treeDoc.id;
+
+      const relQuery = query(collection(db, 'rel_tree_fertilizations'), where('tree_id', '==', treeId));
+      const relSnapshot = await getDocs(relQuery);
+
+      const relData = relSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() } as RelTreeFertilization));
+      setLoading(false);
+      return relData;
+    } catch (err) {
+      setError('Failed to fetch relationships by tree code');
+      setLoading(false);
+      throw err;
+    }
+  };
+
   // Specific methods for each interface
   const groupMethods = {
     getAllGroups: () => getAll<Group>('groups'),
@@ -235,6 +262,7 @@ export const useFirestore = () => {
 
     // Additional methods specific to this relationship
     getRelTreeFertilizationsByTreeId: (treeId: string) => getAll<RelTreeFertilization>('rel_tree_fertilizations', 'tree_id', treeId),
+    getRelTreeFertilizationsByTreeCode,
     getRelTreeFertilizationsByFertilizationId: (fertilizationId: string) => getAll<RelTreeFertilization>('rel_tree_fertilizations', 'fertilization_id', fertilizationId),
     toggleFertilizationCompletion: async (id: string) => {
       const rel = await getById<RelTreeFertilization>('rel_tree_fertilizations', id);
