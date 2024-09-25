@@ -20,6 +20,7 @@ export interface Tree {
 }
 
 export interface RelTreeFertilization {
+  id: string;
   tree_id: string;
   fertilization_id: string;
   is_completed: boolean;
