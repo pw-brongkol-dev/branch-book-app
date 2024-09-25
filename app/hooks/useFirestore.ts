@@ -1,22 +1,23 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { db } from '../db/firebase'; // Ensure this path is correct
-import { collection, doc, getDocs, getDoc, addDoc, updateDoc, deleteDoc, query, where, limit, DocumentData, DocumentReference, UpdateData, Query } from 'firebase/firestore';
+import { collection, doc, getDocs, getDoc, addDoc, updateDoc, deleteDoc, query, where, limit, Timestamp, DocumentData } from 'firebase/firestore';
 
 // Import your interfaces here
 import { Group, User, Account, Tree, Fertilization, Transaction, RelTreeFertilization } from '../db/interfaces';
 
 type CollectionName = 'groups' | 'users' | 'accounts' | 'trees' | 'fertilizations' | 'transactions' | 'rel_tree_fertilizations';
+type AllowedInterfaces = Group | User | Account | Tree | Fertilization | Transaction | RelTreeFertilization;
 
 export const useFirestore = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const getAll = async <T>(collectionName: CollectionName, filterField?: string, filterValue?: string | number | boolean): Promise<T[]> => {
+  const getAll = async <T>(collectionName: CollectionName, filterField?: string, filterValue?: any): Promise<T[]> => {
     setLoading(true);
     try {
-      let q: Query<DocumentData> = collection(db, collectionName);
+      let q = collection(db, collectionName);
       if (filterField && filterValue) {
         q = query(q, where(filterField, '==', filterValue));
       }
@@ -82,11 +83,11 @@ export const useFirestore = () => {
     }
   };
 
-  const update = async <T extends { id: string }>(collectionName: CollectionName, id: string, data: Partial<T>): Promise<void> => {
+  const update = async (collectionName: CollectionName, id: string, data: Partial<AllowedInterfaces>): Promise<void> => {
     setLoading(true);
     try {
-      const docRef = doc(db, collectionName, id) as DocumentReference<T>;
-      await updateDoc(docRef, data as UpdateData<T>);
+      const docRef = doc(db, collectionName, id);
+      await updateDoc(docRef, data);
       setLoading(false);
     } catch (err) {
       setError('Failed to update document');
@@ -151,17 +152,23 @@ export const useFirestore = () => {
     }
   };
 
-  const getTreesByOwnerId = async (ownerId: string): Promise<Tree[]> => {
+  const getTreesByOwnerName = async (ownerName: string): Promise<Tree[]> => {
     setLoading(true);
     try {
-      const trees = await getDocs(query(collection(db, 'trees'), where('user_id', '==', ownerId)));
+      const users = await getDocs(query(collection(db, 'users'), where('name', '==', ownerName)));
+      const userIds = users.docs.map((doc) => doc.id);
+
+      const trees = await getDocs(query(collection(db, 'trees'), where('user_id', 'in', userIds)));
       const treesWithOwners = trees.docs.map((doc) => ({
+        id: doc.id,
         ...doc.data(),
-      }));
+        ownerName: ownerName,
+      })) as Tree[];
+
       setLoading(false);
-      return treesWithOwners as unknown as Tree[];
+      return treesWithOwners;
     } catch (err) {
-      setError('Failed to fetch trees by owner ID');
+      setError('Failed to fetch trees by owner name');
       setLoading(false);
       throw err;
     }
@@ -171,66 +178,59 @@ export const useFirestore = () => {
   const groupMethods = {
     getAllGroups: () => getAll<Group>('groups'),
     getGroupById: (id: string) => getById<Group>('groups', id),
-    getGroupByDocumentId: (id: string) => getByDocumentId<Group>('groups', id),
     addGroup: (group: Omit<Group, 'id'>) => add<Group>('groups', group),
-    updateGroup: (id: string, group: Partial<Group>) => update<Group>('groups', id, group),
+    updateGroup: (id: string, group: Partial<Group>) => update('groups', id, group),
     deleteGroup: (id: string) => remove('groups', id),
   };
 
   const userMethods = {
     getAllUsers: () => getAll<User>('users'),
     getUserById: (id: string) => getById<User>('users', id),
-    getUserByDocumentId: (id: string) => getByDocumentId<User>('users', id),
     addUser: (user: User) => add<User>('users', user),
-    updateUser: (id: string, user: Partial<User>) => update<User>('users', id, user),
+    updateUser: (id: string, user: Partial<User>) => update('users', id, user),
     deleteUser: (id: string) => remove('users', id),
   };
 
   const accountMethods = {
     getAllAccounts: () => getAll<Account>('accounts'),
     getAccountById: (id: string) => getById<Account>('accounts', id),
-    getAccountByDocumentId: (id: string) => getByDocumentId<Account>('accounts', id),
     addAccount: (account: Omit<Account, 'id'>) => add<Account>('accounts', account),
-    updateAccount: (id: string, account: Partial<Account>) => update<Account>('accounts', id, account),
+    updateAccount: (id: string, account: Partial<Account>) => update('accounts', id, account),
     deleteAccount: (id: string) => remove('accounts', id),
   };
 
   const treeMethods = {
     getAllTrees: () => getAll<Tree>('trees'),
     getTreeById: (id: string) => getById<Tree>('trees', id),
-    getTreeByDocumentId: (id: string) => getByDocumentId<Tree>('trees', id),
     getTreeByCode, // Add this line
-    addTree: (tree: Omit<Tree, 'id'>) => add<Tree>('trees', tree),
-    updateTree: (id: string, tree: Partial<Tree>) => update<Tree>('trees', id, tree),
+    addTree: (tree: Tree) => add<Tree>('trees', tree),
+    updateTree: (id: string, tree: Partial<Tree>) => update('trees', id, tree),
     deleteTree: (id: string) => remove('trees', id),
     getTreesWithOwners,
-    getTreesByOwnerId,
+    getTreesByOwnerName,
   };
 
   const fertilizationMethods = {
     getAllFertilizations: () => getAll<Fertilization>('fertilizations'),
     getFertilizationById: (id: string) => getById<Fertilization>('fertilizations', id),
-    getFertilizationByDocumentId: (id: string) => getByDocumentId<Fertilization>('fertilizations', id),
     addFertilization: (fertilization: Omit<Fertilization, 'id'>) => add<Fertilization>('fertilizations', fertilization),
-    updateFertilization: (id: string, fertilization: Partial<Fertilization>) => update<Fertilization>('fertilizations', id, fertilization),
+    updateFertilization: (id: string, fertilization: Partial<Fertilization>) => update('fertilizations', id, fertilization),
     deleteFertilization: (id: string) => remove('fertilizations', id),
   };
 
   const transactionMethods = {
     getAllTransactions: () => getAll<Transaction>('transactions'),
     getTransactionById: (id: string) => getById<Transaction>('transactions', id),
-    getTransactionByDocumentId: (id: string) => getByDocumentId<Transaction>('transactions', id),
     addTransaction: (transaction: Omit<Transaction, 'id'>) => add<Transaction>('transactions', transaction),
-    updateTransaction: (id: string, transaction: Partial<Transaction>) => update<Transaction>('transactions', id, transaction),
+    updateTransaction: (id: string, transaction: Partial<Transaction>) => update('transactions', id, transaction),
     deleteTransaction: (id: string) => remove('transactions', id),
   };
 
   const relTreeFertilizationMethods = {
     getAllRelTreeFertilizations: () => getAll<RelTreeFertilization>('rel_tree_fertilizations'),
     getRelTreeFertilizationById: (id: string) => getById<RelTreeFertilization>('rel_tree_fertilizations', id),
-    getRelTreeFertilizationByDocumentId: (id: string) => getByDocumentId<RelTreeFertilization>('rel_tree_fertilizations', id),
     addRelTreeFertilization: (rel: Omit<RelTreeFertilization, 'id'>) => add<RelTreeFertilization>('rel_tree_fertilizations', rel),
-    updateRelTreeFertilization: (id: string, rel: Partial<RelTreeFertilization>) => update<RelTreeFertilization>('rel_tree_fertilizations', id, rel),
+    updateRelTreeFertilization: (id: string, rel: Partial<RelTreeFertilization>) => update('rel_tree_fertilizations', id, rel),
     deleteRelTreeFertilization: (id: string) => remove('rel_tree_fertilizations', id),
 
     // Additional methods specific to this relationship
@@ -239,7 +239,7 @@ export const useFirestore = () => {
     toggleFertilizationCompletion: async (id: string) => {
       const rel = await getById<RelTreeFertilization>('rel_tree_fertilizations', id);
       if (rel) {
-        return update<RelTreeFertilization>('rel_tree_fertilizations', id, { is_completed: !rel.is_completed });
+        return update('rel_tree_fertilizations', id, { is_completed: !rel.is_completed });
       }
     },
   };
@@ -256,3 +256,79 @@ export const useFirestore = () => {
     ...relTreeFertilizationMethods,
   };
 };
+
+// import { useState, useEffect } from 'react';
+// import { db } from '../db/firebase';
+// import { collection, query, where, onSnapshot, addDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore';
+
+// interface TreeHistory {
+//   id: string;
+//   while: string;
+//   description: string;
+//   completed: boolean;
+// }
+
+// interface Tree {
+//   id: string;
+//   name: string;
+//   owner: string;
+//   type: string;
+//   age: {
+//     years: number;
+//     months: number;
+//   };
+//   location: {
+//     description: string;
+//     coordinates: {
+//       latitude: number;
+//       longitude: number;
+//     };
+//   };
+//   history: TreeHistory[];
+// }
+
+// const useFirestore = (treeId: string) => {
+//   const [tree, setTree] = useState<Tree | null>(null);
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState<string | null>(null);
+
+//   useEffect(() => {
+//     const treeRef = doc(db, 'trees', treeId);
+//     const unsubscribe = onSnapshot(treeRef,
+//       (doc) => {
+//         if (doc.exists()) {
+//           setTree({ id: doc.id, ...doc.data() } as Tree);
+//         } else {
+//           setError('Tree not found');
+//         }
+//         setLoading(false);
+//       },
+//       (error) => {
+//         setError(error.message);
+//         setLoading(false);
+//       }
+//     );
+
+//     return () => unsubscribe();
+//   }, [treeId]);
+
+//   const addHistoryItem = async (historyItem: Omit<TreeHistory, 'id'>) => {
+//     if (!tree) return;
+//     const historyRef = collection(db, 'trees', treeId, 'history');
+//     await addDoc(historyRef, historyItem);
+//   };
+
+//   const updateHistoryItem = async (historyId: string, updates: Partial<TreeHistory>) => {
+//     const historyRef = doc(db, 'trees', treeId, 'history', historyId);
+//     await updateDoc(historyRef, updates);
+//   };
+
+//   const deleteHistoryItem = async (historyId: string) => {
+//     const historyRef = doc(db, 'trees', treeId, 'history', historyId);
+//     await deleteDoc(historyRef);
+//   };
+
+//   return { tree, loading, error, addHistoryItem, updateHistoryItem, deleteHistoryItem };
+// };
+
+// export default useFirestore;
