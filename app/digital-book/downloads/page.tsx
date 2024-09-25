@@ -1,13 +1,11 @@
 'use client'; // Menandakan bahwa ini adalah komponen klien
 
-import jsPDF from 'jspdf'; // Tambahkan import jsPDF (Jika diperlukan)
-import Link from 'next/link'; // Tambahkan import Link
 import { useRef } from 'react';
 import { FaFileAlt } from 'react-icons/fa';
 import React from 'react';
 import ReactToPrint from 'react-to-print';
 import JurnalUmum from './dummy-data/jurnalumum';
-import BackButton from '../../components/BackButton'; // Pastikan import BackButton ada
+import BackButton from '../../components/BackButton';
 
 export default function Home() {
   const componentRef = useRef<React.ElementRef<typeof JurnalUmum>>(null); // Referensi ke komponen JurnalUmum
@@ -52,9 +50,11 @@ export default function Home() {
         </div>
 
         {/* Komponen yang ingin dicetak */}
+      <div className="w-2 h-2 overflow-hidden">
         <div ref={componentRef}>
           <JurnalUmum />
         </div>
+      </div>
       </main>
     </div>
   );
