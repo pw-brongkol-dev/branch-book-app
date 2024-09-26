@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { db } from '../db/firebase'; // Ensure this path is correct
 import {
   collection,
@@ -49,7 +49,7 @@ export const useFirestore = () => {
   ): Promise<T[]> => {
     setLoading(true);
     try {
-      let q = collection(db, collectionName);
+      let q: Query<DocumentData> = collection(db, collectionName);
       if (filterField && filterValue) {
         q = query(q, where(filterField, '==', filterValue));
       }
@@ -95,11 +95,11 @@ export const useFirestore = () => {
     }
   };
 
-  const update = async (collectionName: CollectionName, id: string, data: Partial<AllowedInterfaces>): Promise<void> => {
+  const update = async <T extends { id: string }>(collectionName: CollectionName, id: string, data: Partial<T>): Promise<void> => {
     setLoading(true);
     try {
-      const docRef = doc(db, collectionName, id);
-      await updateDoc(docRef, data);
+      const docRef = doc(db, collectionName, id) as DocumentReference<T>;
+      await updateDoc(docRef, data as UpdateData<T>);
       setLoading(false);
     } catch (err) {
       setError('Failed to update document');
@@ -169,15 +169,11 @@ export const useFirestore = () => {
     }
   };
 
-  const getTreesByOwnerName = async (ownerName: string): Promise<Tree[]> => {
+  const getTreesByOwnerId = async (ownerId: string): Promise<Tree[]> => {
     setLoading(true);
     try {
-      const users = await getDocs(query(collection(db, 'users'), where('name', '==', ownerName)));
-      const userIds = users.docs.map((doc) => doc.id);
-
-      const trees = await getDocs(query(collection(db, 'trees'), where('user_id', 'in', userIds)));
+      const trees = await getDocs(query(collection(db, 'trees'), where('user_id', '==', ownerId)));
       const treesWithOwners = trees.docs.map((doc) => ({
-        id: doc.id,
         ...doc.data(),
       }));
       setLoading(false);
@@ -255,7 +251,7 @@ export const useFirestore = () => {
     updateTree: (id: string, tree: Partial<Tree>) => update<TreeWithId>('trees', id, tree),
     deleteTree: (id: string) => remove('trees', id),
     getTreesWithOwners,
-    getTreesByOwnerName,
+    getTreesByOwnerId,
   };
 
   const fertilizationMethods = {
