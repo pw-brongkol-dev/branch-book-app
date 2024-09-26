@@ -38,6 +38,9 @@ export default function Home() {
               </button>
             )}
             content={() => componentRef1.current} // Pastikan ini mengembalikan referensi yang benar
+            // pageStyle={`@page { size: A4 landscape; }
+            //           table { width: 100%; background-color: white; border: 1px solid gray; text-align: center; }
+            //           th, td { border: 1px solid gray; padding: 0.25rem; text-align: center; }`}
           />
           <ReactToPrint
             trigger={() => (
@@ -68,7 +71,7 @@ export default function Home() {
             <JurnalUmum />
           </div>
         </div>
-        <div className="w-2 h-2 overflow-hidden">
+        <div className="w-2 h-2 overflow">
           <div ref={componentRef1}>
             <NeracaLajur />
           </div>
