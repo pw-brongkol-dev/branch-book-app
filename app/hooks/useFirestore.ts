@@ -2,18 +2,51 @@
 
 import { useState } from 'react';
 import { db } from '../db/firebase'; // Ensure this path is correct
-import { collection, doc, getDocs, getDoc, addDoc, updateDoc, deleteDoc, query, where, DocumentData, DocumentReference, UpdateData, Query } from 'firebase/firestore';
+import {
+  collection,
+  doc,
+  getDocs,
+  getDoc,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  query,
+  where,
+  DocumentData,
+  DocumentReference,
+  UpdateData,
+  Query,
+} from 'firebase/firestore';
 
 // Import your interfaces here
-import { Group, User, Account, Tree, Fertilization, Transaction, RelTreeFertilization } from '../db/interfaces';
+import { 
+  Group, 
+  User, 
+  Account, 
+  Tree, 
+  Fertilization, 
+  Transaction, 
+  RelTreeFertilization 
+} from '../db/interfaces';
 
 type CollectionName = 'groups' | 'users' | 'accounts' | 'trees' | 'fertilizations' | 'transactions' | 'rel_tree_fertilizations';
+type GroupWithId = Group & { id: string };
+type UserWithId = User & { id: string };
+type TreeWithId = Tree & { id: string };
+type FertilizationWithId = Fertilization & { id: string };
+type RelTreeFertilizationWithId = RelTreeFertilization & { id: string };
+type AccountWithId = Account & { id: string };
+type TransactionWithId = Transaction & { id: string };
 
 export const useFirestore = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const getAll = async <T extends { id: string }>(collectionName: CollectionName, filterField?: string, filterValue?: string | number | boolean): Promise<T[]> => {
+  const getAll = async <T extends { id: string }>(
+    collectionName: CollectionName,
+    filterField?: string,
+    filterValue?: string | number | boolean,
+  ): Promise<T[]> => {
     setLoading(true);
     try {
       let q: Query<DocumentData> = collection(db, collectionName);
@@ -103,9 +136,9 @@ export const useFirestore = () => {
       setLoading(false);
       // const { id, ...treeData } = treeDoc.data() as Tree;
       const treeData = treeDoc.data() as Tree;
-      return { 
-        id: treeDoc.id, 
-        ...treeData 
+      return {
+        id: treeDoc.id,
+        ...treeData,
       } as Tree;
     } catch (err) {
       setError('Failed to fetch tree by code');
@@ -125,7 +158,7 @@ export const useFirestore = () => {
             return { ...tree, ownerName: owner?.name || 'Unknown' };
           }
           return { ...tree, ownerName: 'Unknown' };
-        })
+        }),
       );
       setLoading(false);
       return treesWithOwners;
@@ -173,7 +206,7 @@ export const useFirestore = () => {
         const restData = doc.data() as RelTreeFertilization;
         return {
           id: doc.id,
-          ...restData
+          ...restData,
         } as RelTreeFertilization;
       });
       setLoading(false);
@@ -186,7 +219,6 @@ export const useFirestore = () => {
   };
 
   // Specific methods for each interface
-  type GroupWithId = Group & { id: string };
   const groupMethods = {
     getAllGroups: () => getAll<GroupWithId>('groups'),
     getGroupById: (id: string) => getById<Group>('groups', id),
@@ -195,7 +227,6 @@ export const useFirestore = () => {
     deleteGroup: (id: string) => remove('groups', id),
   };
 
-  type UserWithId = User & { id: string };
   const userMethods = {
     getAllUsers: () => getAll<UserWithId>('users'),
     getUserById: (id: string) => getById<User>('users', id),
@@ -204,7 +235,6 @@ export const useFirestore = () => {
     deleteUser: (id: string) => remove('users', id),
   };
 
-  type AccountWithId = Account & { id: string };
   const accountMethods = {
     getAllAccounts: () => getAll<AccountWithId>('accounts'),
     getAccountById: (id: string) => getById<Account>('accounts', id),
@@ -213,7 +243,6 @@ export const useFirestore = () => {
     deleteAccount: (id: string) => remove('accounts', id),
   };
 
-  type TreeWithId = Tree & { id: string };
   const treeMethods = {
     getAllTrees: () => getAll<TreeWithId>('trees'),
     getTreeById: (id: string) => getById<Tree>('trees', id),
@@ -225,7 +254,6 @@ export const useFirestore = () => {
     getTreesByOwnerId,
   };
 
-  type FertilizationWithId = Fertilization & { id: string };
   const fertilizationMethods = {
     getAllFertilizations: () => getAll<FertilizationWithId>('fertilizations'),
     getFertilizationById: (id: string) => getById<Fertilization>('fertilizations', id),
@@ -234,7 +262,6 @@ export const useFirestore = () => {
     deleteFertilization: (id: string) => remove('fertilizations', id),
   };
 
-  type TransactionWithId = Transaction & { id: string };
   const transactionMethods = {
     getAllTransactions: () => getAll<TransactionWithId>('transactions'),
     getTransactionById: (id: string) => getById<Transaction>('transactions', id),
@@ -243,17 +270,18 @@ export const useFirestore = () => {
     deleteTransaction: (id: string) => remove('transactions', id),
   };
 
-  type RelTreeFertilizationWithId = RelTreeFertilization & { id: string };
   const relTreeFertilizationMethods = {
     getAllRelTreeFertilizations: () => getAll<RelTreeFertilizationWithId>('rel_tree_fertilizations'),
     getRelTreeFertilizationById: (id: string) => getById<RelTreeFertilization>('rel_tree_fertilizations', id),
     addRelTreeFertilization: (rel: RelTreeFertilization) => add<RelTreeFertilization>('rel_tree_fertilizations', rel),
-    updateRelTreeFertilization: (id: string, rel: Partial<RelTreeFertilization>) => update<RelTreeFertilizationWithId>('rel_tree_fertilizations', id, rel),
+    updateRelTreeFertilization: (id: string, rel: Partial<RelTreeFertilization>) =>
+      update<RelTreeFertilizationWithId>('rel_tree_fertilizations', id, rel),
     deleteRelTreeFertilization: (id: string) => remove('rel_tree_fertilizations', id),
     // Additional methods specific to this relationship
     getRelTreeFertilizationsByTreeId: (treeId: string) => getAll<RelTreeFertilizationWithId>('rel_tree_fertilizations', 'tree_id', treeId),
     getRelTreeFertilizationsByTreeCode,
-    getRelTreeFertilizationsByFertilizationId: (fertilizationId: string) => getAll<RelTreeFertilizationWithId>('rel_tree_fertilizations', 'fertilization_id', fertilizationId),
+    getRelTreeFertilizationsByFertilizationId: (fertilizationId: string) =>
+      getAll<RelTreeFertilizationWithId>('rel_tree_fertilizations', 'fertilization_id', fertilizationId),
     toggleFertilizationCompletion: async (id: string) => {
       const rel = await getById<RelTreeFertilization>('rel_tree_fertilizations', id);
       if (rel) {
@@ -274,4 +302,3 @@ export const useFirestore = () => {
     ...relTreeFertilizationMethods,
   };
 };
-
