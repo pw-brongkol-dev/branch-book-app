@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useFirestore } from '@/app/hooks/useFirestore';
 import { toast } from '@/hooks/use-toast';
 import { Tree, User } from '@/app/db/interfaces';
+import { Timestamp } from 'firebase/firestore';
 
 const EditTreeForm = ({ params }: { params: { tree_id: string } }) => {
   const tree_code = params.tree_id;
@@ -15,7 +16,6 @@ const EditTreeForm = ({ params }: { params: { tree_id: string } }) => {
   const [fetchStatus, setFetchStatus] = useState('idle');
 
   const [treeDetail, setTreeDetail] = useState<Tree>({
-    id: '',
     user_id: '',
     code: '',
     accession: '',
@@ -25,7 +25,6 @@ const EditTreeForm = ({ params }: { params: { tree_id: string } }) => {
   });
 
   const [userChanged, setUserChanged] = useState<User>({
-    id: '',
     name: '',
     group_id: '',
   });
@@ -41,7 +40,7 @@ const EditTreeForm = ({ params }: { params: { tree_id: string } }) => {
 
       const dataTree = {
         ...tree,
-        planting_date: tree.planting_date.toDate(),
+        planting_date: tree.planting_date.toDate().toISOString().split('T')[0],
       };
 
       const dataUser = {
@@ -81,9 +80,12 @@ const EditTreeForm = ({ params }: { params: { tree_id: string } }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await updateTree('wJTlpRT3T8JkUoB4eqZQ', {
+      const treePlantingDate = new Date(treeDetail.planting_date);
+      const treePlantingDateTimestamp = Timestamp.fromDate(treePlantingDate);
+      await updateTree(treeDetail.id, {
+        // Use treeDetail.id for the correct tree
         ...treeDetail,
-        planting_date: new Date(treeDetail.planting_date),
+        planting_date: treePlantingDateTimestamp, // Ensure planting_date is a Date object
       });
 
       if (userChanged.id) {
@@ -155,7 +157,7 @@ const EditTreeForm = ({ params }: { params: { tree_id: string } }) => {
           <label className="block text-sm font-medium mb-2" htmlFor="planting_date">
             Tanggal Penanaman
           </label>
-          <Input type="date" id="planting_date" name="planting_date" value={treeDetail.planting_date.toISOString().split('T')[0]} onChange={handleInputChange} required />
+          <Input type="date" id="planting_date" name="planting_date" value={treeDetail.planting_date} onChange={handleInputChange} required />
         </div>
         <Button type="submit">Submit</Button>
       </form>

@@ -127,17 +127,22 @@ const TreeDataTablePage = () => {
       <div className="mb-6">
         <div className="relative">
           <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input placeholder="Masukkan Nama Petani" value={searchName} onChange={(e) => setSearchName(e.target.value)} className="pl-8 w-full pr-24" />
+          <Input
+            placeholder="Masukkan Nama Petani"
+            value={searchName}
+            onChange={(e) => setSearchName(e.target.value)}
+            className="pl-8 w-full pr-24"
+          />
           <Button className="absolute right-0 top-0 bottom-0 rounded-l-none">Cari</Button>
         </div>
       </div>
 
-      <div className="flex justify-between items-center mb-4">
+      {/* <div className="flex justify-between items-center mb-4">
         <h3 className="text-lg font-semibold">Daftar Pohon</h3>
         <Link href="/tree/tree-datatable/add-tree">
           <Button>Tambah Data Pohon</Button>
         </Link>
-      </div>
+      </div> */}
 
       <div className="rounded-md border overflow-hidden">
         <Table>
@@ -154,7 +159,11 @@ const TreeDataTablePage = () => {
             {filteredTrees.map((tree, index) => (
               <TableRow key={tree.id}>
                 {columns.map((column) => (
-                  <TableCell key={`${tree.id}-${column.key}`}>{column.render ? column.render(tree[column.dataIndex as keyof Tree] as any, tree, index) : String(tree[column.dataIndex as keyof Tree] ?? '')}</TableCell>
+                  <TableCell key={`${tree.id}-${column.key}`}>
+                    {column.render
+                      ? column.render(tree[column.dataIndex as keyof Tree] as any, tree, index)
+                      : String(tree[column.dataIndex as keyof Tree] ?? '')}
+                  </TableCell>
                 ))}
               </TableRow>
             ))}

@@ -8,7 +8,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useFirestore } from '@/app/hooks/useFirestore';
 import { toast } from '@/hooks/use-toast';
 import { Group } from '@/app/db/interfaces';
-import { v4 as uuidv4 } from 'uuid';
 
 const AddTreeForm = () => {
   const { addTree, addUser, getAllGroups } = useFirestore();
@@ -86,9 +85,7 @@ const AddTreeForm = () => {
     }
 
     try {
-      const userId = uuidv4();
       await addUser({
-        id: userId,
         name: newUser.name,
         group_id: newUser.group_id,
       });
@@ -99,7 +96,6 @@ const AddTreeForm = () => {
         accession: formData.accession,
         location: formData.location,
         planting_date: new Date(formData.plantingDate),
-        user_id: userId,
       });
 
       toast({
