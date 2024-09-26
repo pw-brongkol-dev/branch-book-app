@@ -15,7 +15,8 @@ const EditTreeForm = ({ params }: { params: { tree_id: string } }) => {
   const { getUserById, getTreeByCode, updateTree, updateUser } = useFirestore();
   const [fetchStatus, setFetchStatus] = useState('idle');
 
-  const [treeDetail, setTreeDetail] = useState<Tree>({
+  const [treeDetail, setTreeDetail] = useState<Tree & { id: string }>({
+    id: '',
     user_id: '',
     code: '',
     accession: '',
@@ -42,9 +43,9 @@ const EditTreeForm = ({ params }: { params: { tree_id: string } }) => {
         ...tree,
         planting_date: tree.planting_date.toDate().toISOString().split('T')[0],
       };
+      console.log('datatree', dataTree);
 
       const dataUser = {
-        id: user.id,
         name: user.name,
         group_id: user.group_id,
       };
@@ -82,9 +83,11 @@ const EditTreeForm = ({ params }: { params: { tree_id: string } }) => {
     try {
       const treePlantingDate = new Date(treeDetail.planting_date);
       const treePlantingDateTimestamp = Timestamp.fromDate(treePlantingDate);
+      // console.log('ini aman', treeDetail
+
+      const { id, ...restTreeDetail } = treeDetail;
       await updateTree(treeDetail.id, {
-        // Use treeDetail.id for the correct tree
-        ...treeDetail,
+        ...restTreeDetail,
         planting_date: treePlantingDateTimestamp, // Ensure planting_date is a Date object
       });
 
