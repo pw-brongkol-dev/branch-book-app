@@ -124,7 +124,7 @@ const TreeDataTablePage = () => {
         <p className="text-muted-foreground">Tabel ini menampilkan data pohon kopi dan durian yang ditanam oleh para petani.</p>
       </div>
 
-      <div className="mb-6">
+      {/* <div className="mb-6">
         <div className="relative">
           <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
@@ -135,14 +135,14 @@ const TreeDataTablePage = () => {
           />
           <Button className="absolute right-0 top-0 bottom-0 rounded-l-none">Cari</Button>
         </div>
-      </div>
+      </div> */}
 
-      {/* <div className="flex justify-between items-center mb-4">
+      <div className="flex justify-between items-center mb-4">
         <h3 className="text-lg font-semibold">Daftar Pohon</h3>
         <Link href="/tree/tree-datatable/add-tree">
           <Button>Tambah Data Pohon</Button>
         </Link>
-      </div> */}
+      </div>
 
       <div className="rounded-md border overflow-hidden">
         <Table>
