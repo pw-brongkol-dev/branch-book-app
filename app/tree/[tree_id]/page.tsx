@@ -25,7 +25,8 @@ const TreeDetailsPage = ({ params }: { params: { tree_id: string } }) => {
 
   type FertilizationHistory = RelTreeFertilization & Fertilization & {
     id: string,
-    date: string
+    date: string,
+    originalDate: Date
   }
 
   const [treeDetail, setTreeDetail] = useState<TreeDetail | undefined>();
@@ -76,19 +77,23 @@ const TreeDetailsPage = ({ params }: { params: { tree_id: string } }) => {
       
       const fertilizations = await Promise.all(treeFertilizations.map(async (fertilization) => {
         const fertilizationDetail = await getFertilizationById(fertilization.fertilization_id);
-        const convertedDate = fertilizationDetail?.date?.toDate()
+        const convertedDate = fertilizationDetail?.date?.toDate();
         return {
           id: fertilization.id,
           title: fertilizationDetail?.title,
           description: fertilizationDetail?.description,
-          date: convertedDate?.toLocaleDateString(),
+          date: convertedDate?.toLocaleDateString(), // Keep formatted date for output
+          originalDate: convertedDate, // Store original Date object for sorting
           is_completed: fertilization.is_completed,
           tree_id: fertilization.tree_id,
           fertilization_id: fertilization.fertilization_id
         } as FertilizationHistory;
       }));
-      
-      setFertilizationHistory(fertilizations);
+
+      const sortedFertilizations = fertilizations.sort((a, b) => {
+        return (a.originalDate as Date).getTime() - (b.originalDate as Date).getTime(); // Sort by original Date object
+      });
+      setFertilizationHistory(sortedFertilizations);
 
       setTreeDetail(data);
       setFetchStatus('success');
