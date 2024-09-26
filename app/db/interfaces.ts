@@ -1,16 +1,16 @@
 export interface Group {
-  id: string;
+  // id: string; 
   name: string;
 }
 
 export interface User {
-  id: string;
+  // id: string; 
   name: string;
   group_id: string;
 }
 
 export interface Tree {
-  id: string;
+  // id: string; 
   code: string;
   type: string;
   accession: string;
@@ -20,28 +20,29 @@ export interface Tree {
 }
 
 export interface RelTreeFertilization {
-  id: string;
+  // id: string; 
   tree_id: string;
   fertilization_id: string;
   is_completed: boolean;
 }
 
 export interface Fertilization {
-  id: string;
+  // id: string; 
   date: Date;
   title: string;
   description: string;
 }
 
 export interface Account {
-  id: string;
+  // id: string; 
+  code: string;
   name: string;
   type: string;
   db_cr: string; // Assuming this is for debit/credit
 }
 
 export interface Transaction {
-  id: string;
+  // id: string; 
   account_id: string; // Foreign key to Account
   user_id: string; // Foreign key to User
   date: Date;
