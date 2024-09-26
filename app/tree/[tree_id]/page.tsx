@@ -10,9 +10,11 @@ import { FiDownload, FiEdit } from 'react-icons/fi';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import Link from 'next/link';
 
+import { RelTreeFertilization, Fertilization } from '@/app/db/interfaces';
+
 const TreeDetailsPage = ({ params }: { params: { tree_id: string } }) => {
   const tree_code = params.tree_id;
-  const { getTreeByCode, getUserById } = useFirestore();
+  const { getTreeByCode, getUserById, getRelTreeFertilizationsByTreeCode, getRelTreeFertilizationById, getFertilizationById, toggleFertilizationCompletion } = useFirestore();
 
   interface TreeDetail {
     owner: string;
@@ -21,7 +23,13 @@ const TreeDetailsPage = ({ params }: { params: { tree_id: string } }) => {
     location: string;
   }
 
+  type FertilizationHistory = RelTreeFertilization & Fertilization & {
+    id: string,
+    date: string
+  }
+
   const [treeDetail, setTreeDetail] = useState<TreeDetail | undefined>();
+  const [fertilizationHistory, setFertilizationHistory] = useState<FertilizationHistory[]>([])
   const [fetchStatus, setFetchStatus] = useState('idle');
   const [qrCodeData, setQrCodeData] = useState<string | null>(null);
 
@@ -64,6 +72,24 @@ const TreeDetailsPage = ({ params }: { params: { tree_id: string } }) => {
         location: tree.location,
       };
 
+      const treeFertilizations = await getRelTreeFertilizationsByTreeCode(tree_code);
+      
+      const fertilizations = await Promise.all(treeFertilizations.map(async (fertilization) => {
+        const fertilizationDetail = await getFertilizationById(fertilization.fertilization_id);
+        const convertedDate = fertilizationDetail?.date?.toDate()
+        return {
+          id: fertilization.id,
+          title: fertilizationDetail?.title,
+          description: fertilizationDetail?.description,
+          date: convertedDate?.toLocaleDateString(),
+          is_completed: fertilization.is_completed,
+          tree_id: fertilization.tree_id,
+          fertilization_id: fertilization.fertilization_id
+        } as FertilizationHistory;
+      }));
+      
+      setFertilizationHistory(fertilizations);
+
       setTreeDetail(data);
       setFetchStatus('success');
     } catch (err) {
@@ -72,41 +98,34 @@ const TreeDetailsPage = ({ params }: { params: { tree_id: string } }) => {
     }
   };
 
+
+  const toggleCompleted = async (id: string) => {
+    await toggleFertilizationCompletion(id)
+    const updatedFertilization = await getRelTreeFertilizationById(id)
+    if (updatedFertilization) {
+      setFertilizationHistory(prevHistory => 
+        prevHistory.map(item => 
+          item.id === id 
+            ? { ...item, is_completed: updatedFertilization.is_completed } // Update the specific item
+            : item // Keep the rest unchanged
+          )
+        );
+    }
+  };
+
+
   useEffect(() => {
     fetchData();
   }, [tree_code]);
 
-  const [history, setHistory] = useState([
-    {
-      id: 1,
-      while: 'Setelah Panen',
-      date: 'Sabtu, 28 Mei 2024 - 10.00',
-      description: 'Tabur: Organik 5 karung, NPK Mutiara 16-16-16 4kg, Karate Plus Boroni 1kg',
-      completed: true,
-    },
-    {
-      id: 2,
-      while: 'Setelah Mata Ketam Keluar',
-      date: 'Sabtu, 28 Mei 2024 - 10.00',
-      description: 'Tabur: NPK Grower 15-09-20+TE 4kg, Karate Plus Boroni 1kg',
-      completed: false,
-    },
-    {
-      id: 3,
-      while: 'Umur 30-40 Hari Setelah Bunga Mekar',
-      date: 'Sabtu, 28 Mei 2024 - 10.00',
-      description: 'Tabur: NPK Grower 15-09-20+TE 4kg, Karate Plus Boroni 1kg',
-      completed: false,
-    },
-  ]);
+  useEffect(() => {
+    console.log("hey")
+    console.log(fertilizationHistory)
+  }, [fertilizationHistory])
 
   if (fetchStatus === 'loading') {
     return <div>Loading...</div>;
   }
-
-  const toggleCompleted = (id: number) => {
-    setHistory(history.map((item) => (item.id === id ? { ...item, completed: !item.completed } : item)));
-  };
 
   return (
     <div className="min-h-screen p-4 bg-gray-100" style={{ backgroundColor: '#f7fbf2' }}>
@@ -141,11 +160,11 @@ const TreeDetailsPage = ({ params }: { params: { tree_id: string } }) => {
               <AccordionTrigger>Riwayat</AccordionTrigger>
               <AccordionContent>
                 <div className="space-y-2">
-                  {history.map((item) => (
+                  {fertilizationHistory.map((item) => (
                     <div key={item.id} className="flex items-start p-2 rounded-md">
-                      <input type="checkbox" checked={item.completed} onChange={() => toggleCompleted(item.id)} className="h-6 w-6 flex-none" style={{ accentColor: '#38693C', width: '24px', height: '24px', marginRight: '10px' }} />
+                      <input type="checkbox" checked={item.is_completed} onChange={() => toggleCompleted(item.id)} className="h-6 w-6 flex-none" style={{ accentColor: '#38693C', width: '24px', height: '24px', marginRight: '10px' }} />
                       <div>
-                        <p className="font-semibold text-[#38693C]">{item.while}</p>
+                        <p className="font-semibold text-[#38693C]">{item.title}</p>
                         <p className="text-xs text-gray-600">{item.date}</p>
                         <p className="text-sm">{item.description}</p>
                       </div>
