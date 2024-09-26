@@ -14,6 +14,7 @@ export default function Test() {
   const {
     getAllTrees,
     getAllFertilizations,
+    getAllUsers,
     addGroup,
     addUser,
     addAccount,
@@ -21,13 +22,6 @@ export default function Test() {
     addFertilization,
     addTransaction,
     addRelTreeFertilization,
-    deleteAccount,
-    deleteFertilization,
-    deleteGroup,
-    deleteRelTreeFertilization,
-    deleteTransaction,
-    deleteTree,
-    deleteUser,
   } = useFirestore();
 
   async function handleInsertDummyData() {
@@ -57,12 +51,15 @@ export default function Test() {
       // console.log(userIds);
 
       // // Insert trees with user_id
+      // const users = await getAllUsers()
+      // const sortedUsers = users.sort((a, b) => parseInt(a.name.split(' ')[1]) - parseInt(b.name.split(' ')[1]));
+      // console.log(sortedUsers)
       // const treeIds = await Promise.all(
       //   tree_all.map(async (tree, index) => {
       //     // const id = await addTree({ ...tree, user_id: userIds[index].id });
       //     const id = await addTree({
       //       ...tree,
-      //       user_id: 'YPSU116MaRDOYTQQmScT',
+      //       user_id: sortedUsers[Math.ceil((index+1)/2)-1].id,
       //     });
       //     return { ...tree, id };
       //   }),
@@ -129,9 +126,11 @@ export default function Test() {
               fertilization_id: fertilization.id, // Assuming fertilization has an 'id' property
               is_completed: false, // Set default value
             };
+
             // DANGER! THIS WILL BE INSERT TO DB
             // const id = await addRelTreeFertilization(rel);
             const id = null
+
             console.log(rel)
             return { ...rel, id };
           })
@@ -144,47 +143,6 @@ export default function Test() {
     }
   }
 
-  function handleDeleteDummyData() {
-    // try {
-    //   const dummyData = {
-    //     group: group_all,
-    //     user: user_all,
-    //     tree: tree_all,
-    //     fertilization: fertilization_all,
-    //     rel_tree_fertilization: rel_tree_fertilization_all,
-    //     account: account_all,
-    //     transaction: transaction_all,
-    //   };
-    //   console.log("Deleting dummy data...");
-    //   for (const group of dummyData.group) {
-    //     await deleteGroup(group.id); // Assuming each group has an 'id'
-    //     console.log("Group deleted:", group.name);
-    //   }
-    //   for (const user of dummyData.user) {
-    //     await deleteUser(user.id); // Assuming each user has an 'id'
-    //     console.log("User deleted:", user.name);
-    //   }
-    //   for (const account of dummyData.account) {
-    //     await deleteAccount(account.id); // Assuming each account has an 'id'
-    //     console.log("Account deleted:", account.name);
-    //   }
-    //   for (const tree of dummyData.tree) {
-    //     await deleteTree(tree.id); // Assuming each tree has an 'id'
-    //     console.log("Tree deleted:", tree.code);
-    //   }
-    //   for (const fertilization of dummyData.fertilization) {
-    //     await deleteFertilization(fertilization.id); // Assuming each fertilization has an 'id'
-    //     console.log("Fertilization deleted:", fertilization.title);
-    //   }
-    //   for (const transaction of dummyData.transaction) {
-    //     await deleteTransaction(transaction.id); // Assuming each transaction has an 'id'
-    //     console.log("Transaction deleted:", transaction.description);
-    //   }
-    //   console.log("All dummy data deleted successfully!");
-    // } catch (error) {
-    //   console.error("Error deleting dummy data:", error);
-    // }
-  }
   return (
     <>
       <button className="border border-black" onClick={handleInsertDummyData}>
@@ -192,13 +150,13 @@ export default function Test() {
       </button>
       <br />
       <br />
-      <button className="border border-black" onClick={handleDeleteDummyData}>
+      {/* <button className="border border-black" onClick={handleDeleteDummyData}>
         Delete Dummy Data
-      </button>
+      </button> */}
       <br />
       <br />
       <button className="border border-black" onClick={insertRelTreeFertilizationPair}>
-        Generate Pair Tree-Fertilization
+        [Danger!] Generate Pair Tree-Fertilization
       </button>
     </>
   );

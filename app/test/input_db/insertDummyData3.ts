@@ -13,36 +13,39 @@ export const group_all: Omit<Group, 'id'>[] = [
   },
 ];
 
-export const user_all: Omit<User, 'id'>[] = [
-  {
-    name: `Nabil Finansial`,
-    group_id: '', // This will be set later
-  },
-];
+// export const user_all: Omit<User, 'id'>[] = [
+//   {
+//     name: `Nabil Finansial`,
+//     group_id: '', // This will be set later
+//   },
+// ];
+
+export const user_all: Omit<User, 'id'>[] = generateUsers(24);
+
+function generateUsers(count: number): Omit<User, 'id'>[] {
+  return Array.from({ length: count }, (_, index) => ({
+    name: `User ${index + 1}`, // Generate user names dynamically
+    group_id: 'zMeAxIZm2r7ZwAx5fQ89', // This will be set later
+  }));
+}
 
 export const tree_type = {
   durian: `Durian`,
   kopi: `Kopi`,
 };
 
-export const tree_all: Omit<Tree, 'id'>[] = [
-  {
-    code: `DURIAN-1`,
+export const tree_all: Omit<Tree, 'id'>[] = generateTrees(50); // Generate 50 trees
+
+function generateTrees(count: number): Omit<Tree, 'id'>[] {
+  return Array.from({ length: count }, (_, index) => ({
+    code: `DURIAN-${index + 1}`, // Generate unique tree codes
     type: tree_type.durian,
     accession: `undefined`,
     location: `no_location`,
     planting_date: new Date(),
     user_id: '', // This will be set later
-  },
-  {
-    code: `DURIAN-2`,
-    type: tree_type.durian,
-    accession: `undefined`,
-    location: `no_location`,
-    planting_date: new Date(),
-    user_id: '', // This will be set later
-  },
-];
+  }));
+}
 
 export const fertilization_all: Omit<Fertilization, 'id'>[] = [
   {
