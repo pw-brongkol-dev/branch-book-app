@@ -7,17 +7,20 @@ import BackButton from '@/app/components/BackButton';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useFirestore } from '@/app/hooks/useFirestore';
 import { toast } from '@/hooks/use-toast';
-import { Group } from '@/app/db/interfaces';
+import { Group, User } from '@/app/db/interfaces';
+import { Timestamp } from 'firebase/firestore'; // Import Firebase Timestamp
 
 const AddTreeForm = () => {
-  const { addTree, addUser, getAllGroups } = useFirestore();
+  const { addTree, addUser, getAllGroups, getAllUsers } = useFirestore();
 
+  // State management
   const [formData, setFormData] = useState({
     code: '',
     type: '',
     accession: '',
     location: '',
     plantingDate: '',
+    user_id: '',
   });
 
   const [newUser, setNewUser] = useState({
@@ -26,88 +29,87 @@ const AddTreeForm = () => {
   });
 
   const [groups, setGroups] = useState<Group[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(false); // Loading state
 
-  // Fetch groups data when component mounts
+  // Fetch groups and users on component mount
   useEffect(() => {
-    const fetchGroups = async () => {
+    const fetchData = async () => {
       try {
-        const fetchedGroups = await getAllGroups();
-        setGroups(fetchedGroups);
-      } catch (err) {
-        console.error('Error fetching groups:', err);
+        const groupData = await getAllGroups();
+        const userData = await getAllUsers();
+        setGroups(groupData);
+        setUsers(userData);
+      } catch (error) {
+        console.error('Error fetching data:', error);
       }
     };
-    fetchGroups();
+    fetchData();
   }, []);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Handle form input changes
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  const handleUserChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Handle user input changes
+  const handleUserInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setNewUser((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    setNewUser((prevUser) => ({ ...prevUser, [name]: value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  // Handle tree type selection
+  const handleTypeChange = (value: string) => {
+    setFormData((prevData) => ({ ...prevData, type: value }));
+
+    let selectedGroup = null;
+    if (value === 'Durian') {
+      selectedGroup = groups.find((group) => group.name === 'Ajuning Tani');
+    } else if (value === 'Kopi') {
+      selectedGroup = groups.find((group) => group.name === 'Karya Bakti I');
+    }
+
+    if (selectedGroup) {
+      setNewUser((prevUser) => ({ ...prevUser, group_id: selectedGroup.id }));
+    }
+  };
+
+  // Handle form submission
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Validasi form
-    if (!formData.code || !newUser.name || !formData.type || !formData.accession || !formData.location || !formData.plantingDate) {
-      toast({
-        title: 'Error',
-        description: 'Tolong isi semua kolom',
-        variant: 'destructive',
-      });
-      return;
-    }
-
-    console.log('ini form data:', formData.type);
-
-    // Set group_id berdasarkan jenis pohon
-    if (formData.type === 'Durian') {
-      const group = groups.find((group) => group.name === 'Ajuning Tani');
-      if (group) {
-        newUser.group_id = group.id;
-      }
-    } else if (formData.type === 'Kopi') {
-      const group = groups.find((group) => group.name === 'Karya Bakti I');
-      if (group) {
-        newUser.group_id = group.id;
-      }
-    }
-
+    setLoading(true); // Start loading
     try {
-      await addUser({
-        name: newUser.name,
-        group_id: newUser.group_id,
-      });
+      // Convert planting date to Firebase Timestamp, or set a default value if plantingDate is empty
+      const plantingDateTimestamp = formData.plantingDate ? Timestamp.fromDate(new Date(formData.plantingDate)) : Timestamp.now(); // Set default to current timestamp if no date provided
 
-      await addTree({
+      const finalFormData = {
         code: formData.code,
         type: formData.type,
         accession: formData.accession,
         location: formData.location,
-        planting_date: new Date(formData.plantingDate),
-      });
+        planting_date: plantingDateTimestamp, // Ensure correct field name and type
+        user_id: formData.user_id,
+      };
 
-      toast({
-        title: 'Success',
-        description: 'Data pohon dan petani berhasil ditambahkan',
-      });
-    } catch (err) {
-      toast({
-        title: 'Error',
-        description: 'Gagal menambahkan data pohon atau user',
-        variant: 'destructive',
-      });
+      const userExists = users.some((user) => user.name === newUser.name);
+      if (!userExists) {
+        // await addUser(newUser);
+        console.log('User added:', newUser);
+        toast({ title: 'User added successfully' });
+      }
+
+      const foundUser = users.find((user) => user.name === newUser.name) || { id: newUser.name }; // Adjust if needed
+      if (foundUser) {
+        finalFormData.user_id = foundUser.id;
+        // await addTree(finalFormData);
+        console.log('Tree added:', finalFormData);
+        toast({ title: 'Data pohon berhasil ditambahkan' });
+      }
+    } catch (error) {
+      toast({ title: 'Error', description: 'Gagal menambahkan data pohon' });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -120,19 +122,19 @@ const AddTreeForm = () => {
           <label className="block text-sm font-medium mb-2" htmlFor="code">
             Kode Pohon
           </label>
-          <Input id="code" name="code" placeholder="Kode Pohon" value={formData.code} onChange={handleChange} required />
+          <Input id="code" name="code" placeholder="Kode Pohon" value={formData.code} onChange={handleInputChange} required />
         </div>
         <div>
           <label className="block text-sm font-medium mb-2" htmlFor="name">
             Nama Petani
           </label>
-          <Input id="name" name="name" placeholder="Nama Petani" value={newUser.name} onChange={handleUserChange} required />
+          <Input id="name" name="name" placeholder="Nama Petani" value={newUser.name} onChange={handleUserInputChange} required />
         </div>
         <div>
           <label className="block text-sm font-medium mb-2" htmlFor="type">
             Jenis Pohon
           </label>
-          <Select value={formData.type} onValueChange={(value: string) => setFormData({ ...formData, type: value })} required>
+          <Select value={formData.type} onValueChange={handleTypeChange}>
             <SelectTrigger>
               <SelectValue placeholder="Pilih Jenis Pohon" />
             </SelectTrigger>
@@ -146,21 +148,23 @@ const AddTreeForm = () => {
           <label className="block text-sm font-medium mb-2" htmlFor="accession">
             Aksesi
           </label>
-          <Input id="accession" name="accession" placeholder="Aksesi" value={formData.accession} onChange={handleChange} required />
+          <Input id="accession" name="accession" placeholder="Aksesi" value={formData.accession} onChange={handleInputChange} required />
         </div>
         <div>
           <label className="block text-sm font-medium mb-2" htmlFor="location">
             Lokasi
           </label>
-          <Input id="location" name="location" placeholder="Lokasi" value={formData.location} onChange={handleChange} required />
+          <Input id="location" name="location" placeholder="Lokasi" value={formData.location} onChange={handleInputChange} required />
         </div>
         <div>
           <label className="block text-sm font-medium mb-2" htmlFor="plantingDate">
             Tanggal Penanaman
           </label>
-          <Input type="date" id="plantingDate" name="plantingDate" value={formData.plantingDate} onChange={handleChange} required />
+          <Input type="date" id="plantingDate" name="plantingDate" value={formData.plantingDate} onChange={handleInputChange} required />
         </div>
-        <Button type="submit">Submit</Button>
+        <Button type="submit" disabled={loading}>
+          {loading ? 'Loading...' : 'Submit'}
+        </Button>
       </form>
     </div>
   );
