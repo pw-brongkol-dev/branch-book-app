@@ -71,7 +71,7 @@ export default function Home() {
             <JurnalUmum />
           </div>
         </div>
-        <div className="w-2 h-2 overflow-hidden">
+        <div className="w-2 h-2 overflow-">
           <div ref={componentRef1}>
             <NeracaLajur />
           </div>
