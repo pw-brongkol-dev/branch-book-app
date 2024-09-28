@@ -43,10 +43,7 @@ export default function Home() {
                 <span className="text-left"> Neraca Lajur </span>
               </button>
             )}
-            content={() => componentRef2.current} // Pastikan ini mengembalikan referensi yang benar
-            // pageStyle={`@page { size: A4 landscape; }
-            //           table { width: 100%; background-color: white; border: 1px solid gray; text-align: center; }
-            //           th, td { border: 1px solid gray; padding: 0.25rem; text-align: center; }`}
+            content={() => componentRef2.current} // Pastikan ini 
           />
           <ReactToPrint
             trigger={() => (
@@ -112,7 +109,7 @@ export default function Home() {
             <LaporanPosisiKeuangan />
           </div>
         </div>
-        <div className="w-2 h-2 overflow-">
+        <div className="w-2 h-2 overflow-hidden">
           <div ref={componentRef6}>
             <LaporanPerubahanModal />
           </div>

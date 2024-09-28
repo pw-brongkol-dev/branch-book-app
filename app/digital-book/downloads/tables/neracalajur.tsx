@@ -1,5 +1,5 @@
 import React from 'react';
-import { accounts } from '../dummy-data/neraca-lajur';
+import { accounts } from '../dummy-data/neraca-lajur'; // Pastikan path ini benar
 
 // Fungsi untuk memformat angka menjadi format Rupiah tanpa 'Rp'
 const formatRupiah = (value: number) => {
@@ -12,7 +12,7 @@ const formatRupiah = (value: number) => {
 
 // Fungsi untuk menghitung semua total dalam satu iterasi
 const getTotalValues = () => {
-  return accounts.reduce(
+  return accounts.children.reduce(
     (totals, account) => {
       totals.neracaSaldoDebit += account.NeracaSaldoDebit;
       totals.neracaSaldoKredit += account.NeracaSaldoKredit;
@@ -48,9 +48,9 @@ const NeracaLajurTable: React.FC = () => {
     <div className="w-[1100px] min-h-[550px] mx-auto p-5" style={{ fontSize: '8pt' }}>
       {/* Bagian Header Laporan */}
       <div className="flex flex-col items-center justify-center text-center mb-10">
-        <h1 className="text-lg mb-2">Kode perusahaan</h1>
-        <h1 className="text-3xl font-bold mb-2">Neraca Lajur</h1>
-        <h1 className="text-lg">Bulan ini</h1>
+        <h1 className="text-lg mb-2">{accounts.code}</h1> {/* Menampilkan kode perusahaan */}
+        <h1 className="text-3xl font-bold mb-2">{accounts.name}</h1> {/* Menampilkan nama laporan */}
+        <h1 className="text-lg">{accounts.date}</h1> {/* Menampilkan tanggal laporan */}
       </div>
 
       {/* Bagian Tabel Transaksi */}
@@ -90,7 +90,7 @@ const NeracaLajurTable: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {accounts.map((item, index) => (
+            {accounts.children.map((item, index) => (
               <tr key={index}>
                 <td className="px-2 py-1 border-b border-black border-r text-center">{item.NomorAkun}</td>
                 <td className="px-2 py-1 border-b border-black border-r text-center">{item.NamaAkun}</td>
@@ -165,6 +165,16 @@ const NeracaLajurTable: React.FC = () => {
               <td className="px-4 py-2 border-b border-black border-r text-center"></td>
               <td className="px-4 py-2 border-b border-black border-r text-center"></td>
               <td className="px-4 py-2 border-b border-black border-r text-center"></td>
+              <td className="px-4 py-2 border-b border-black border-r text-center">
+                <span className="text-left">Rp</span>
+                <span className="float-right">{formatRupiah(labaRugiKredit-labaRugiDebit)}</span>
+              </td>
+              <td className="px-4 py-2 border-b border-black border-r text-center"></td>
+              <td className="px-4 py-2 border-b border-black border-r text-center"></td>
+              <td className="px-4 py-2 border-b border-black border-r text-center">
+                <span className="text-left">Rp</span>
+                <span className="float-right">{formatRupiah(neracaDebit-neracaKredit)}</span>
+              </td>
             </tr>
             <tr className="bg-[#B5E6A2]">
               <td className="px-4 py-2 border-b border-black border-r text-center" colSpan={2}>
@@ -174,6 +184,22 @@ const NeracaLajurTable: React.FC = () => {
               <td className="px-4 py-2 border-b border-black border-r text-center"></td>
               <td className="px-4 py-2 border-b border-black border-r text-center"></td>
               <td className="px-4 py-2 border-b border-black border-r text-center"></td>
+              <td className="px-4 py-2 border-b border-black border-r text-center">
+                <span className="text-left">Rp</span>
+                <span className="float-right">{formatRupiah(labaRugiDebit+(labaRugiKredit-labaRugiDebit))}</span>
+              </td>
+              <td className="px-4 py-2 border-b border-black border-r text-center">
+                <span className="text-left">Rp</span>
+                <span className="float-right">{formatRupiah(labaRugiKredit)}</span>
+              </td>
+              <td className="px-4 py-2 border-b border-black border-r text-center">
+                <span className="text-left">Rp</span>
+                <span className="float-right">{formatRupiah(neracaDebit)}</span>
+              </td>
+              <td className="px-4 py-2 border-b border-black border-r text-center">
+                <span className="text-left">Rp</span>
+                <span className="float-right">{formatRupiah(neracaKredit+(neracaDebit-neracaKredit))}</span>
+              </td>
             </tr>
           </tbody>
         </table>

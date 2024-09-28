@@ -1,4 +1,8 @@
-export const transactions = [
+export const transactions = {
+  code: 'UD XXX XXX',
+  name: 'JURNAL UMUM',
+  date: 'Januari 2024',
+  children: [
     {
       Tanggal: new Date("2024-01-01"),
       Keterangan: "Setoran Modal Awal",
@@ -197,4 +201,5 @@ export const transactions = [
       Debit: 0,
       Kredit: 150000
     }
-  ];
+  ]
+};

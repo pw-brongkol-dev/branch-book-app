@@ -42,12 +42,6 @@ const LaporanLabaRugiTable: React.FC = () => {
       {/* Bagian Tabel Transaksi */}
       <div className="bg-white rounded-md">
         <table className="w-full bg-white border border-black">
-          <thead>
-            <tr className="bg-[#4EA72E]">
-              <th className="px-4 py-2 border-b border-black border-r text-center">Deskripsi</th>
-              <th className="px-4 py-2 border-b border-black text-center">Jumlah</th>
-            </tr>
-          </thead>
           <tbody>
             {/* Pendapatan dari Penjualan */}
             {report.children.map((category, index) => (
@@ -56,31 +50,39 @@ const LaporanLabaRugiTable: React.FC = () => {
                   <td className="px-4 py-2 border-b border-black border-r text-left font-bold">{category.type}</td>
                   <td className="px-4 py-2 border-b border-black text-right"></td>
                 </tr>
-                {category.children.map((item, idx) => (
+
+                {/* Pengecekan apakah category.children ada */}
+                {category.children && category.children.map((item, idx) => (
                   <tr key={idx}>
-                    <td className="px-4 py-2 border-b border-black border-r text-left">{item.label}</td>
-                    <td className="px-4 py-2 border-b border-black text-right">
-                      <span>Rp</span>
+                    <td className="px-4 py-2 border-b border-black border-r text-left">
+                      {/* Menambahkan penomoran pada item */}
+                      {`${idx + 1}. ${item.label}`}
+                    </td>
+                    <td className="px-4 py-2 border-b border-black text-left">
+                      <span className="text-left">Rp</span>
                       <span className="float-right">{formatRupiah(item.amount)}</span>
                     </td>
                   </tr>
                 ))}
-                {/* Total tiap kategori */}
-                <tr className="bg-gray-100 font-bold">
-                  <td className="px-4 py-2 border-b border-black border-r text-left">{category.total.label}</td>
-                  <td className="px-4 py-2 border-b border-black text-right">
-                    <span>Rp</span>
-                    <span className="float-right">{formatRupiah(category.total.amount)}</span>
-                  </td>
-                </tr>
+
+                {/* Pengecekan apakah category.total ada */}
+                {category.total && (
+                  <tr className="bg-[#DAF2D0] font-bold">
+                    <td className="px-4 py-2 border-b border-black border-r text-left">{category.total.label}</td>
+                    <td className="px-4 py-2 border-b border-black text-left">
+                      <span className="text-left">Rp</span>
+                      <span className="float-right">{formatRupiah(category.total.amount)}</span>
+                    </td>
+                  </tr>
+                )}
               </React.Fragment>
             ))}
 
             {/* Total Laba Bersih */}
             <tr className="bg-[#4EA72E] font-bold">
               <td className="px-4 py-2 border-b border-black border-r text-left">{report.total.name}</td>
-              <td className="px-4 py-2 border-b border-black text-right">
-                <span>Rp</span>
+              <td className="px-4 py-2 border-b border-black text-left">
+                <span className="text-left">Rp</span>
                 <span className="float-right">{formatRupiah(labaBersih)}</span>
               </td>
             </tr>

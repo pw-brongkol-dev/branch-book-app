@@ -1,6 +1,6 @@
 export const report = {
   name: 'LAPORAN LABA RUGI',
-  date: "Januari 2024",
+  date: 'Januari 2024',
   children: [
     {
       type: 'Pendapatan dari Penjualan',
@@ -24,7 +24,7 @@ export const report = {
         { label: 'Beban Telp, listrik, dan air', amount: 150000 },
       ],
       total: {
-        name: 'Total Beban-Beban Usaha',
+        label: 'Total Beban-Beban Usaha',
         amount: 5550000,
       },
     },
