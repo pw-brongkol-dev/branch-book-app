@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { History, BookOpen, Sprout, Trees } from 'lucide-react';
 import RippleButton from './components/RippleButton';
 import { LucideIcon } from 'lucide-react';
+import { useFirestore } from './hooks/useFirestore';
 
 interface PastelIconProps {
   Icon: LucideIcon;
@@ -23,7 +24,9 @@ const PastelIcon: React.FC<PastelIconProps> = ({ Icon, bgColor, iconColor }) => 
 
 export default function Home() {
   const router = useRouter(); // Initialize the router
+  const { getUserById } = useFirestore()
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userName, setUserName] = useState("")
 
   useEffect(() => {
     const userId = localStorage.getItem('user_id_branch_book_app');
@@ -31,6 +34,9 @@ export default function Home() {
       router.push('/auth/login');
     } else {
       setIsLoggedIn(true);
+      getUserById(userId).then((data) => {
+        setUserName(data?.name || "")
+      })
     }
   }, [router]);
 
@@ -49,7 +55,7 @@ export default function Home() {
         <div className="flex items-center justify-between mb-20">
           <div className="flex items-center">
             <Sprout className="h-8 w-8 mr-3 text-green-600" />
-            <h1 className="text-3xl font-bold">Halo Haryadi</h1>
+            <h1 className="text-3xl font-bold">Halo {userName}</h1>
           </div>
           <button
             onClick={handleLogout}
