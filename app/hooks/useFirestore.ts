@@ -185,6 +185,35 @@ export const useFirestore = () => {
     }
   };
 
+  const getTransactionsByUserId = async (userId: string, month?: number, year?: number): Promise<TransactionWithId[]> => {
+    setLoading(true);
+    try {
+      let transactionsQuery = query(collection(db, 'transactions'), where('user_id', '==', userId));
+
+      if (month && year) {
+        const startDate = new Date(year, month - 1, 1); // Start of the month
+        const endDate = new Date(year, month, 0, 23, 59, 59, 999); // End of the month
+        transactionsQuery = query(
+          transactionsQuery,
+          where('date', '>=', startDate),
+          where('date', '<=', endDate)
+        );
+      }
+
+      const querySnapshot = await getDocs(transactionsQuery);
+      const transactions = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as TransactionWithId[];
+      setLoading(false);
+      return transactions;
+    } catch (err) {
+      setError('Failed to fetch transactions by user ID');
+      setLoading(false);
+      throw err;
+    }
+  };
+
   const getRelTreeFertilizationsByTreeCode = async (treeCode: string): Promise<RelTreeFertilizationWithId[]> => {
     setLoading(true);
     try {
@@ -268,6 +297,7 @@ export const useFirestore = () => {
     addTransaction: (transaction: Transaction) => add<Transaction>('transactions', transaction),
     updateTransaction: (id: string, transaction: Partial<Transaction>) => update<TransactionWithId>('transactions', id, transaction),
     deleteTransaction: (id: string) => remove('transactions', id),
+    getTransactionsByUserId, // Add this line
   };
 
   const relTreeFertilizationMethods = {
