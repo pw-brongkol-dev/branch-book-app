@@ -7,11 +7,11 @@ import BackButton from '@/app/components/BackButton';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useFirestore } from '@/app/hooks/useFirestore';
 import { toast } from '@/hooks/use-toast';
-import { Group, User } from '@/app/db/interfaces';
-import { Timestamp } from 'firebase/firestore'; // Import Firebase Timestamp
+import { Fertilization, Group, User, Tree } from '@/app/db/interfaces';
+import { Timestamp } from 'firebase/firestore';
 
 const AddTreeForm = () => {
-  const { addTree, addUser, getAllGroups, getAllUsers } = useFirestore();
+  const { addTree, addUser, getAllGroups, getAllUsers, getAllTrees, getAllFertilizations, addRelTreeFertilization } = useFirestore();
 
   // State management
   const [formData, setFormData] = useState({
@@ -30,7 +30,16 @@ const AddTreeForm = () => {
 
   const [groups, setGroups] = useState<Group[]>([]);
   const [users, setUsers] = useState<User[]>([]);
-  const [loading, setLoading] = useState(false); // Loading state
+  const [trees, setTrees] = useState<Tree[]>([]);
+  const [fertData, setFertData] = useState<Fertilization[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [example, setExample] = useState('abc');
+
+  useEffect(() => {
+    console.log(example);
+    setExample('def');
+    console.log(example);
+  }, [example]);
 
   // Fetch groups and users on component mount
   useEffect(() => {
@@ -38,14 +47,18 @@ const AddTreeForm = () => {
       try {
         const groupData = await getAllGroups();
         const userData = await getAllUsers();
+        const fertData = await getAllFertilizations();
+        const treeData = await getAllTrees();
         setGroups(groupData);
         setUsers(userData);
+        setFertData(fertData);
+        setTrees(treeData);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
     };
     fetchData();
-  }, []);
+  }, [getAllGroups, getAllUsers, getAllFertilizations, getAllTrees]);
 
   // Handle form input changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -67,47 +80,83 @@ const AddTreeForm = () => {
     if (value === 'Durian') {
       selectedGroup = groups.find((group) => group.name === 'Ajuning Tani');
     } else if (value === 'Kopi') {
-      selectedGroup = groups.find((group) => group.name === 'Karya Bakti I');
+      selectedGroup = groups.find((group) => group.name === 'Karya Bakti 1');
     }
 
     if (selectedGroup) {
-      setNewUser((prevUser) => ({ ...prevUser, group_id: selectedGroup.id }));
+      setNewUser((prevUser) => ({ ...prevUser, group_id: selectedGroup?.id }));
     }
   };
 
-  // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true); // Start loading
+    setLoading(true);
     try {
-      // Convert planting date to Firebase Timestamp, or set a default value if plantingDate is empty
-      const plantingDateTimestamp = formData.plantingDate ? Timestamp.fromDate(new Date(formData.plantingDate)) : Timestamp.now(); // Set default to current timestamp if no date provided
+      const plantingDateTimestamp = formData.plantingDate ? Timestamp.fromDate(new Date(formData.plantingDate)) : Timestamp.now();
 
-      const finalFormData = {
-        code: formData.code,
-        type: formData.type,
-        accession: formData.accession,
-        location: formData.location,
-        planting_date: plantingDateTimestamp, // Ensure correct field name and type
-        user_id: formData.user_id,
+      // Menyalin formData dan menambahkan planting_date
+      let finalFormData = {
+        ...formData,
+        planting_date: plantingDateTimestamp,
+        user_id: '', // Inisialisasi awal
       };
 
-      const userExists = users.some((user) => user.name === newUser.name);
+      // Format nama user
+      const formattedName = newUser.name.charAt(0).toUpperCase() + newUser.name.slice(1).toLowerCase();
+      const userExists = users.some((user) => user.name.toLowerCase() === formattedName.toLowerCase());
+
+      let newUserId: string | undefined;
+
       if (!userExists) {
-        // await addUser(newUser);
-        console.log('User added:', newUser);
+        // Tambahkan pengguna baru dan ambil ID-nya
+        const addedUser = await addUser({ ...newUser, name: formattedName }); // pastikan await di sini
+        newUserId = addedUser.id; // Asumsikan addUser mengembalikan objek user dengan id
+        console.log('User added:', addedUser);
         toast({ title: 'User added successfully' });
+      } else {
+        // Ambil ID pengguna yang sudah ada
+        const foundUser = users.find((user) => user.name.toLowerCase() === formattedName.toLowerCase());
+        newUserId = foundUser?.id;
       }
 
-      const foundUser = users.find((user) => user.name === newUser.name) || { id: newUser.name }; // Adjust if needed
-      if (foundUser) {
-        finalFormData.user_id = foundUser.id;
-        // await addTree(finalFormData);
-        console.log('Tree added:', finalFormData);
-        toast({ title: 'Data pohon berhasil ditambahkan' });
+      // Pastikan user_id sudah valid, dan masukkan ke finalFormData
+      if (newUserId) {
+        finalFormData = {
+          ...finalFormData,
+          user_id: newUserId,
+        };
+      } else {
+        console.error('User ID is undefined');
+        throw new Error('User ID not found');
       }
+
+      // Tunggu sampai data pohon berhasil ditambahkan dengan user_id
+      console.log('Tree data with user_id:', finalFormData);
+      await addTree(finalFormData); // Pastikan menunggu sampai addTree selesai
+      toast({ title: 'Data pohon berhasil ditambahkan' });
+
+      // Cari pohon yang baru ditambahkan berdasarkan kode
+      const newTree = trees.find((tree) => tree.code === finalFormData.code);
+      console.log('ini newtree', newTree);
+
+      const fertilizationRelations = fertData.map((fertilization) => ({
+        fertilization_id: fertilization.id,
+        is_completed: false,
+        tree_id: newTree?.id || '', // Pastikan tree_id valid
+      }));
+
+      for (const relation of fertilizationRelations) {
+        // await addRelTreeFertilization(relation);
+        console.log('Relasi fertilization ditambahkan:', relation);
+      }
+
+      toast({ title: 'Relasi fertilization berhasil ditambahkan' });
     } catch (error) {
-      toast({ title: 'Error', description: 'Gagal menambahkan data pohon' });
+      console.error('Error:', error);
+      toast({
+        title: 'Error',
+        description: 'Gagal menambahkan data pohon atau relasi fertilization',
+      });
     } finally {
       setLoading(false);
     }
