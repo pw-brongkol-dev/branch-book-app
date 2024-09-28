@@ -7,12 +7,18 @@ import ReactToPrint from 'react-to-print';
 import JurnalUmum from './tables/jurnalumum';
 import NeracaLajur from './tables/neracalajur';
 import NeracaSaldo from './tables/neracasaldo';
+import LabaRugi from './tables/labarugi'
+import LaporanPosisiKeuangan from './tables/laporanposisikeuangan';
+import LaporanPerubahanModal from './tables/laporanperubahanmodal'
 import BackButton from '../../components/BackButton';
 
 export default function Home() {
-  const componentRef = useRef<React.ElementRef<typeof JurnalUmum>>(null); // Referensi ke komponen JurnalUmum
-  const componentRef1 = useRef<React.ElementRef<typeof NeracaLajur>>(null);
-  const componentRef2 = useRef<React.ElementRef<typeof NeracaSaldo>>(null);
+  const componentRef1 = useRef<React.ElementRef<typeof JurnalUmum>>(null); // Referensi ke komponen JurnalUmum
+  const componentRef2 = useRef<React.ElementRef<typeof NeracaLajur>>(null);
+  const componentRef3 = useRef<React.ElementRef<typeof NeracaSaldo>>(null);
+  const componentRef4 = useRef<React.ElementRef<typeof LabaRugi>>(null);
+  const componentRef5 = useRef<React.ElementRef<typeof LaporanPosisiKeuangan>>(null);
+  const componentRef6 = useRef<React.ElementRef<typeof LaporanPerubahanModal>>(null);
 
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
@@ -28,7 +34,7 @@ export default function Home() {
                 <span className="text-left"> Jurnal Umum </span>
               </button>
             )}
-            content={() => componentRef.current} // Pastikan ini mengembalikan referensi yang benar
+            content={() => componentRef1.current} // Pastikan ini mengembalikan referensi yang benar
           />
           <ReactToPrint
             trigger={() => (
@@ -37,7 +43,7 @@ export default function Home() {
                 <span className="text-left"> Neraca Lajur </span>
               </button>
             )}
-            content={() => componentRef1.current} // Pastikan ini mengembalikan referensi yang benar
+            content={() => componentRef2.current} // Pastikan ini mengembalikan referensi yang benar
             // pageStyle={`@page { size: A4 landscape; }
             //           table { width: 100%; background-color: white; border: 1px solid gray; text-align: center; }
             //           th, td { border: 1px solid gray; padding: 0.25rem; text-align: center; }`}
@@ -49,36 +55,66 @@ export default function Home() {
                 <span className="text-left"> Neraca Saldo </span>
               </button>
             )}
-            content={() => componentRef2.current} // Pastikan ini mengembalikan referensi yang benar
+            content={() => componentRef3.current} // Pastikan ini mengembalikan referensi yang benar
           />
-          <button className="flex items-center bg-[#16a34a] text-white hover:bg-[#128a3a] rounded-[14px] w-auto h-[60px] text-sm sm:text-base px-2 sm:px-4">
-            <FaFileAlt className="mr-2 pl-2 text-2xl" />
-            <span className="text-left"> Laba Rugi </span>
-          </button>
-          <button className="flex items-center justify-start bg-[#16a34a] text-white hover:bg-[#128a3a] rounded-[14px] w-auto h-[60px] text-sm sm:text-base px-2 sm:px-4">
-            <FaFileAlt className="mr-2 pl-2 text-2xl" />
-            <span className="text-left"> Laporan Posisi Keuangan </span>
-          </button>
-          <button className="flex items-center bg-[#16a34a] text-white hover:bg-[#128a3a] rounded-[14px] w-auto h-[60px] text-sm sm:text-base px-2 sm:px-4">
-            <FaFileAlt className="mr-2 pl-2 text-2xl" />
-            <span className="text-left"> Laporan Perubahan Modal </span>
-          </button>
+          <ReactToPrint
+            trigger={() => (
+              <button className="flex items-center bg-[#16a34a] text-white hover:bg-[#128a3a] rounded-[14px] w-auto h-[60px] text-sm sm:text-base px-2 sm:px-4">
+                <FaFileAlt className="mr-2 pl-2 text-2xl" />
+                <span className="text-left"> Laba Rugi </span>
+              </button>
+            )}
+            content={() => componentRef4.current}
+          />
+          <ReactToPrint
+            trigger={() => (
+              <button className="flex items-center justify-start bg-[#16a34a] text-white hover:bg-[#128a3a] rounded-[14px] w-auto h-[60px] text-sm sm:text-base px-2 sm:px-4">
+                <FaFileAlt className="mr-2 pl-2 text-2xl" />
+                <span className="text-left"> Laporan Posisi Keuangan </span>
+              </button>
+            )}
+            content={() => componentRef5.current}
+          />
+          <ReactToPrint
+            trigger={() => (
+              <button className="flex items-center bg-[#16a34a] text-white hover:bg-[#128a3a] rounded-[14px] w-auto h-[60px] text-sm sm:text-base px-2 sm:px-4">
+                <FaFileAlt className="mr-2 pl-2 text-2xl" />
+                <span className="text-left"> Laporan Perubahan Modal </span>
+              </button>
+            )}
+            content={() => componentRef6.current}
+          />
         </div>
 
         {/* Komponen yang ingin dicetak */}
         <div className="w-2 h-2 overflow-hidden">
-          <div ref={componentRef}>
-            <JurnalUmum />
-          </div>
-        </div>
-        <div className="w-2 h-2 overflow-">
           <div ref={componentRef1}>
-            <NeracaLajur />
+            <JurnalUmum />
           </div>
         </div>
         <div className="w-2 h-2 overflow-hidden">
           <div ref={componentRef2}>
+            <NeracaLajur />
+          </div>
+        </div>
+        <div className="w-2 h-2 overflow-hidden">
+          <div ref={componentRef3}>
             <NeracaSaldo />
+          </div>
+        </div>
+        <div className="w-2 h-2 overflow-hidden">
+          <div ref={componentRef4}>
+            <LabaRugi />
+          </div>
+        </div>
+        <div className="w-2 h-2 overflow-hidden">
+          <div ref={componentRef5}>
+            <LaporanPosisiKeuangan />
+          </div>
+        </div>
+        <div className="w-2 h-2 overflow-">
+          <div ref={componentRef6}>
+            <LaporanPerubahanModal />
           </div>
         </div>
       </main>

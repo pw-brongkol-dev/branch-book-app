@@ -1,31 +1,33 @@
 import React from 'react';
 import { accounts } from '../dummy-data/neraca-saldo'; // Pastikan path ini benar
 
+// Fungsi untuk memformat angka menjadi format Rupiah tanpa 'Rp'
 const formatRupiah = (value: number) => {
   if (value === 0) {
-      return '-'; // Jika nilai 0, tampilkan "-"
+    return '-'; // Jika nilai 0, tampilkan "-"
   }
-  // Pisahkan Rp dan nominal agar bisa diberikan style yang berbeda
   const formattedValue = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(value);
   return formattedValue.replace('Rp', ''); // Hilangkan 'Rp' agar bisa ditangani terpisah di JSX
 };
 
-// Fungsi untuk menghitung total Debit
-const getTotalDebit = () => {
-  return accounts.reduce((total, account) => total + account.Debit, 0);
-};
-
-// Fungsi untuk menghitung total Kredit
-const getTotalKredit = () => {
-  return accounts.reduce((total, account) => total + account.Kredit, 0);
+// Fungsi untuk menghitung total Debit dan Kredit dalam satu iterasi
+const getTotalValues = () => {
+  return accounts.reduce(
+    (totals, account) => {
+      totals.totalDebit += account.Debit;
+      totals.totalKredit += account.Kredit;
+      return totals;
+    },
+    { totalDebit: 0, totalKredit: 0 } // Inisialisasi total Debit dan Kredit
+  );
 };
 
 const NeracaSaldoTable: React.FC = () => {
-  const totalDebit = getTotalDebit();
-  const totalKredit = getTotalKredit();
+  // Ambil total debit dan kredit
+  const { totalDebit, totalKredit } = getTotalValues();
 
-    return (
-    <div className="w-[216mm] min-h-[297mm] mx-auto p-10" style={{ fontSize: '10pt' }}> {/* Ubah dari '12pt' ke '10pt' */}
+  return (
+    <div className="w-[216mm] min-h-[297mm] mx-auto p-10" style={{ fontSize: '10pt' }}>
       {/* Bagian Header Laporan */}
       <div className="flex flex-col items-center justify-center text-center mb-10">
         <h1 className="text-lg mb-2">Kode perusahaan</h1>
@@ -49,11 +51,11 @@ const NeracaSaldoTable: React.FC = () => {
               <tr key={index}>
                 <td className="px-2 py-1 border-b border-black border-r text-center">{account.NomorAkun}</td>
                 <td className="px-4 py-2 border-b border-black border-r text-left">{account.NamaAkun}</td>
-                <td className='px-2 py-1 border-b border-black border-r text-left'>
+                <td className="px-2 py-1 border-b border-black border-r text-left">
                   <span className="text-left">Rp</span>
                   <span className="float-right">{formatRupiah(account.Debit)}</span>
                 </td>
-                <td className='px-2 py-1 border-b border-black text-left'>
+                <td className="px-2 py-1 border-b border-black text-left">
                   <span className="text-left">Rp</span>
                   <span className="float-right">{formatRupiah(account.Kredit)}</span>
                 </td>
@@ -62,14 +64,16 @@ const NeracaSaldoTable: React.FC = () => {
 
             {/* Baris tambahan setelah baris terakhir */}
             <tr className="bg-[#4EA72E]">
-              <td className="px-4 py-2 border-b border-black border-r text-center" colSpan={2}><strong>JUMLAH</strong></td>
-              <td className='px-2 py-1 border-b border-black border-r text-left'>
-                <span className="text-left">Rp</span>
-                <span className="float-right">{formatRupiah(totalDebit)}</span> {/* Gantilah dengan nilai yang sesuai */}
+              <td className="px-4 py-2 border-b border-black border-r text-center" colSpan={2}>
+                <strong>JUMLAH</strong>
               </td>
-              <td className='px-2 py-1 border-b border-black text-left'>
+              <td className="px-2 py-1 border-b border-black border-r text-left">
                 <span className="text-left">Rp</span>
-                <span className="float-right">{formatRupiah(totalKredit)}</span> {/* Gantilah dengan nilai yang sesuai */}
+                <span className="float-right">{formatRupiah(totalDebit)}</span> {/* Tampilkan total Debit */}
+              </td>
+              <td className="px-2 py-1 border-b border-black text-left">
+                <span className="text-left">Rp</span>
+                <span className="float-right">{formatRupiah(totalKredit)}</span> {/* Tampilkan total Kredit */}
               </td>
             </tr>
           </tbody>
