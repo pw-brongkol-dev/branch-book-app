@@ -1,15 +1,36 @@
-const laporanLabaRugi = [
-  { label: "Pendapatan dari Penjualan", value: null },
-  { label: "Penjualan Biji Kopi", value: 11500000 },
-  { label: "Retur Penjualan", value: 0 },
-  { label: "Total Pendapatan dari Penjualan (2-3)", value: 11500000 },
-  { label: "Beban-Beban Usaha", value: null },
-  { label: "Beban Pupuk", value: 200000 },
-  { label: "Beban Benih", value: 4000000 },
-  { label: "Beban obat hama", value: 100000 },
-  { label: "Beban Gaji dan Upah", value: 1000000 },
-  { label: "Beban Transportasi", value: 100000 },
-  { label: "Beban Telp, listrik, dan air", value: 150000 },
-  { label: "Total Beban-Beban Usaha", value: 5550000 },
-  { label: "Laba Bersih", value: 5950000 }
-];
+export const report = {
+  name: 'LAPORAN LABA RUGI',
+  date: "Januari 2024",
+  children: [
+    {
+      type: 'Pendapatan dari Penjualan',
+      children: [
+        { label: 'Penjualan Biji Kopi', amount: 11500000 },
+        { label: 'Retur Penjualan', amount: 0 },
+      ],
+      total: {
+        label: 'Total Pendapatan dari Penjualan (2-3)',
+        amount: 11500000,
+      },
+    },
+    {
+      type: 'Beban-Beban Usaha',
+      children: [
+        { label: 'Beban Pupuk', amount: 200000 },
+        { label: 'Beban Benih', amount: 4000000 },
+        { label: 'Beban obat hama', amount: 100000 },
+        { label: 'Beban Gaji dan Upah', amount: 1000000 },
+        { label: 'Beban Transportasi', amount: 100000 },
+        { label: 'Beban Telp, listrik, dan air', amount: 150000 },
+      ],
+      total: {
+        name: 'Total Beban-Beban Usaha',
+        amount: 5550000,
+      },
+    },
+  ],
+  total: {
+    name: 'Laba Bersih',
+    amount: 5950000,
+  },
+};
