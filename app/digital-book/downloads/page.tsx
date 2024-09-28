@@ -4,9 +4,9 @@ import { useRef } from 'react';
 import { FaFileAlt } from 'react-icons/fa';
 import React from 'react';
 import ReactToPrint from 'react-to-print';
-import JurnalUmum from './dummy-data/jurnalumum';
-import NeracaLajur from './dummy-data/neracalajur';
-import NeracaSaldo from './dummy-data/neracasaldo';
+import JurnalUmum from './tables/jurnalumum';
+import NeracaLajur from './tables/neracalajur';
+import NeracaSaldo from './tables/neracasaldo';
 import BackButton from '../../components/BackButton';
 
 export default function Home() {

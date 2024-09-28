@@ -1,5 +1,5 @@
 import React from 'react';
-import { accounts } from './neraca-saldo'; // Pastikan path ini benar
+import { accounts } from '../dummy-data/neraca-saldo'; // Pastikan path ini benar
 
 const formatRupiah = (value: number) => {
   if (value === 0) {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { accounts } from './neraca-lajur';
+import { accounts } from '../dummy-data/neraca-lajur';
 
 const formatRupiah = (value: number) => {
     if (value === 0) {

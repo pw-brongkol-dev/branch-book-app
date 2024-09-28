@@ -1,5 +1,5 @@
 import React from 'react';
-import { transactions } from './jurnal-umum';
+import { transactions } from '../dummy-data/jurnal-umum';
 
 const formatRupiah = (value: number) => {
   if (value === 0) {
