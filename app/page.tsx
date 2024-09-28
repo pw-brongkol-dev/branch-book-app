@@ -1,7 +1,10 @@
+"use client"
+
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { History, BookOpen, Sprout, Trees } from 'lucide-react';
 import RippleButton from './components/RippleButton';
-
 import { LucideIcon } from 'lucide-react';
 
 interface PastelIconProps {
@@ -19,12 +22,41 @@ const PastelIcon: React.FC<PastelIconProps> = ({ Icon, bgColor, iconColor }) => 
 };
 
 export default function Home() {
+  const router = useRouter(); // Initialize the router
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const userId = localStorage.getItem('user_id_branch_book_app');
+    if (!userId) {
+      router.push('/auth/login');
+    } else {
+      setIsLoggedIn(true);
+    }
+  }, [router]);
+
+  const handleLogout = () => {
+    localStorage.removeItem('user_id_branch_book_app'); // Clear user ID from local storage
+    router.push('/auth/login'); // Redirect to login page
+  };
+
+  if (!isLoggedIn) {
+    return <div>loading...</div>;
+  }
+
   return (
     <main className="min-h-screen bg-background text-foreground p-6">
       <div className="flex flex-col h-full max-w-md mx-auto">
-        <div className="flex items-center mb-20">
-          <Sprout className="h-8 w-8 mr-3 text-green-600" />
-          <h1 className="text-3xl font-bold">Halo Haryadi</h1>
+        <div className="flex items-center justify-between mb-20">
+          <div className="flex items-center">
+            <Sprout className="h-8 w-8 mr-3 text-green-600" />
+            <h1 className="text-3xl font-bold">Halo Haryadi</h1>
+          </div>
+          <button
+            onClick={handleLogout}
+            className="text-red-600 hover:text-red-800 transition-colors"
+          >
+            Keluar
+          </button>
         </div>
         <div className="flex flex-col gap-4">
           <Link href="/tree/tree-datatable" className="w-full">
