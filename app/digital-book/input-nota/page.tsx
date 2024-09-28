@@ -9,6 +9,7 @@ import BackButton from '../../components/BackButton';
 import { useFirestore } from '@/app/hooks/useFirestore';
 import { Account } from '@/app/db/interfaces';
 import { toast } from '@/hooks/use-toast';
+import { Timestamp } from 'firebase/firestore';
 
 const InputNota = () => {
   const { addTransaction, getAllAccounts } = useFirestore();
@@ -39,7 +40,7 @@ const InputNota = () => {
     }
 
     const data = {
-      date: formData.get('date'),
+      date: formData.get('date') ? Timestamp.fromDate(new Date(formData.get('date') as string)) : null, // Handle null case
       description: formData.get('description'),
       account_id: selectedAccount,
       total_amount: formData.get('nominal'),
