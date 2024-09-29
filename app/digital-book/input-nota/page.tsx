@@ -10,8 +10,10 @@ import { useFirestore } from '@/app/hooks/useFirestore';
 import { Account } from '@/app/db/interfaces';
 import { toast } from '@/hooks/use-toast';
 import { Timestamp } from 'firebase/firestore';
+import { useRouter } from 'next/navigation';
 
 const InputNota = () => {
+  const router = useRouter()
   const { addTransaction, getAllAccounts } = useFirestore();
   const [accounts, setAccounts] = React.useState<Account[]>([]);
   const [selectedAccount, setSelectedAccount] = React.useState<string | undefined>(undefined);
@@ -21,7 +23,7 @@ const InputNota = () => {
     async function fetchAccounts() {
       try {
         const accounts = await getAllAccounts();
-        setAccounts(accounts);
+        setAccounts(accounts.sort((a,b) => a.code.localeCompare(b.code)));
       } catch (error) {
         console.error('Error fetching accounts:', error);
       }
@@ -39,12 +41,19 @@ const InputNota = () => {
       return;
     }
 
+    const userId = localStorage.getItem('user_id_branch_book_app');
+
+    if(!userId) {
+      alert("session expired")
+      router.push("/auth/login")
+    }
+
     const data = {
       date: formData.get('date') ? Timestamp.fromDate(new Date(formData.get('date') as string)) : null, // Handle null case
       description: formData.get('description'),
       account_id: selectedAccount,
       total_amount: formData.get('nominal'),
-      user_id: '',
+      user_id: userId,
       ref: '',
     };
 
