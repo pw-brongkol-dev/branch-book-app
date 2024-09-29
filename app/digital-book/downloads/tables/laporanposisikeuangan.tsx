@@ -49,30 +49,27 @@ const LaporanPosisiKeuanganTable: React.FC = () => {
       <div className="bg-white rounded-md">
         <table className="w-full bg-white border border-black">
           <thead>
-            <tr className="bg-[#4EA72E]">
-              <th className="px-4 py-2 border-b border-black border-r text-center">Deskripsi</th>
-              <th className="px-4 py-2 border-b border-black text-center">Jumlah</th>
-            </tr>
+            {/* Header dihapus */}
           </thead>
           <tbody>
             {/* AKTIVA */}
             {report.children.map((category, index) => (
               <React.Fragment key={index}>
                 <tr className="bg-gray-200">
-                  <td className="px-4 py-2 border-b border-black border-r text-left font-bold">{category.type}</td>
+                  <td className="px-4 py-2 border-b border-black text-left font-bold">{category.type}</td>
                   <td className="px-4 py-2 border-b border-black text-right"></td>
                 </tr>
                 {category.children.map((subCategory, idx) => (
                   <React.Fragment key={idx}>
                     <tr className="bg-gray-100">
-                      <td className="px-4 py-2 border-b border-black border-r text-left font-bold">{subCategory.type}</td>
+                      <td className="px-4 py-2 border-b border-black text-left font-bold">{subCategory.type}</td>
                       <td className="px-4 py-2 border-b border-black text-right"></td>
                     </tr>
                     {subCategory.children.map((item, idy) => (
                       <tr key={idy}>
                         <td className="px-4 py-2 border-b border-black border-r text-left">{item.accountName}</td>
                         <td className="px-4 py-2 border-b border-black text-right">
-                          <span>Rp</span>
+                          <span className="float-left">Rp</span>
                           <span className="float-right">{formatRupiah(item.amount)}</span>
                         </td>
                       </tr>
@@ -81,17 +78,17 @@ const LaporanPosisiKeuanganTable: React.FC = () => {
                     <tr className="bg-gray-100 font-bold">
                       <td className="px-4 py-2 border-b border-black border-r text-left">{subCategory.total.name}</td>
                       <td className="px-4 py-2 border-b border-black text-right">
-                        <span>Rp</span>
+                        <span className="float-left">Rp</span>
                         <span className="float-right">{formatRupiah(subCategory.total.amount)}</span>
                       </td>
                     </tr>
                   </React.Fragment>
                 ))}
                 {/* Total per kategori */}
-                <tr className="bg-gray-200 font-bold">
-                  <td className="px-4 py-2 border-b border-black border-r text-left">{category.total.name}</td>
+                <tr className="bg-[#B5E6A2] font-bold">
+                  <td className="px-4 py-2 border-b border-black border-r text-center">{category.total.name}</td>
                   <td className="px-4 py-2 border-b border-black text-right">
-                    <span>Rp</span>
+                    <span className="float-left">Rp</span>
                     <span className="float-right">{formatRupiah(category.total.amount)}</span>
                   </td>
                 </tr>
@@ -99,27 +96,27 @@ const LaporanPosisiKeuanganTable: React.FC = () => {
             ))}
 
             {/* Total Keseluruhan */}
-            <tr className="bg-[#4EA72E] font-bold">
+            {/* <tr className="bg-[#4EA72E] font-bold">
               <td className="px-4 py-2 border-b border-black border-r text-left">Total Kewajiban</td>
               <td className="px-4 py-2 border-b border-black text-right">
-                <span>Rp</span>
+                <span className="float-left">Rp</span>
                 <span className="float-right">{formatRupiah(totalKewajiban)}</span>
               </td>
-            </tr>
-            <tr className="bg-[#4EA72E] font-bold">
+            </tr> */}
+            {/* <tr className="bg-[#4EA72E] font-bold">
               <td className="px-4 py-2 border-b border-black border-r text-left">Total Ekuitas</td>
               <td className="px-4 py-2 border-b border-black text-right">
-                <span>Rp</span>
+                <span className="float-left">Rp</span>
                 <span className="float-right">{formatRupiah(totalEkuitas)}</span>
               </td>
             </tr>
             <tr className="bg-[#4EA72E] font-bold">
               <td className="px-4 py-2 border-b border-black border-r text-left">Total Aktiva</td>
               <td className="px-4 py-2 border-b border-black text-right">
-                <span>Rp</span>
+                <span className="float-left">Rp</span>
                 <span className="float-right">{formatRupiah(totalAktiva)}</span>
               </td>
-            </tr>
+            </tr> */}
           </tbody>
         </table>
       </div>

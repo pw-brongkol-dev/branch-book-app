@@ -99,7 +99,7 @@ export default function Home() {
             <NeracaSaldo />
           </div>
         </div>
-        <div className="w-2 h-2 overflow-hidden">
+        <div className="w-2 h-2 overflow-">
           <div ref={componentRef4}>
             <LabaRugi />
           </div>

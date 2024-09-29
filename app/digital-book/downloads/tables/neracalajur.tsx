@@ -55,7 +55,7 @@ const NeracaLajurTable: React.FC = () => {
 
       {/* Bagian Tabel Transaksi */}
       <div>
-        <table className="w-[1000px] bg-white border border-black">
+        <table className="w-[1050px] bg-white border border-black">
           <thead>
             <tr className="bg-[#4EA72E]">
               <th rowSpan={2} className="px-2 py-1 border-b border-black border-r text-center">
