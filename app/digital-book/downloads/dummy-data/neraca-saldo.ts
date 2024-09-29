@@ -1,4 +1,8 @@
-export const accounts = [
+export const report = {
+  code: 'UD XXX XXX',
+  name: 'NEACA SALDO',
+  date: 'Januari 2024',
+  children: [
     {
       NomorAkun: "1-0000",
       NamaAkun: "Aktiva",
@@ -143,4 +147,5 @@ export const accounts = [
       Debit: 150000,
       Kredit: 0
     }
-  ];
+  ]
+};

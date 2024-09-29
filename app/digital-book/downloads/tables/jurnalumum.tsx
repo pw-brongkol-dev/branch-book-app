@@ -1,6 +1,7 @@
 import React from 'react';
-import { transactions } from '../dummy-data/jurnal-umum';
+import { transactions } from '../dummy-data/jurnal-umum'; // Pastikan path ini benar
 
+// Fungsi untuk memformat angka menjadi format Rupiah tanpa 'Rp'
 const formatRupiah = (value: number) => {
   if (value === 0) {
     return '-'; // Jika nilai 0, tampilkan "-"
@@ -10,14 +11,14 @@ const formatRupiah = (value: number) => {
   return formattedValue.replace('Rp', ''); // Hilangkan 'Rp' agar bisa ditangani terpisah di JSX
 };
 
-const JurnalUmum = () => {
+const JurnalUmum: React.FC = () => {
   return (
     <div className="w-[1000px] min-h-[297mm] mx-auto p-10" style={{ fontSize: '10pt' }}> {/* Ubah dari '12pt' ke '10pt' */}
       {/* Bagian Header Laporan */}
       <div className="flex flex-col items-center justify-center text-center mb-10">
-        <h1 className="text-lg mb-2">Kode perusahaan</h1>
-        <h1 className="text-3xl font-bold mb-2">Laporan Jurnal Umum</h1>
-        <h1 className="text-lg">Bulan ini</h1>
+        <h1 className="text-lg mb-2">{transactions.code}</h1> {/* Tambahkan kode perusahaan */}
+        <h1 className="text-3xl font-bold mb-2">{transactions.name}</h1> {/* Ubah judul menjadi "JURNAL UMUM" */}
+        <h1 className="text-lg">{transactions.date}</h1> {/* Tanggal laporan diambil dari `transactions.date` */}
       </div>
 
       {/* Bagian Tabel Transaksi */}
@@ -34,7 +35,7 @@ const JurnalUmum = () => {
             </tr>
           </thead>
           <tbody>
-            {transactions.map((transaction, index) => (
+            {transactions.children.map((transaction, index) => (  // Sesuaikan dengan `transactions.children`
               <tr key={index}>
                 <td className="px-4 py-2 border-b border-r border-black">{transaction.Tanggal.toLocaleDateString()}</td> {/* Border hitam vertikal */}
                 <td className="px-4 py-2 border-b border-r border-black">{transaction.Keterangan}</td> {/* Border hitam vertikal */}

@@ -1,4 +1,8 @@
-export const accounts = [
+export const accounts = {
+  code: 'UD XXX XXX',
+  name: 'NERACA LAJUR',
+  date: 'Januari 2024',
+  children: [
     {
       NomorAkun: "1-0000",
       NamaAkun: "Aktiva",
@@ -239,4 +243,5 @@ export const accounts = [
       NeracaSaldoDebit: 0,
       NeracaSaldoKredit: 0
     }
-  ];
+  ]
+};
