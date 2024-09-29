@@ -14,7 +14,14 @@ import { RelTreeFertilization, Fertilization } from '@/app/db/interfaces';
 
 const TreeDetailsPage = ({ params }: { params: { tree_id: string } }) => {
   const tree_code = params.tree_id;
-  const { getTreeByCode, getUserById, getRelTreeFertilizationsByTreeCode, getRelTreeFertilizationById, getFertilizationById, toggleFertilizationCompletion } = useFirestore();
+  const {
+    getTreeByCode,
+    getUserById,
+    getRelTreeFertilizationsByTreeCode,
+    getRelTreeFertilizationById,
+    getFertilizationById,
+    toggleFertilizationCompletion,
+  } = useFirestore();
 
   interface TreeDetail {
     owner: string;
@@ -23,14 +30,15 @@ const TreeDetailsPage = ({ params }: { params: { tree_id: string } }) => {
     location: string;
   }
 
-  type FertilizationHistory = RelTreeFertilization & Fertilization & {
-    id: string,
-    date: string,
-    originalDate: Date
-  }
+  type FertilizationHistory = RelTreeFertilization &
+    Fertilization & {
+      id: string;
+      date: string;
+      originalDate: Date;
+    };
 
   const [treeDetail, setTreeDetail] = useState<TreeDetail | undefined>();
-  const [fertilizationHistory, setFertilizationHistory] = useState<FertilizationHistory[]>([])
+  const [fertilizationHistory, setFertilizationHistory] = useState<FertilizationHistory[]>([]);
   const [fetchStatus, setFetchStatus] = useState('idle');
   const [qrCodeData, setQrCodeData] = useState<string | null>(null);
 
@@ -74,21 +82,23 @@ const TreeDetailsPage = ({ params }: { params: { tree_id: string } }) => {
       };
 
       const treeFertilizations = await getRelTreeFertilizationsByTreeCode(tree_code);
-      
-      const fertilizations = await Promise.all(treeFertilizations.map(async (fertilization) => {
-        const fertilizationDetail = await getFertilizationById(fertilization.fertilization_id);
-        const convertedDate = fertilizationDetail?.date?.toDate();
-        return {
-          id: fertilization.id,
-          title: fertilizationDetail?.title,
-          description: fertilizationDetail?.description,
-          date: convertedDate?.toLocaleDateString(), // Keep formatted date for output
-          originalDate: convertedDate, // Store original Date object for sorting
-          is_completed: fertilization.is_completed,
-          tree_id: fertilization.tree_id,
-          fertilization_id: fertilization.fertilization_id
-        } as FertilizationHistory;
-      }));
+
+      const fertilizations = await Promise.all(
+        treeFertilizations.map(async (fertilization) => {
+          const fertilizationDetail = await getFertilizationById(fertilization.fertilization_id);
+          const convertedDate = fertilizationDetail?.date?.toDate();
+          return {
+            id: fertilization.id,
+            title: fertilizationDetail?.title,
+            description: fertilizationDetail?.description,
+            date: convertedDate?.toLocaleDateString(), // Keep formatted date for output
+            originalDate: convertedDate, // Store original Date object for sorting
+            is_completed: fertilization.is_completed,
+            tree_id: fertilization.tree_id,
+            fertilization_id: fertilization.fertilization_id,
+          } as FertilizationHistory;
+        }),
+      );
 
       const sortedFertilizations = fertilizations.sort((a, b) => {
         return (a.originalDate as Date).getTime() - (b.originalDate as Date).getTime(); // Sort by original Date object
@@ -103,30 +113,28 @@ const TreeDetailsPage = ({ params }: { params: { tree_id: string } }) => {
     }
   };
 
-
   const toggleCompleted = async (id: string) => {
-    await toggleFertilizationCompletion(id)
-    const updatedFertilization = await getRelTreeFertilizationById(id)
+    await toggleFertilizationCompletion(id);
+    const updatedFertilization = await getRelTreeFertilizationById(id);
     if (updatedFertilization) {
-      setFertilizationHistory(prevHistory => 
-        prevHistory.map(item => 
-          item.id === id 
+      setFertilizationHistory((prevHistory) =>
+        prevHistory.map((item) =>
+          item.id === id
             ? { ...item, is_completed: updatedFertilization.is_completed } // Update the specific item
-            : item // Keep the rest unchanged
-          )
-        );
+            : item,
+        ),
+      );
     }
   };
-
 
   useEffect(() => {
     fetchData();
   }, [tree_code]);
 
   useEffect(() => {
-    console.log("hey")
-    console.log(fertilizationHistory)
-  }, [fertilizationHistory])
+    console.log('hey');
+    console.log(fertilizationHistory);
+  }, [fertilizationHistory]);
 
   if (fetchStatus === 'loading') {
     return <div>Loading...</div>;
@@ -167,7 +175,13 @@ const TreeDetailsPage = ({ params }: { params: { tree_id: string } }) => {
                 <div className="space-y-2">
                   {fertilizationHistory.map((item) => (
                     <div key={item.id} className="flex items-start p-2 rounded-md">
-                      <input type="checkbox" checked={item.is_completed} onChange={() => toggleCompleted(item.id)} className="h-6 w-6 flex-none" style={{ accentColor: '#38693C', width: '24px', height: '24px', marginRight: '10px' }} />
+                      <input
+                        type="checkbox"
+                        checked={item.is_completed}
+                        onChange={() => toggleCompleted(item.id)}
+                        className="h-6 w-6 flex-none"
+                        style={{ accentColor: '#38693C', width: '24px', height: '24px', marginRight: '10px' }}
+                      />
                       <div>
                         <p className="font-semibold text-[#38693C]">{item.title}</p>
                         <p className="text-xs text-gray-600">{item.date}</p>

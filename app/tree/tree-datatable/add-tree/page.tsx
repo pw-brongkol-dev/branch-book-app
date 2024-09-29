@@ -33,13 +33,13 @@ const AddTreeForm = () => {
   const [trees, setTrees] = useState<Tree[]>([]);
   const [fertData, setFertData] = useState<Fertilization[]>([]);
   const [loading, setLoading] = useState(false);
-  const [example, setExample] = useState('abc');
+  // const [example, setExample] = useState('abc');
 
-  useEffect(() => {
-    console.log(example);
-    setExample('def');
-    console.log(example);
-  }, [example]);
+  // useEffect(() => {
+  //   console.log(example);
+  //   setExample('def');
+  //   console.log(example);
+  // }, [example]);
 
   // Fetch groups and users on component mount
   useEffect(() => {
@@ -91,6 +91,7 @@ const AddTreeForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+
     try {
       const plantingDateTimestamp = formData.plantingDate ? Timestamp.fromDate(new Date(formData.plantingDate)) : Timestamp.now();
 
@@ -98,25 +99,46 @@ const AddTreeForm = () => {
       let finalFormData = {
         ...formData,
         planting_date: plantingDateTimestamp,
-        user_id: '', // Inisialisasi awal
+        user_id: '',
       };
+
+      console.log('Initial finalFormData:', finalFormData);
 
       // Format nama user
       const formattedName = newUser.name.charAt(0).toUpperCase() + newUser.name.slice(1).toLowerCase();
+      console.log('Formatted User Name:', formattedName);
+
       const userExists = users.some((user) => user.name.toLowerCase() === formattedName.toLowerCase());
+      console.log('User exists:', userExists);
 
       let newUserId: string | undefined;
 
       if (!userExists) {
         // Tambahkan pengguna baru dan ambil ID-nya
-        const addedUser = await addUser({ ...newUser, name: formattedName }); // pastikan await di sini
-        newUserId = addedUser.id; // Asumsikan addUser mengembalikan objek user dengan id
-        console.log('User added:', addedUser);
-        toast({ title: 'User added successfully' });
+        const addedUser = await addUser({ ...newUser, name: formattedName });
+        console.log('Added User:', addedUser); // Log seluruh objek addedUser
+
+        // Jika addedUser adalah string, langsung gunakan sebagai newUserId
+        if (typeof addedUser === 'string') {
+          newUserId = addedUser;
+          console.log('New User ID:', newUserId);
+          toast({ title: 'User added successfully' });
+        } else {
+          console.error('Failed to get added user ID:', addedUser);
+          throw new Error('Failed to get user ID from addUser');
+        }
       } else {
         // Ambil ID pengguna yang sudah ada
         const foundUser = users.find((user) => user.name.toLowerCase() === formattedName.toLowerCase());
-        newUserId = foundUser?.id;
+        console.log('Found User:', foundUser);
+
+        if (foundUser && foundUser.id) {
+          newUserId = foundUser.id;
+          console.log('Existing User ID:', newUserId);
+        } else {
+          console.error('Failed to find user ID in existing users');
+          throw new Error('User ID not found for existing user');
+        }
       }
 
       // Pastikan user_id sudah valid, dan masukkan ke finalFormData
@@ -125,8 +147,9 @@ const AddTreeForm = () => {
           ...finalFormData,
           user_id: newUserId,
         };
+        console.log('Updated finalFormData with user_id:', finalFormData);
       } else {
-        console.error('User ID is undefined');
+        console.error('User ID is undefined after user processing');
         throw new Error('User ID not found');
       }
 
@@ -137,22 +160,29 @@ const AddTreeForm = () => {
 
       // Cari pohon yang baru ditambahkan berdasarkan kode
       const newTree = trees.find((tree) => tree.code === finalFormData.code);
-      console.log('ini newtree', newTree);
+      console.log('Newly added tree:', newTree);
 
-      const fertilizationRelations = fertData.map((fertilization) => ({
-        fertilization_id: fertilization.id,
-        is_completed: false,
-        tree_id: newTree?.id || '', // Pastikan tree_id valid
-      }));
+      if (newTree && newTree.id) {
+        const fertilizationRelations = fertData.map((fertilization) => ({
+          fertilization_id: fertilization.id,
+          is_completed: false,
+          tree_id: newTree.id, // Pastikan tree_id valid
+        }));
 
-      for (const relation of fertilizationRelations) {
-        // await addRelTreeFertilization(relation);
-        console.log('Relasi fertilization ditambahkan:', relation);
+        console.log('Fertilization Relations:', fertilizationRelations);
+
+        for (const relation of fertilizationRelations) {
+          await addRelTreeFertilization(relation);
+          console.log('Relasi fertilization ditambahkan:', relation);
+        }
+
+        toast({ title: 'Relasi fertilization berhasil ditambahkan' });
+      } else {
+        console.error('New tree ID is undefined');
+        throw new Error('Failed to find the new tree by code');
       }
-
-      toast({ title: 'Relasi fertilization berhasil ditambahkan' });
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error during form submission:', error);
       toast({
         title: 'Error',
         description: 'Gagal menambahkan data pohon atau relasi fertilization',
