@@ -15,9 +15,9 @@ const ProcessDataReport = () => {
     const userId = localStorage.getItem('user_id_branch_book_app');
     if (!userId) {
       router.push('/auth/login');
-		} else {
-			handleProcess()
-		}
+    } else {
+      handleProcess();
+    }
   }, [router, selectedMonth, inputYear]);
 
   const handleProcess = () => {
@@ -32,19 +32,13 @@ const ProcessDataReport = () => {
       <h2>Process Data Report</h2>
       <div>
         <label>Select Month:</label>
-        <div>
+        <select value={selectedMonth} onChange={(e) => setSelectedMonth(Number(e.target.value))}>
           {[...Array(12)].map((_, index) => (
-            <label key={index}>
-              <input
-                type="radio"
-                value={index + 1}
-                checked={selectedMonth === index + 1}
-                onChange={() => setSelectedMonth(index + 1)}
-              />
+            <option key={index} value={index + 1}>
               {new Date(0, index).toLocaleString('default', { month: 'long' })}
-            </label>
+            </option>
           ))}
-        </div>
+        </select>
       </div>
       <div>
         <label>Input Year:</label>
@@ -55,7 +49,7 @@ const ProcessDataReport = () => {
           min="2000" // Set a minimum year
         />
       </div>
-      {/* <button onClick={handleProcess}>Process</button> */}
+      <button onClick={handleProcess}>Process</button>
       <div>
         {/* Render the data here if needed */}
         {data.length > 0 && (
