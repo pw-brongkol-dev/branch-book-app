@@ -61,10 +61,14 @@ const TreeDetailsPage = ({ params }: { params: { tree_id: string } }) => {
   const fetchData = async () => {
     try {
       setFetchStatus('loading');
+      console.log('Fetching tree with code:', tree_code);
+
       const tree = await getTreeByCode(tree_code);
+      console.log('Fetched tree:', tree);
       if (!tree) throw 'fetch error: tree not found';
 
       const user = await getUserById(tree.user_id);
+      console.log('Fetched user:', user);
       if (!user) throw 'fetch error: user not found';
 
       const plantingDate = tree.planting_date.toDate();
@@ -80,18 +84,24 @@ const TreeDetailsPage = ({ params }: { params: { tree_id: string } }) => {
         age: ageString,
         location: tree.location,
       };
+      console.log('Tree detail data:', data);
 
+      // Fetch fertilizations related to the tree
       const treeFertilizations = await getRelTreeFertilizationsByTreeCode(tree_code);
+      console.log('Fetched tree fertilizations:', treeFertilizations);
 
       const fertilizations = await Promise.all(
         treeFertilizations.map(async (fertilization) => {
+          console.log('Processing fertilization:', fertilization);
           const fertilizationDetail = await getFertilizationById(fertilization.fertilization_id);
+          console.log('Fertilization detail:', fertilizationDetail);
+
           const convertedDate = fertilizationDetail?.date?.toDate();
           return {
             id: fertilization.id,
             title: fertilizationDetail?.title,
             description: fertilizationDetail?.description,
-            date: convertedDate?.toLocaleDateString(), // Keep formatted date for output
+            date: convertedDate?.toLocaleDateString(), // Formatted date for output
             originalDate: convertedDate, // Store original Date object for sorting
             is_completed: fertilization.is_completed,
             tree_id: fertilization.tree_id,
@@ -100,16 +110,21 @@ const TreeDetailsPage = ({ params }: { params: { tree_id: string } }) => {
         }),
       );
 
+      if (fertilizations.length === 0) {
+        console.warn('No fertilizations found for tree:', tree_code);
+      }
+
       const sortedFertilizations = fertilizations.sort((a, b) => {
         return (a.originalDate as Date).getTime() - (b.originalDate as Date).getTime(); // Sort by original Date object
       });
-      setFertilizationHistory(sortedFertilizations);
+      console.log('Sorted fertilizations:', sortedFertilizations);
 
+      setFertilizationHistory(sortedFertilizations);
       setTreeDetail(data);
       setFetchStatus('success');
     } catch (err) {
       setFetchStatus('error');
-      console.error(err);
+      console.error('Error occurred:', err);
     }
   };
 
