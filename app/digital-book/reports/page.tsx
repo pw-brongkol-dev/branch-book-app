@@ -1,28 +1,110 @@
 'use client'; // Menandakan bahwa ini adalah komponen klien
 
-import { useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useFirestore } from '@/app/hooks/useFirestore';
+
+import { useRef, useState, useEffect } from 'react';
 import { FaFileAlt } from 'react-icons/fa';
 import React from 'react';
 import ReactToPrint from 'react-to-print';
-// import JurnalUmum from './tables/jurnalumum';
-// import NeracaLajur from './tables/neracalajur';
-// import NeracaSaldo from './tables/neracasaldo';
-// import LabaRugi from './tables/labarugi'
-// import LaporanPosisiKeuangan from './tables/laporanposisikeuangan';
-// import LaporanPerubahanModal from './tables/laporanperubahanmodal'
+
 import { generateReportData } from './generate-report-data';
 import BackButton from '../../components/BackButton';
 
-export default function ReportPage() {
-  const { reportJurnalUmum, reportNeracaLajur, reportNeracaSaldo, reportLabaRugi, reportLaporanPosisiKeuangan, reportLaporanPerubahanModal } =
-    generateReportData({ month: 8, year: 2024 });
+import JurnalUmum from './tables/02-jurnal-umum';
+import NeracaLajur from './tables/03-neraca-lajur';
+import NeracaSaldo from './tables/04-neraca-saldo';
+import LabaRugi from './tables/05-laba-rugi';
+import LaporanPosisiKeuangan from './tables/06-laporan-posisi-keuangan';
+import LaporanPerubahanModal from './tables/07-laporan-perubahan-modal';
 
-  const JurnalUmum = reportJurnalUmum;
-  const NeracaLajur = reportNeracaLajur;
-  const NeracaSaldo = reportNeracaSaldo;
-  const LabaRugi = reportLabaRugi;
-  const LaporanPosisiKeuangan = reportLaporanPosisiKeuangan;
-  const LaporanPerubahanModal = reportLaporanPerubahanModal;
+
+export default function ProcessDataReport() {
+  const router = useRouter();
+  const { getTransactionsByUserId, getAllAccounts } = useFirestore();
+  const [data, setData] = useState(null);
+  const [processDataStatus, setProcessDataStatus] = useState('idle');
+  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1); // Default to current month
+  const [inputYear, setInputYear] = useState(new Date().getFullYear()); // Default to current year
+
+  useEffect(() => {
+    setProcessDataStatus('processing');
+    const userId = localStorage.getItem('user_id_branch_book_app');
+    if (!userId) {
+      router.push('/auth/login');
+    } else {
+      handleProcess();
+      setProcessDataStatus('completed');
+    }
+  }, [router, selectedMonth, inputYear]);
+
+  const handleProcess = async () => {
+    const userId = localStorage.getItem('user_id_branch_book_app');
+    if (userId) {
+      try {
+        const transactions = await getTransactionsByUserId(userId, selectedMonth, inputYear);
+        const accounts = await getAllAccounts();
+
+        const reportData = generateReportData({
+          month: selectedMonth,
+          year: inputYear,
+          transactions: transactions,
+          accounts: accounts,
+        });
+
+        setData(reportData);
+        console.log(reportData);
+      } catch (err) {
+        console.error('error', err);
+      }
+    }
+  };
+
+  return (
+    <div>
+      <h2>Process Data Report</h2>
+      <div>
+        <label>Select Month:</label>
+        <select value={selectedMonth} onChange={(e) => setSelectedMonth(Number(e.target.value))}>
+          {[...Array(12)].map((_, index) => (
+            <option key={index} value={index + 1}>
+              {new Date(0, index).toLocaleString('default', { month: 'long' })}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div>
+        <label>Input Year:</label>
+        <input
+          type="number"
+          value={inputYear}
+          onChange={(e) => setInputYear(Number(e.target.value))}
+          min="2000" // Set a minimum year
+        />
+      </div>
+      <button onClick={handleProcess}>Process</button>
+      {/* <div>
+        {data.length > 0 && (
+          <ul>
+            {data.map((transaction, index) => (
+              <li key={index}>{JSON.stringify(transaction)}</li>
+            ))}
+          </ul>
+        )}
+      </div> */}
+      {processDataStatus === 'idle' ? (
+        <p>please wait</p>
+      ) : processDataStatus === 'processing' ? (
+        <p>loading...</p>
+      ) : (
+        data && <ReportDownloads data={data} />
+      )}
+    </div>
+  );
+}
+
+function ReportDownloads({ data }) {
+  const { reportJurnalUmum, reportNeracaLajur, reportNeracaSaldo, reportLabaRugi, reportLaporanPosisiKeuangan, reportLaporanPerubahanModal } = data;
 
   const componentRef1 = useRef<React.ElementRef<typeof JurnalUmum>>(null); // Referensi ke komponen JurnalUmum
   const componentRef2 = useRef<React.ElementRef<typeof NeracaLajur>>(null);
@@ -97,32 +179,32 @@ export default function ReportPage() {
         {/* Komponen yang ingin dicetak */}
         <div className="w-2 h-2 overflow-hidden">
           <div ref={componentRef1}>
-            <JurnalUmum />
+            <JurnalUmum transactions={reportJurnalUmum} />
           </div>
         </div>
         <div className="w-2 h-2 overflow-hidden">
           <div ref={componentRef2}>
-            <NeracaLajur />
+            <NeracaLajur accounts={reportNeracaLajur} />
           </div>
         </div>
         <div className="w-2 h-2 overflow-hidden">
           <div ref={componentRef3}>
-            <NeracaSaldo />
+            <NeracaSaldo report={reportNeracaSaldo} />
           </div>
         </div>
         <div className="w-2 h-2 overflow-hidden">
           <div ref={componentRef4}>
-            <LabaRugi />
+            <LabaRugi report={reportLabaRugi} />
           </div>
         </div>
         <div className="w-2 h-2 overflow-hidden">
           <div ref={componentRef5}>
-            <LaporanPosisiKeuangan />
+            <LaporanPosisiKeuangan report={reportLaporanPosisiKeuangan} />
           </div>
         </div>
         <div className="w-2 h-2 overflow-hidden">
           <div ref={componentRef6}>
-            <LaporanPerubahanModal />
+            <LaporanPerubahanModal report={reportLaporanPerubahanModal} />
           </div>
         </div>
       </main>

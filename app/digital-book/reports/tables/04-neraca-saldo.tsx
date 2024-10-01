@@ -22,7 +22,7 @@ type AccountEntry = {
 };
 
 
-const NeracaSaldoTable: React.FC<{ report: ReportNeracaSaldo }> = ({ report }) => {
+const NeracaSaldo: React.FC<{ report: ReportNeracaSaldo }> = ({ report }) => {
   const totalDebit = report.total.debit;
   const totalKredit = report.total.kredit;
 
@@ -84,4 +84,4 @@ const NeracaSaldoTable: React.FC<{ report: ReportNeracaSaldo }> = ({ report }) =
   );
 };
 
-export default NeracaSaldoTable;
+export default NeracaSaldo;

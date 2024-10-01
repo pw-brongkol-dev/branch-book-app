@@ -10,7 +10,7 @@ type ReportJurnalUmum = {
 
 // Define types for the transaction entry structure
 type TransactionEntry = {
-  Tanggal: Date;
+  Tanggal: string;
   Keterangan: string;
   KodeAkun: string;
   NamaAkun: string;
@@ -53,7 +53,7 @@ const JurnalUmum: React.FC<{ transactions: ReportJurnalUmum }> = ({ transactions
                 index, // Sesuaikan dengan `transactions.children`
               ) => (
                 <tr key={index}>
-                  <td className="px-4 py-2 border-b border-r border-black">{transaction.Tanggal.toLocaleDateString()}</td>{' '}
+                  <td className="px-4 py-2 border-b border-r border-black">{transaction.Tanggal}</td>{' '}
                   {/* Border hitam vertikal */}
                   <td className="px-4 py-2 border-b border-r border-black">{transaction.Keterangan}</td> {/* Border hitam vertikal */}
                   <td className="px-4 py-2 border-b border-r border-black">{transaction.KodeAkun}</td> {/* Border hitam vertikal */}

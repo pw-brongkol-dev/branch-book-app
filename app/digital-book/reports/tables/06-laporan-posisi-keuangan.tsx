@@ -31,7 +31,7 @@ interface Total {
   amount: number;
 }
 
-const LaporanPosisiKeuanganTable: React.FC<{ report: ReportLaporanPosisiKeuangan }> = ({ report }) => {
+const LaporanPosisiKeuangan: React.FC<{ report: ReportLaporanPosisiKeuangan }> = ({ report }) => {
   // Ambil total aktiva, kewajiban, dan ekuitas
 
   return (
@@ -119,4 +119,4 @@ const LaporanPosisiKeuanganTable: React.FC<{ report: ReportLaporanPosisiKeuangan
   );
 };
 
-export default LaporanPosisiKeuanganTable;
+export default LaporanPosisiKeuangan;

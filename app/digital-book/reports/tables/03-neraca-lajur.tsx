@@ -41,7 +41,7 @@ type TransactionGroup = {
   NeracaKredit: number;
 };
 
-const NeracaLajurTable: React.FC<{ accounts: ReportNeracaLajur }> = ({ accounts }) => {
+const NeracaLajur: React.FC<{ accounts: ReportNeracaLajur }> = ({ accounts }) => {
   // Ambil semua total dari fungsi getTotalValues
   const { neracaSaldoDebit, neracaSaldoKredit, labaRugiDebit, labaRugiKredit, neracaDebit, neracaKredit } = accounts.sum;
 
@@ -209,4 +209,4 @@ const NeracaLajurTable: React.FC<{ accounts: ReportNeracaLajur }> = ({ accounts 
   );
 };
 
-export default NeracaLajurTable;
+export default NeracaLajur;

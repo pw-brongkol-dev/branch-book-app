@@ -26,7 +26,7 @@ interface Total {
   amount: number;
 }
 
-const LaporanLabaRugiTable: React.FC<{ report: ReportLabaRugi }> = ({ report }) => {
+const LaporanLabaRugi: React.FC<{ report: ReportLabaRugi }> = ({ report }) => {
   // Ambil total pendapatan, beban, dan laba bersih
 
   return (
@@ -92,4 +92,4 @@ const LaporanLabaRugiTable: React.FC<{ report: ReportLabaRugi }> = ({ report }) 
   );
 };
 
-export default LaporanLabaRugiTable;
+export default LaporanLabaRugi;

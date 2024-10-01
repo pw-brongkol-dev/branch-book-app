@@ -30,7 +30,7 @@ interface Total {
   amount: number;
 }
 
-const LaporanPerubahanModalTable: React.FC<{ report: ReportLaporanPerubahanModal }> = ({ report }) => {
+const LaporanPerubahanModal: React.FC<{ report: ReportLaporanPerubahanModal }> = ({ report }) => {
   // Ambil total saldo awal, perubahan modal, dan modal akhir
 
   return (
@@ -103,4 +103,4 @@ const LaporanPerubahanModalTable: React.FC<{ report: ReportLaporanPerubahanModal
   );
 };
 
-export default LaporanPerubahanModalTable;
+export default LaporanPerubahanModal;
