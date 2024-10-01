@@ -4,13 +4,15 @@ import React, { useState, useEffect } from 'react';
 import BackButton from '@/app/components/BackButton';
 import { Button } from '@/components/ui/button';
 import { useFirestore } from '@/app/hooks/useFirestore';
-import { differenceInYears, differenceInMonths, differenceInDays } from 'date-fns';
+import { differenceInYears, differenceInMonths, differenceInDays, set } from 'date-fns';
 import * as qrcode from 'qrcode';
-import { FiDownload, FiEdit } from 'react-icons/fi';
+import { FiDownload, FiEdit, FiTrash } from 'react-icons/fi';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation'; // Change this import
 
-import { RelTreeFertilization, Fertilization } from '@/app/db/interfaces';
+import { RelTreeFertilization, Fertilization, Tree } from '@/app/db/interfaces';
+import { useToast } from '@/hooks/use-toast';
 
 const TreeDetailsPage = ({ params }: { params: { tree_id: string } }) => {
   const tree_code = params.tree_id;
@@ -21,7 +23,11 @@ const TreeDetailsPage = ({ params }: { params: { tree_id: string } }) => {
     getRelTreeFertilizationById,
     getFertilizationById,
     toggleFertilizationCompletion,
+    deleteTree,
+    deleteRelTreeFertilization,
   } = useFirestore();
+  const { toast } = useToast();
+  const router = useRouter(); // Initialize router
 
   interface TreeDetail {
     owner: string;
@@ -40,6 +46,8 @@ const TreeDetailsPage = ({ params }: { params: { tree_id: string } }) => {
   const [treeDetail, setTreeDetail] = useState<TreeDetail | undefined>();
   const [fertilizationHistory, setFertilizationHistory] = useState<FertilizationHistory[]>([]);
   const [fetchStatus, setFetchStatus] = useState('idle');
+  const [treeFertilizations, setTreeFertilizations] = useState<RelTreeFertilization[]>([]);
+  const [treeDataId, setTreeDataId] = useState('');
   const [qrCodeData, setQrCodeData] = useState<string | null>(null);
 
   const generateQRCode = async () => {
@@ -61,10 +69,15 @@ const TreeDetailsPage = ({ params }: { params: { tree_id: string } }) => {
   const fetchData = async () => {
     try {
       setFetchStatus('loading');
+      console.log('Fetching tree with code:', tree_code);
+
       const tree = await getTreeByCode(tree_code);
+      console.log('Fetched tree:', tree.id);
+      setTreeDataId(tree.id);
       if (!tree) throw 'fetch error: tree not found';
 
       const user = await getUserById(tree.user_id);
+      // console.log('Fetched user:', user);
       if (!user) throw 'fetch error: user not found';
 
       const plantingDate = tree.planting_date.toDate();
@@ -80,19 +93,26 @@ const TreeDetailsPage = ({ params }: { params: { tree_id: string } }) => {
         age: ageString,
         location: tree.location,
       };
+      // console.log('Tree detail data:', data);
 
-      const treeFertilizations = await getRelTreeFertilizationsByTreeCode(tree_code);
+      // Fetch fertilizations related to the tree
+      const treeFertilizationsData = await getRelTreeFertilizationsByTreeCode(tree_code);
+      setTreeFertilizations(treeFertilizationsData); // Simpan data ke state
+      console.log('Fetched tree fertilizations:', treeFertilizationsData);
 
       const fertilizations = await Promise.all(
-        treeFertilizations.map(async (fertilization) => {
+        treeFertilizationsData.map(async (fertilization) => {
+          // console.log('Processing fertilization:', fertilization);
           const fertilizationDetail = await getFertilizationById(fertilization.fertilization_id);
+          // console.log('Fertilization detail:', fertilizationDetail);
+
           const convertedDate = fertilizationDetail?.date?.toDate();
           return {
             id: fertilization.id,
             title: fertilizationDetail?.title,
             description: fertilizationDetail?.description,
-            date: convertedDate?.toLocaleDateString(), // Keep formatted date for output
-            originalDate: convertedDate, // Store original Date object for sorting
+            date: convertedDate?.toLocaleDateString(),
+            originalDate: convertedDate,
             is_completed: fertilization.is_completed,
             tree_id: fertilization.tree_id,
             fertilization_id: fertilization.fertilization_id,
@@ -100,16 +120,21 @@ const TreeDetailsPage = ({ params }: { params: { tree_id: string } }) => {
         }),
       );
 
+      if (fertilizations.length === 0) {
+        console.warn('No fertilizations found for tree:', tree_code);
+      }
+
       const sortedFertilizations = fertilizations.sort((a, b) => {
         return (a.originalDate as Date).getTime() - (b.originalDate as Date).getTime(); // Sort by original Date object
       });
-      setFertilizationHistory(sortedFertilizations);
+      console.log('Sorted fertilizations:', sortedFertilizations);
 
+      setFertilizationHistory(sortedFertilizations);
       setTreeDetail(data);
       setFetchStatus('success');
     } catch (err) {
       setFetchStatus('error');
-      console.error(err);
+      console.error('Error occurred:', err);
     }
   };
 
@@ -124,6 +149,25 @@ const TreeDetailsPage = ({ params }: { params: { tree_id: string } }) => {
             : item,
         ),
       );
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      if (treeFertilizations.length > 0) {
+        for (const fertilization of treeFertilizations) {
+          await deleteRelTreeFertilization(fertilization.id);
+          console.log(fertilization.id);
+        }
+      }
+
+      console.log('tree id ini dihapus', treeDataId);
+      await deleteTree(treeDataId);
+      toast({ title: 'Pohon berhasil dihapus' });
+      router.push('/tree/tree-datatable');
+    } catch (error) {
+      console.error('Error deleting tree or related fertilizations:', error);
+      toast({ title: 'Pohon gagal dihapus', variant: 'destructive' });
     }
   };
 
@@ -159,12 +203,19 @@ const TreeDetailsPage = ({ params }: { params: { tree_id: string } }) => {
             <p className="text-sm">
               Lokasi: <span className="font-semibold">{treeDetail?.location}</span>
             </p>
-            <Link href={`/tree/${tree_code}/edit-tree`}>
-              <button className="text-green-600 flex items-center mt-2">
-                <FiEdit className="mr-1" />
-                Edit
+            <div className="flex justify-start items-center mt-4 space-x-4">
+              <Link href={`/tree/${tree_code}/edit-tree`}>
+                <button className="bg-green-600 text-white flex items-center py-2 px-4 rounded-md hover:bg-green-700">
+                  <FiEdit className="mr-1" />
+                  Edit
+                </button>
+              </Link>
+
+              <button onClick={handleDelete} className="bg-red-600 text-white flex items-center py-2 px-4 rounded-md hover:bg-red-700">
+                <FiTrash className="mr-1" />
+                Delete
               </button>
-            </Link>
+            </div>
           </div>
 
           {/* Accordion for Riwayat */}
