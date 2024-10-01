@@ -9,11 +9,11 @@ import { useFirestore } from '@/app/hooks/useFirestore';
 import { toast } from '@/hooks/use-toast';
 import { Fertilization, Group, User, Tree } from '@/app/db/interfaces';
 import { Timestamp } from 'firebase/firestore';
+import { useRouter } from 'next/navigation';
 
 const AddTreeForm = () => {
   const { addTree, addUser, getAllGroups, getAllUsers, getAllTrees, getAllFertilizations, addRelTreeFertilization } = useFirestore();
-
-  // State management
+  const router = useRouter();
   const [formData, setFormData] = useState({
     code: '',
     type: '',
@@ -198,6 +198,8 @@ const AddTreeForm = () => {
         console.error('New tree ID is still undefined after tree addition');
         throw new Error('Failed to retrieve tree ID');
       }
+
+      router.push('/tree/tree-datatable');
     } catch (error) {
       console.error('Error during form submission:', error);
       toast({
