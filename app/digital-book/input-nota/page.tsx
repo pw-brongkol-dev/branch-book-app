@@ -52,7 +52,7 @@ const InputNota = () => {
       date: formData.get('date') ? Timestamp.fromDate(new Date(formData.get('date') as string)) : null, // Handle null case
       description: formData.get('description'),
       account_id: selectedAccount,
-      total_amount: formData.get('nominal'),
+      total_amount: parseInt(formData.get('nominal') as string),
       user_id: userId,
       ref: '',
     };

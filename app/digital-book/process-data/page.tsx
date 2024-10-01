@@ -3,10 +3,11 @@
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useFirestore } from "@/app/hooks/useFirestore"
+import { generateReportData } from "./generate-report-data"
 
 const ProcessDataReport = () => {
   const router = useRouter()
-  const { getTransactionsByUserId } = useFirestore()
+  const { getTransactionsByUserId, getAllAccounts } = useFirestore()
   const [data, setData] = useState([])
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1); // Default to current month
   const [inputYear, setInputYear] = useState(new Date().getFullYear()); // Default to current year
@@ -20,10 +21,25 @@ const ProcessDataReport = () => {
     }
   }, [router, selectedMonth, inputYear]);
 
-  const handleProcess = () => {
+  const handleProcess = async () => {
     const userId = localStorage.getItem('user_id_branch_book_app');
     if (userId) {
-      getTransactionsByUserId(userId, selectedMonth, inputYear).then(res => setData(res));
+			try {
+				const transactions = await getTransactionsByUserId(userId, selectedMonth, inputYear)
+				const accounts = await getAllAccounts()
+
+				const reportData = generateReportData({
+					month: selectedMonth, 
+					year: inputYear, 
+					transactions: transactions, 
+					accounts: accounts
+				})
+
+				setData(reportData)
+				console.log(reportData)
+			} catch (err) {
+
+			}
     }
   };
 

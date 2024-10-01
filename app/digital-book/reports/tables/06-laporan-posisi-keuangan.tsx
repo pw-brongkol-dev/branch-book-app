@@ -1,41 +1,38 @@
 import React from 'react';
-import { report } from '../dummy-data/laporan-posisi-keuangan'; // Pastikan path ini benar
+import { formatRupiah } from './utils';
 
-// Fungsi untuk memformat angka menjadi format Rupiah tanpa 'Rp'
-const formatRupiah = (value: number) => {
-  if (value === 0) {
-    return '-'; // Jika nilai 0, tampilkan "-"
-  }
-  const formattedValue = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(value);
-  return formattedValue.replace('Rp', ''); // Hilangkan 'Rp' agar bisa ditangani terpisah di JSX
-};
+// Define interfaces for the report structure
+interface ReportLaporanPosisiKeuangan {
+  code: string;
+  name: string;
+  date: string; // Adjust type if date is a Date object
+  children: FinancialGroup1[];
+}
 
-// Fungsi untuk menghitung total aktiva, kewajiban, dan ekuitas dalam satu iterasi
-const getTotalValues = () => {
-  let totalAktiva = 0;
-  let totalKewajiban = 0;
-  let totalEkuitas = 0;
+interface FinancialGroup1 {
+  type: string;
+  children: FinancialGroup2[];
+  total: Total;
+}
 
-  report.children.forEach((category) => {
-    if (category.type === 'AKTIVA') {
-      totalAktiva = category.total.amount;
-    } else if (category.type === 'KEWAJIBAN DAN EKUITAS') {
-      category.children.forEach((subCategory) => {
-        if (subCategory.type.includes('Kewajiban')) {
-          totalKewajiban += subCategory.total.amount;
-        } else if (subCategory.type === 'Ekuitas') {
-          totalEkuitas = subCategory.total.amount;
-        }
-      });
-    }
-  });
+interface FinancialGroup2 {
+  type: string;
+  children: FinancialItem[];
+  total: Total;
+}
 
-  return { totalAktiva, totalKewajiban, totalEkuitas };
-};
+interface FinancialItem {
+  accountName: string;
+  amount: number;
+}
 
-const LaporanPosisiKeuanganTable: React.FC = () => {
+interface Total {
+  name: string;
+  amount: number;
+}
+
+const LaporanPosisiKeuanganTable: React.FC<{ report: ReportLaporanPosisiKeuangan }> = ({ report }) => {
   // Ambil total aktiva, kewajiban, dan ekuitas
-  const { totalAktiva, totalKewajiban, totalEkuitas } = getTotalValues();
 
   return (
     <div className="w-[216mm] min-h-[297mm] mx-auto p-10" style={{ fontSize: '10pt' }}>
@@ -48,9 +45,7 @@ const LaporanPosisiKeuanganTable: React.FC = () => {
       {/* Bagian Tabel Transaksi */}
       <div className="bg-white rounded-md">
         <table className="w-full bg-white border border-black">
-          <thead>
-            {/* Header dihapus */}
-          </thead>
+          <thead>{/* Header dihapus */}</thead>
           <tbody>
             {/* AKTIVA */}
             {report.children.map((category, index) => (
@@ -62,7 +57,7 @@ const LaporanPosisiKeuanganTable: React.FC = () => {
                 {category.children.map((subCategory, idx) => (
                   <React.Fragment key={idx}>
                     <tr className="bg-gray-100">
-                      <td className="px-4 py-2 border-b border-black text-left font-bold">{subCategory.type} abc</td>
+                      <td className="px-4 py-2 border-b border-black text-left font-bold">{subCategory.type}</td>
                       <td className="px-4 py-2 border-b border-black text-right"></td>
                     </tr>
                     {subCategory.children.map((item, idy) => (

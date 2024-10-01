@@ -117,42 +117,49 @@ export const account_all: Omit<Account, 'id'>[] = [
     name: `Kas`,
     type: `Asset`,
     db_cr: `Db`,
+    pos: `NRC`,
   },
   {
     code: `1-1200`,
     name: `Piutang`,
     type: `Asset`,
     db_cr: `Db`,
+    pos: `NRC`,
   },
   {
     code: `1-1300`,
     name: `Perlangkapan`,
     type: `Asset`,
     db_cr: `Db`,
+    pos: `NRC`,
   },
   {
     code: `1-1400`,
     name: `Persediaan Aset Biologis`,
     type: `Asset`,
     db_cr: `Db`,
+    pos: `NRC`,
   },
   {
     code: `1-2100`,
     name: `Lahan Pertanian`,
     type: `Asset`,
     db_cr: `Db`,
+    pos: `NRC`,
   },
   {
     code: `1-2200`,
     name: `Peralatan`,
     type: `Asset`,
     db_cr: `Db`,
+    pos: `NRC`,
   },
   {
     code: `1-2210`,
     name: `Akumulasi Penyusutan Perlatan`,
     type: `Asset`,
     db_cr: `Cr`,
+    pos: `NRC`,
   },
   // kewajiban
   {
@@ -160,12 +167,14 @@ export const account_all: Omit<Account, 'id'>[] = [
     name: `Utang Usaha`,
     type: `Liabilitas`,
     db_cr: `Cr`,
+    pos: `NRC`,
   },
   {
     code: `2-2100`,
     name: `Utang Jangka Panjang`,
     type: `Liabilitas`,
     db_cr: `Cr`,
+    pos: `NRC`,
   },
   // ekuitas
   {
@@ -173,12 +182,14 @@ export const account_all: Omit<Account, 'id'>[] = [
     name: `Modal`,
     type: `Equity`,
     db_cr: `Cr`,
+    pos: `NRC`,
   },
   {
     code: `3-1200`,
     name: `Laba`,
     type: `Equity`,
     db_cr: `Db`,
+    pos: `NRC`,
   },
   // Pendapatan
   {
@@ -186,12 +197,14 @@ export const account_all: Omit<Account, 'id'>[] = [
     name: `Pendapatan Usaha`,
     type: `Income`,
     db_cr: `Cr`,
+    pos: `LR`,
   },
   {
     code: `4-1200`,
     name: `Retur Penjualan`,
     type: `Income`,
     db_cr: `Db`,
+    pos: `LR`,
   },
   // Beban-beban usaha
   {
@@ -199,36 +212,42 @@ export const account_all: Omit<Account, 'id'>[] = [
     name: `Beban Pupuk`,
     type: `Expense`,
     db_cr: `Db`,
+    pos: `LR`,
   },
   {
     code: `6-1200`,
     name: `Beban Benih`,
     type: `Expense`,
     db_cr: `Db`,
+    pos: `LR`,
   },
   {
     code: `6-1300`,
     name: `Beban Obat Hama`,
     type: `Expense`,
     db_cr: `Db`,
+    pos: `LR`,
   },
   {
     code: `6-1400`,
     name: `Beban Gaji dan Upah`,
     type: `Expense`,
     db_cr: `Db`,
+    pos: `LR`,
   },
   {
     code: `6-1500`,
     name: `Beban Transportasi`,
     type: `Expense`,
     db_cr: `Db`,
+    pos: `LR`,
   },
   {
     code: `6-1600`,
     name: `Beban Telp, Listrik, Air`,
     type: `Expense`,
     db_cr: `Db`,
+    pos: `LR`,
   },
 ];
 

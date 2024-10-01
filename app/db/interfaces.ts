@@ -41,6 +41,7 @@ export interface Account {
   name: string;
   type: string;
   db_cr: string; // Assuming this is for debit/credit
+  pos: string;
 }
 
 export interface Transaction {
