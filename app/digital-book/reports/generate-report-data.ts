@@ -299,7 +299,7 @@ export function generateReportData({ month, year, transactions = [], accounts = 
   const reportLaporanPerubahanModal = {
     code: 'UD XXX XXX',
     name: 'LAPORAN PERUBAHAN MODAL',
-    date: 'Januari 2024',
+    date: date,
     children: [
       {
         total: { name: 'Saldo Awal', amount: reportNeracaLajur.children.find((data) => data.NomorAkun === '3-1100').NeracaKredit },

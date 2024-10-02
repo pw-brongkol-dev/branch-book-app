@@ -64,11 +64,11 @@ export default function ProcessDataReport() {
 
   return (
     <div className="w-full h-dvh grid place-items-center">
-      <div className="max-w-md mx-auto flex flex-col gap-4">
+      <div className="max-w-md mx-auto p-5 flex flex-col gap-4">
         <BackButton />
         <h1 className="text-3xl font-bold">Download Laporan</h1>
         <div className="flex gap-4">
-          <div className="flex-1">
+          <div className="flex-1 flex flex-col gap-1">
             <label>Bulan</label>
             <Select value={selectedMonth} onValueChange={(value) => setSelectedMonth(Number(value))}>
               <SelectTrigger className="w-full">
@@ -83,7 +83,7 @@ export default function ProcessDataReport() {
               </SelectContent>
             </Select>
           </div>
-          <div className="flex-1">
+          <div className="flex-1 flex flex-col gap-1">
             <label>Tahun</label>
             <Input
               type="number"
@@ -121,7 +121,7 @@ function ReportDownloads({ data }) {
         <div className="grid grid-cols-2 gap-6">
           <ReactToPrint
             trigger={() => (
-              <button className="flex items-center bg-[#16a34a] text-white hover:bg-[#128a3a] rounded-[14px] w-auto h-[60px] text-sm sm:text-base px-2 sm:px-4">
+              <button className="flex items-center bg-blue-500 text-white hover:bg-blue-600 rounded-[14px] w-auto h-[60px] text-sm sm:text-base px-2 sm:px-4">
                 <FaFileAlt className="mr-2 pl-2 text-2xl" />
                 <span className="text-left"> Jurnal Umum </span>
               </button>
@@ -130,7 +130,7 @@ function ReportDownloads({ data }) {
           />
           <ReactToPrint
             trigger={() => (
-              <button className="flex items-center bg-[#16a34a] text-white hover:bg-[#128a3a] rounded-[14px] w-auto h-[60px] text-sm sm:text-base px-2 sm:px-4">
+              <button className="flex items-center bg-blue-500 text-white hover:bg-blue-600 rounded-[14px] w-auto h-[60px] text-sm sm:text-base px-2 sm:px-4">
                 <FaFileAlt className="mr-2 pl-2 text-2xl" />
                 <span className="text-left"> Neraca Lajur </span>
               </button>
@@ -139,7 +139,7 @@ function ReportDownloads({ data }) {
           />
           <ReactToPrint
             trigger={() => (
-              <button className="flex items-center bg-[#16a34a] text-white hover:bg-[#128a3a] rounded-[14px] w-auto h-[60px] text-sm sm:text-base px-2 sm:px-4">
+              <button className="flex items-center bg-blue-500 text-white hover:bg-blue-600 rounded-[14px] w-auto h-[60px] text-sm sm:text-base px-2 sm:px-4">
                 <FaFileAlt className="mr-2 pl-2 text-2xl" />
                 <span className="text-left"> Neraca Saldo </span>
               </button>
@@ -148,7 +148,7 @@ function ReportDownloads({ data }) {
           />
           <ReactToPrint
             trigger={() => (
-              <button className="flex items-center bg-[#16a34a] text-white hover:bg-[#128a3a] rounded-[14px] w-auto h-[60px] text-sm sm:text-base px-2 sm:px-4">
+              <button className="flex items-center bg-blue-500 text-white hover:bg-blue-600 rounded-[14px] w-auto h-[60px] text-sm sm:text-base px-2 sm:px-4">
                 <FaFileAlt className="mr-2 pl-2 text-2xl" />
                 <span className="text-left"> Laba Rugi </span>
               </button>
@@ -157,7 +157,7 @@ function ReportDownloads({ data }) {
           />
           <ReactToPrint
             trigger={() => (
-              <button className="flex items-center justify-start bg-[#16a34a] text-white hover:bg-[#128a3a] rounded-[14px] w-auto h-[60px] text-sm sm:text-base px-2 sm:px-4">
+              <button className="flex items-center justify-start bg-blue-500 text-white hover:bg-blue-600 rounded-[14px] w-auto h-[60px] text-sm sm:text-base px-2 sm:px-4">
                 <FaFileAlt className="mr-2 pl-2 text-2xl" />
                 <span className="text-left"> Laporan Posisi Keuangan </span>
               </button>
@@ -166,7 +166,7 @@ function ReportDownloads({ data }) {
           />
           <ReactToPrint
             trigger={() => (
-              <button className="flex items-center bg-[#16a34a] text-white hover:bg-[#128a3a] rounded-[14px] w-auto h-[60px] text-sm sm:text-base px-2 sm:px-4">
+              <button className="flex items-center bg-blue-500 text-white hover:bg-blue-600 rounded-[14px] w-auto h-[60px] text-sm sm:text-base px-2 sm:px-4">
                 <FaFileAlt className="mr-2 pl-2 text-2xl" />
                 <span className="text-left"> Laporan Perubahan Modal </span>
               </button>
