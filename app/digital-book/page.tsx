@@ -198,6 +198,7 @@ const TableViewNota = () => {
 
   return (
     <div className="w-full p-6 bg-gray-100 min-h-screen">
+      <div className='max-w-md mx-auto'>
       <BackButton />
       <div className="mt-8">
         <div className="flex flex-col mb-4 p-4 ">
@@ -207,7 +208,7 @@ const TableViewNota = () => {
               <Button className="bg-blue-600 text-white hover:bg-blue-700 transition duration-300 ease-in-out transform hover:scale-105">Input Nota Transaksi</Button>
             </Link>
             <div className="mx-2" /> {/* Tambahkan padding di sini */}
-            <Link href="/digital-book/downloads">
+            <Link href="/digital-book/reports">
               <Button className="bg-green-600 text-white hover:bg-green-700 transition duration-300 ease-in-out transform hover:scale-105">Unduh Laporan</Button>
             </Link>
           </div>
@@ -268,6 +269,7 @@ const TableViewNota = () => {
             </Button>
           </div>
         </div>
+      </div>
       </div>
     </div>
   );

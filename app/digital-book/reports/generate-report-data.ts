@@ -1,5 +1,5 @@
 export function generateReportData({ month, year, transactions = [], accounts = [] }) {
-  const localMonth = new Date(0, month).toLocaleString('default', { month: 'long' });
+  const localMonth = new Date(0, month-1).toLocaleString('default', { month: 'long' });
   const date = `${localMonth.toUpperCase()} ${year}`;
 
   transactions.sort((a, b) => a.date.toDate().getTime() - b.date.toDate().getTime());

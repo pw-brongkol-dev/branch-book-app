@@ -83,6 +83,7 @@ const InputNota = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 p-8">
+      <div className='max-w-md mx-auto'>
       <BackButton />
 
       <div className="max-w-3xl mx-auto mt-10">
@@ -132,6 +133,7 @@ const InputNota = () => {
             </Button>
           </div>
         </form>
+      </div>
       </div>
     </div>
   );

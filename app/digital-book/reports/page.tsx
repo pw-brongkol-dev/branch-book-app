@@ -18,6 +18,8 @@ import LabaRugi from './tables/05-laba-rugi';
 import LaporanPosisiKeuangan from './tables/06-laporan-posisi-keuangan';
 import LaporanPerubahanModal from './tables/07-laporan-perubahan-modal';
 
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
 
 export default function ProcessDataReport() {
   const router = useRouter();
@@ -61,44 +63,44 @@ export default function ProcessDataReport() {
   };
 
   return (
-    <div>
-      <h2>Process Data Report</h2>
-      <div>
-        <label>Select Month:</label>
-        <select value={selectedMonth} onChange={(e) => setSelectedMonth(Number(e.target.value))}>
-          {[...Array(12)].map((_, index) => (
-            <option key={index} value={index + 1}>
-              {new Date(0, index).toLocaleString('default', { month: 'long' })}
-            </option>
-          ))}
-        </select>
-      </div>
-      <div>
-        <label>Input Year:</label>
-        <input
-          type="number"
-          value={inputYear}
-          onChange={(e) => setInputYear(Number(e.target.value))}
-          min="2000" // Set a minimum year
-        />
-      </div>
-      <button onClick={handleProcess}>Process</button>
-      {/* <div>
-        {data.length > 0 && (
-          <ul>
-            {data.map((transaction, index) => (
-              <li key={index}>{JSON.stringify(transaction)}</li>
-            ))}
-          </ul>
+    <div className="w-full h-dvh grid place-items-center">
+      <div className="max-w-md mx-auto flex flex-col gap-4">
+        <BackButton />
+        <h1 className="text-3xl font-bold">Download Laporan</h1>
+        <div className="flex gap-4">
+          <div className="flex-1">
+            <label>Bulan</label>
+            <Select value={selectedMonth} onValueChange={(value) => setSelectedMonth(Number(value))}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select Month" />
+              </SelectTrigger>
+              <SelectContent>
+                {[...Array(12)].map((_, index) => (
+                  <SelectItem key={index} value={index + 1}>
+                    {new Date(0, index).toLocaleString('default', { month: 'long' })}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex-1">
+            <label>Tahun</label>
+            <Input
+              type="number"
+              value={inputYear}
+              onChangeCapture={(e) => setInputYear(Number(e.target.value))}
+              min="2000" // Set a minimum year
+            />
+          </div>
+        </div>
+        {processDataStatus === 'idle' ? (
+          <p>please wait</p>
+        ) : processDataStatus === 'processing' ? (
+          <p>loading...</p>
+        ) : (
+          data && <ReportDownloads data={data} />
         )}
-      </div> */}
-      {processDataStatus === 'idle' ? (
-        <p>please wait</p>
-      ) : processDataStatus === 'processing' ? (
-        <p>loading...</p>
-      ) : (
-        data && <ReportDownloads data={data} />
-      )}
+      </div>
     </div>
   );
 }
@@ -114,11 +116,8 @@ function ReportDownloads({ data }) {
   const componentRef6 = useRef<React.ElementRef<typeof LaporanPerubahanModal>>(null);
 
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <BackButton /> {/* Tambahkan BackButton di sini */}
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <h1 className="text-3xl font-bold">Download Laporan</h1>
-
+    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center font-[family-name:var(--font-geist-sans)]">
+      <main className="flex flex-col row-start-2 items-center sm:items-start">
         <div className="grid grid-cols-2 gap-6">
           <ReactToPrint
             trigger={() => (
