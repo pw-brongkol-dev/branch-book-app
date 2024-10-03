@@ -6,105 +6,107 @@ import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import BackButton from '../components/BackButton';
 import Link from 'next/link';
+import { useFirestore } from '../hooks/useFirestore';
+import { useState, useEffect } from 'react';
 
-const data: Payment[] = [
-  {
-    id: 'm5gr84i9',
-    nominal: 316000,
-    date: '12 September 2024',
-    name_account: 'Kas',
-    ref: ' ',
-    information: 'Penjualan kopi',
-  },
-  {
-    id: 'm5gr84i9',
-    nominal: 316000,
-    date: '12 September 2024',
-    name_account: 'Kas',
-    ref: ' ',
-    information: 'Penjualan kopi',
-  },
-  {
-    id: 'm5gr84i9',
-    nominal: 316000,
-    date: '12 September 2024',
-    name_account: 'Kas',
-    ref: ' ',
-    information: 'Penjualan kopi',
-  },
-  {
-    id: 'm5gr84i9',
-    nominal: 316000,
-    date: '12 September 2024',
-    name_account: 'Kas',
-    ref: ' ',
-    information: 'Penjualan kopi',
-  },
-  {
-    id: 'm5gr84i9',
-    nominal: 316000,
-    date: '12 September 2024',
-    name_account: 'Kas',
-    ref: ' ',
-    information: 'Penjualan kopi',
-  },
-  {
-    id: 'm5gr84i9',
-    nominal: 316000,
-    date: '12 September 2024',
-    name_account: 'Kas',
-    ref: ' ',
-    information: 'Penjualan kopi',
-  },
-  {
-    id: 'm5gr84i9',
-    nominal: 316000,
-    date: '12 September 2024',
-    name_account: 'Kas',
-    ref: ' ',
-    information: 'Penjualan kopi',
-  },
-  {
-    id: 'm5gr84i9',
-    nominal: 316000,
-    date: '12 September 2024',
-    name_account: 'Kas',
-    ref: ' ',
-    information: 'Penjualan kopi',
-  },
-  {
-    id: 'm5gr84i9',
-    nominal: 316000,
-    date: '12 September 2024',
-    name_account: 'Kas',
-    ref: ' ',
-    information: 'Penjualan kopi',
-  },
-  {
-    id: 'm5gr84i9',
-    nominal: 316000,
-    date: '12 September 2024',
-    name_account: 'Kas',
-    ref: ' ',
-    information: 'Penjualan kopi',
-  },
-  {
-    id: 'm5gr84i9',
-    nominal: 316000,
-    date: '12 September 2024',
-    name_account: 'Kas',
-    ref: ' ',
-    information: 'Penjualan kopi',
-  },
-  {
-    id: 'm5gr84i9',
-    nominal: 316000,
-    date: '12 September 2024',
-    name_account: 'Kas',
-    ref: ' ',
-    information: 'Penjualan kopi',
-  },
-];
+// const data: Payment[] = [
+//   {
+//     id: 'm5gr84i9',
+//     nominal: 316000,
+//     date: '12 September 2024',
+//     name_account: 'Kas',
+//     ref: ' ',
+//     information: 'Penjualan kopi',
+//   },
+//   {
+//     id: 'm5gr84i9',
+//     nominal: 316000,
+//     date: '12 September 2024',
+//     name_account: 'Kas',
+//     ref: ' ',
+//     information: 'Penjualan kopi',
+//   },
+//   {
+//     id: 'm5gr84i9',
+//     nominal: 316000,
+//     date: '12 September 2024',
+//     name_account: 'Kas',
+//     ref: ' ',
+//     information: 'Penjualan kopi',
+//   },
+//   {
+//     id: 'm5gr84i9',
+//     nominal: 316000,
+//     date: '12 September 2024',
+//     name_account: 'Kas',
+//     ref: ' ',
+//     information: 'Penjualan kopi',
+//   },
+//   {
+//     id: 'm5gr84i9',
+//     nominal: 316000,
+//     date: '12 September 2024',
+//     name_account: 'Kas',
+//     ref: ' ',
+//     information: 'Penjualan kopi',
+//   },
+//   {
+//     id: 'm5gr84i9',
+//     nominal: 316000,
+//     date: '12 September 2024',
+//     name_account: 'Kas',
+//     ref: ' ',
+//     information: 'Penjualan kopi',
+//   },
+//   {
+//     id: 'm5gr84i9',
+//     nominal: 316000,
+//     date: '12 September 2024',
+//     name_account: 'Kas',
+//     ref: ' ',
+//     information: 'Penjualan kopi',
+//   },
+//   {
+//     id: 'm5gr84i9',
+//     nominal: 316000,
+//     date: '12 September 2024',
+//     name_account: 'Kas',
+//     ref: ' ',
+//     information: 'Penjualan kopi',
+//   },
+//   {
+//     id: 'm5gr84i9',
+//     nominal: 316000,
+//     date: '12 September 2024',
+//     name_account: 'Kas',
+//     ref: ' ',
+//     information: 'Penjualan kopi',
+//   },
+//   {
+//     id: 'm5gr84i9',
+//     nominal: 316000,
+//     date: '12 September 2024',
+//     name_account: 'Kas',
+//     ref: ' ',
+//     information: 'Penjualan kopi',
+//   },
+//   {
+//     id: 'm5gr84i9',
+//     nominal: 316000,
+//     date: '12 September 2024',
+//     name_account: 'Kas',
+//     ref: ' ',
+//     information: 'Penjualan kopi',
+//   },
+//   {
+//     id: 'm5gr84i9',
+//     nominal: 316000,
+//     date: '12 September 2024',
+//     name_account: 'Kas',
+//     ref: ' ',
+//     information: 'Penjualan kopi',
+//   },
+// ];
 
 export type Payment = {
   id: string;
@@ -163,10 +165,49 @@ export const columns: ColumnDef<Payment>[] = [
 ];
 
 const TableViewNota = () => {
+  const { getTransactionsByUserId, getAllAccounts } = useFirestore()
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
+
+  const [data, setData] = useState([])
+  const [fetchStatus, setFetchStatus] = useState('idle')
+  
+  useEffect(() => {
+    fetchData()
+  },[])
+
+  const fetchData = async () => {
+    setFetchStatus('loading')
+    const userId = localStorage.getItem('user_id_branch_book_app');
+    if (userId) {
+      try {
+        const transactions = await getTransactionsByUserId(userId);
+        const accounts = await getAllAccounts();
+
+        const transactionData = transactions.map((transaction) => ({
+          id: transaction.id,
+          nominal: transaction.total_amount,
+          date: transaction.date.toDate().toLocaleDateString('id-ID', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          }),
+          name_account: accounts.find(account => account.id === transaction.account_id)?.name || '', // find account name by transactiion.account_id
+          ref: '',
+          information: transaction.description,
+        }))
+
+        setData(transactionData);
+        console.log(transactionData);
+        setFetchStatus('completed')
+      } catch (err) {
+        console.error('error', err);
+        setFetchStatus('error')
+      }
+    }
+  }
 
   // Pagination state management
   const [pagination, setPagination] = React.useState({
@@ -195,6 +236,18 @@ const TableViewNota = () => {
     manualPagination: false, // Using the table's internal pagination
     pageCount: Math.ceil(data.length / pagination.pageSize), // Adjust if you have server-side data
   });
+
+  if (fetchStatus === 'idle') {
+    return <div>loading...</div>
+  }
+
+  if (fetchStatus === 'loading') {
+    return <div>loading</div>
+  }
+
+  if (fetchStatus === 'error') {
+    return <div>try again</div>
+  }
 
   return (
     <div className="w-full p-6 bg-gray-100 min-h-screen">
