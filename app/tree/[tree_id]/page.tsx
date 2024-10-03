@@ -26,6 +26,7 @@ const TreeDetailsPage = ({ params }: { params: { tree_id: string } }) => {
     deleteTree,
     deleteRelTreeFertilization,
   } = useFirestore();
+
   const { toast } = useToast();
   const router = useRouter(); // Initialize router
 
@@ -180,99 +181,130 @@ const TreeDetailsPage = ({ params }: { params: { tree_id: string } }) => {
     console.log(fertilizationHistory);
   }, [fertilizationHistory]);
 
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen((prev) => !prev);
+  };
+
+  const closeDropdown = () => {
+    setIsDropdownOpen(false);
+  };
+
   if (fetchStatus === 'loading') {
     return <div>Loading...</div>;
   }
 
   return (
-    <div className="min-h-screen p-4 bg-gray-100" style={{ backgroundColor: '#f7fbf2' }}>
-      <BackButton />
-      <div className="bg-white max-w-md mx-auto mt-12 pt-4 pb-4 rounded-lg shadow-lg">
-        <h2 className="text-lg font-semibold text-center">Pohon Durian</h2>
-        <div className="p-4">
-          <div className="mb-4">
-            <p className="text-sm">
-              Pemilik: <span className="font-semibold">{treeDetail?.owner}</span>
-            </p>
-            <p className="text-sm">
-              Jenis/Aksesi: <span className="font-semibold">{treeDetail?.type}</span>
-            </p>
-            <p className="text-sm">
-              Usia: <span className="font-semibold">{treeDetail?.age}</span>
-            </p>
-            <p className="text-sm">
-              Lokasi: <span className="font-semibold">{treeDetail?.location}</span>
-            </p>
-            <div className="flex justify-start items-center mt-4 space-x-4">
-              <Link href={`/tree/${tree_code}/edit-tree`}>
-                <button className="bg-green-600 text-white flex items-center py-2 px-4 rounded-md hover:bg-green-700">
-                  <FiEdit className="mr-1" />
-                  Edit
+    <div className="min-h-dvh w-full">
+      <div className="flex flex-col w-full max-w-md mx-auto p-4">
+        <BackButton />
+        <div className="bg-white pt-8">
+          <h2 className="text-lg font-semibold text-center">Pohon Durian</h2>
+          <div className="p-4">
+            <div className="flex justify-between items-center mb-4">
+              <div>
+                <p className="text-sm">
+                  Pemilik: <span className="font-semibold">{treeDetail?.owner}</span>
+                </p>
+                <p className="text-sm">
+                  Jenis/Aksesi: <span className="font-semibold">{treeDetail?.type}</span>
+                </p>
+                <p className="text-sm">
+                  Usia: <span className="font-semibold">{treeDetail?.age}</span>
+                </p>
+                <p className="text-sm">
+                  Lokasi: <span className="font-semibold">{treeDetail?.location}</span>
+                </p>
+              </div>
+              <div className="relative">
+                <button onClick={toggleDropdown} className="bg-gray-600 text-white rounded-md p-2">
+                  More
                 </button>
-              </Link>
-
-              <button onClick={handleDelete} className="bg-red-600 text-white flex items-center py-2 px-4 rounded-md hover:bg-red-700">
-                <FiTrash className="mr-1" />
-                Delete
-              </button>
-            </div>
-          </div>
-
-          {/* Accordion for Riwayat */}
-          <Accordion type="single" collapsible className="w-full">
-            <AccordionItem value="riwayat">
-              <AccordionTrigger>Riwayat</AccordionTrigger>
-              <AccordionContent>
-                <div className="space-y-2">
-                  {fertilizationHistory.map((item) => (
-                    <div key={item.id} className="flex items-start p-2 rounded-md">
-                      <input
-                        type="checkbox"
-                        checked={item.is_completed}
-                        onChange={() => toggleCompleted(item.id)}
-                        className="h-6 w-6 flex-none"
-                        style={{ accentColor: '#38693C', width: '24px', height: '24px', marginRight: '10px' }}
-                      />
-                      <div>
-                        <p className="font-semibold text-[#38693C]">{item.title}</p>
-                        <p className="text-xs text-gray-600">{item.date}</p>
-                        <p className="text-sm">{item.description}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
-
-          {/* Accordion for QR Code */}
-          <Accordion type="single" collapsible className="w-full mt-4">
-            <AccordionItem value="qr-code">
-              <AccordionTrigger>Buat QR Code</AccordionTrigger>
-              <AccordionContent>
-                <Button onClick={generateQRCode} className="mt-2">
-                  Generate QR Code
-                </Button>
-                {qrCodeData && (
-                  <div className="flex flex-col items-center mt-4">
-                    <img src={qrCodeData} alt="QR Code" className="w-64 h-64" />
-                    <Button
+                {isDropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white border rounded-md shadow-lg z-10 ">
+                    <div className='flex flex-col gap-2 p-3'> 
+                    <Link href={`/tree/${tree_code}/edit-tree`} passHref>
+                      <button
+                        onClick={closeDropdown}
+                        className="bg-green-600 text-white flex items-center py-2 px-4 rounded-md hover:bg-green-700 w-full text-left"
+                      >
+                        <FiEdit className="mr-1" />
+                        Edit
+                      </button>
+                    </Link>
+                    <button
                       onClick={() => {
-                        const link = document.createElement('a');
-                        link.href = qrCodeData as string;
-                        link.download = `qrcode-${tree_code}.png`;
-                        link.click();
+                        handleDelete();
+                        closeDropdown();
                       }}
-                      className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white mt-2"
+                      className="bg-red-600 text-white flex items-center py-2 px-4 rounded-md hover:bg-red-700 w-full text-left"
                     >
-                      <FiDownload />
-                      Download QR Code
-                    </Button>
+                      <FiTrash className="mr-1" />
+                      Delete
+                    </button>
+                    </div>
                   </div>
                 )}
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
+              </div>
+            </div>
+
+            {/* Accordion for Riwayat */}
+            <Accordion type="single" collapsible defaultValue="riwayat" className="w-full">
+              <AccordionItem value="riwayat">
+                <AccordionTrigger>Riwayat</AccordionTrigger>
+                <AccordionContent>
+                  <div className="space-y-2">
+                    {fertilizationHistory.map((item) => (
+                      <div key={item.id} className="flex items-start p-2 rounded-md">
+                        <input
+                          type="checkbox"
+                          checked={item.is_completed}
+                          onChange={() => toggleCompleted(item.id)}
+                          className="h-6 w-6 flex-none"
+                          style={{ accentColor: '#38693C', width: '24px', height: '24px', marginRight: '10px' }}
+                        />
+                        <div>
+                          <p className="font-semibold text-[#38693C]">{item.title}</p>
+                          <p className="text-xs text-gray-600">{item.date}</p>
+                          <p className="text-sm">{item.description}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+
+            {/* Accordion for QR Code */}
+            <Accordion type="single" collapsible className="w-full mt-4">
+              <AccordionItem value="qr-code">
+                <AccordionTrigger>Buat QR Code</AccordionTrigger>
+                <AccordionContent>
+                  <Button onClick={generateQRCode} className="mt-2">
+                    Generate QR Code
+                  </Button>
+                  {qrCodeData && (
+                    <div className="flex flex-col items-center mt-4">
+                      <img src={qrCodeData} alt="QR Code" className="w-64 h-64" />
+                      <Button
+                        onClick={() => {
+                          const link = document.createElement('a');
+                          link.href = qrCodeData as string;
+                          link.download = `qrcode-${tree_code}.png`;
+                          link.click();
+                        }}
+                        className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white mt-2"
+                      >
+                        <FiDownload />
+                        Download QR Code
+                      </Button>
+                    </div>
+                  )}
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </div>
         </div>
       </div>
     </div>

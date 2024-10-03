@@ -115,55 +115,57 @@ const EditTreeForm = ({ params }: { params: { tree_id: string } }) => {
 
   return (
     <div className="container mx-auto px-6 py-12">
-      <BackButton />
-      <h2 className="text-2xl font-bold mb-4 mt-6">Edit Data Pohon</h2>
-      <form className="space-y-4" onSubmit={handleSubmit}>
-        <div>
-          <label className="block text-sm font-medium mb-2" htmlFor="code">
-            Kode Pohon
-          </label>
-          <Input id="code" name="code" value={treeDetail.code} onChange={handleInputChange} required />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-2" htmlFor="owner">
-            Nama Petani
-          </label>
-          <Input id="owner" name="owner" value={userChanged.name} onChange={handleInputChange} required />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-2" htmlFor="type">
-            Jenis Pohon
-          </label>
-          <Select onValueChange={handleSelectChange} value={treeDetail.type} required>
-            <SelectTrigger>
-              <SelectValue>{treeDetail.type ? treeDetail.type : 'Pilih Jenis Pohon'}</SelectValue>
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Durian">Durian</SelectItem>
-              <SelectItem value="Kopi">Kopi</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-2" htmlFor="accession">
-            Aksesi
-          </label>
-          <Input id="accession" name="accession" value={treeDetail.accession} onChange={handleInputChange} required />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-2" htmlFor="location">
-            Lokasi
-          </label>
-          <Input id="location" name="location" value={treeDetail.location} onChange={handleInputChange} required />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-2" htmlFor="planting_date">
-            Tanggal Penanaman
-          </label>
-          <Input type="date" id="planting_date" name="planting_date" value={treeDetail.planting_date} onChange={handleInputChange} required />
-        </div>
-        <Button type="submit">Submit</Button>
-      </form>
+      <div className="flex flex-col w-full max-w-md mx-auto p-4">
+        <BackButton />
+        <h2 className="text-2xl font-bold mb-4 mt-6">Edit Data Pohon</h2>
+        <form className="space-y-4" onSubmit={handleSubmit}>
+          <div>
+            <label className="block text-sm font-medium mb-2" htmlFor="code">
+              Kode Pohon
+            </label>
+            <Input id="code" name="code" value={treeDetail.code} onChange={handleInputChange} required />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2" htmlFor="owner">
+              Nama Petani
+            </label>
+            <Input id="owner" name="owner" value={userChanged.name} onChange={handleInputChange} required />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2" htmlFor="type">
+              Jenis Pohon
+            </label>
+            <Select onValueChange={handleSelectChange} value={treeDetail.type} required>
+              <SelectTrigger>
+                <SelectValue>{treeDetail.type ? treeDetail.type : 'Pilih Jenis Pohon'}</SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Durian">Durian</SelectItem>
+                <SelectItem value="Kopi">Kopi</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2" htmlFor="accession">
+              Aksesi
+            </label>
+            <Input id="accession" name="accession" value={treeDetail.accession} onChange={handleInputChange} required />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2" htmlFor="location">
+              Lokasi
+            </label>
+            <Input id="location" name="location" value={treeDetail.location} onChange={handleInputChange} required />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2" htmlFor="planting_date">
+              Tanggal Penanaman
+            </label>
+            <Input type="date" id="planting_date" name="planting_date" value={treeDetail.planting_date} onChange={handleInputChange} required />
+          </div>
+          <Button type="submit">Submit</Button>
+        </form>
+      </div>
     </div>
   );
 };
