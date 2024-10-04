@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'; // Import Button from shadcn
 import { useRouter } from 'next/navigation';
 
 const LoginPage = () => {
-	const router = useRouter()
+  const router = useRouter();
   const { getAllUsers } = useFirestore();
   const [users, setUsers] = useState<{ id: string; name: string }[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<{ id: string; name: string }[]>([]);
@@ -41,7 +41,7 @@ const LoginPage = () => {
       localStorage.setItem('user_id_branch_book_app', selectedUserId);
       // Redirect to the next page or perform the next action
       console.log('User ID saved:', selectedUserId);
-			router.push("/")
+      router.push('/');
     }
   };
 
@@ -54,10 +54,10 @@ const LoginPage = () => {
 
   return (
     <div className="p-5 h-dvh flex flex-col justify-between">
-			<div>
-				<h2>Halo</h2>
-			</div>
-      <div className='w-full'>
+      <div>
+        <h2>Halo</h2>
+      </div>
+      <div className="w-full">
         <label htmlFor="user" className="text-sm">
           Nama
         </label>
@@ -71,7 +71,7 @@ const LoginPage = () => {
           onBlur={() => {
             setTimeout(() => {
               setIsFocused(false);
-            }, 100);
+            }, 400);
           }} // Set focus state to false
           autoComplete="on"
         />
@@ -87,11 +87,11 @@ const LoginPage = () => {
               </ul>
             )}
         </div>
-        <Button className='w-full' onClick={handleNext} disabled={!selectedUserId}>
+        <Button className="w-full" onClick={handleNext} disabled={!selectedUserId}>
           Lanjut
         </Button>
       </div>
-			<div></div>
+      <div></div>
     </div>
   );
 };

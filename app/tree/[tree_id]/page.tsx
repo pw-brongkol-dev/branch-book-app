@@ -13,6 +13,8 @@ import { useRouter } from 'next/navigation'; // Change this import
 
 import { RelTreeFertilization, Fertilization, Tree } from '@/app/db/interfaces';
 import { useToast } from '@/hooks/use-toast';
+import ReactToPrint from 'react-to-print';
+import QrCode from '../tree-datatable/qrcode';
 
 const TreeDetailsPage = ({ params }: { params: { tree_id: string } }) => {
   const tree_code = params.tree_id;
@@ -50,6 +52,7 @@ const TreeDetailsPage = ({ params }: { params: { tree_id: string } }) => {
   const [treeFertilizations, setTreeFertilizations] = useState<RelTreeFertilization[]>([]);
   const [treeDataId, setTreeDataId] = useState('');
   const [qrCodeData, setQrCodeData] = useState<string | null>(null);
+  const componentRef = React.useRef<React.ElementRef<typeof QrCode>>(null);
 
   const generateQRCode = async () => {
     try {
@@ -223,26 +226,26 @@ const TreeDetailsPage = ({ params }: { params: { tree_id: string } }) => {
                 </button>
                 {isDropdownOpen && (
                   <div className="absolute right-0 mt-2 w-48 bg-white border rounded-md shadow-lg z-10 ">
-                    <div className='flex flex-col gap-2 p-3'> 
-                    <Link href={`/tree/${tree_code}/edit-tree`} passHref>
+                    <div className="flex flex-col gap-2 p-3">
+                      <Link href={`/tree/${tree_code}/edit-tree`} passHref>
+                        <button
+                          onClick={closeDropdown}
+                          className="bg-green-600 text-white flex items-center py-2 px-4 rounded-md hover:bg-green-700 w-full text-left"
+                        >
+                          <FiEdit className="mr-1" />
+                          Edit
+                        </button>
+                      </Link>
                       <button
-                        onClick={closeDropdown}
-                        className="bg-green-600 text-white flex items-center py-2 px-4 rounded-md hover:bg-green-700 w-full text-left"
+                        onClick={() => {
+                          handleDelete();
+                          closeDropdown();
+                        }}
+                        className="bg-red-600 text-white flex items-center py-2 px-4 rounded-md hover:bg-red-700 w-full text-left"
                       >
-                        <FiEdit className="mr-1" />
-                        Edit
+                        <FiTrash className="mr-1" />
+                        Delete
                       </button>
-                    </Link>
-                    <button
-                      onClick={() => {
-                        handleDelete();
-                        closeDropdown();
-                      }}
-                      className="bg-red-600 text-white flex items-center py-2 px-4 rounded-md hover:bg-red-700 w-full text-left"
-                    >
-                      <FiTrash className="mr-1" />
-                      Delete
-                    </button>
                     </div>
                   </div>
                 )}
@@ -285,21 +288,24 @@ const TreeDetailsPage = ({ params }: { params: { tree_id: string } }) => {
                     Generate QR Code
                   </Button>
                   {qrCodeData && (
-                    <div className="flex flex-col items-center mt-4">
-                      <img src={qrCodeData} alt="QR Code" className="w-64 h-64" />
-                      <Button
-                        onClick={() => {
-                          const link = document.createElement('a');
-                          link.href = qrCodeData as string;
-                          link.download = `qrcode-${tree_code}.png`;
-                          link.click();
-                        }}
-                        className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white mt-2"
-                      >
-                        <FiDownload />
-                        Download QR Code
-                      </Button>
-                    </div>
+                    <>
+                      <div className="flex flex-col items-center mt-4">
+                        <img src={qrCodeData} alt="QR Code" className="w-64 h-64" />
+                      </div>
+                      <ReactToPrint
+                        trigger={() => (
+                          <Button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white mt-2">
+                            <FiDownload />
+                            Download QR Code
+                          </Button>
+                        )}
+                        content={() => componentRef.current} // Komponen yang akan dicetak
+                      />
+                      {/* Komponen QR Code yang tidak terlihat, akan digunakan oleh ReactToPrint */}
+                      <div style={{ display: 'none' }}>
+                        <QrCode ref={componentRef} qrCodeData={qrCodeData} treeDetail={treeDetail} />
+                      </div>
+                    </>
                   )}
                 </AccordionContent>
               </AccordionItem>
