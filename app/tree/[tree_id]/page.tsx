@@ -292,15 +292,19 @@ const TreeDetailsPage = ({ params }: { params: { tree_id: string } }) => {
                       <div className="flex flex-col items-center mt-4">
                         <img src={qrCodeData} alt="QR Code" className="w-64 h-64" />
                       </div>
-                      <ReactToPrint
-                        trigger={() => (
-                          <Button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white mt-2">
-                            <FiDownload />
-                            Download QR Code
-                          </Button>
-                        )}
-                        content={() => componentRef.current} // Komponen yang akan dicetak
-                      />
+                      <div className="flex justify-center mt-2">
+                        {' '}
+                        {/* Centering the button */}
+                        <ReactToPrint
+                          trigger={() => (
+                            <Button className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white">
+                              <FiDownload />
+                              Download QR Code
+                            </Button>
+                          )}
+                          content={() => componentRef.current} // Komponen yang akan dicetak
+                        />
+                      </div>
                       {/* Komponen QR Code yang tidak terlihat, akan digunakan oleh ReactToPrint */}
                       <div style={{ display: 'none' }}>
                         <QrCode ref={componentRef} qrCodeData={qrCodeData} treeDetail={treeDetail} />
