@@ -24,8 +24,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} antialiased`} suppressHydrationWarning={true}>
-        {children}
+      <body className={`${inter.variable} antialiased w-screen h-dvh flex items-center justify-center bg-gray-200 sm:py-4`} suppressHydrationWarning={true}>
+        <main className='max-w-md w-full h-full bg-white sm:rounded-3xl overflow-auto relative'>
+          {children}
+        </main>
         <Toaster />
       </body>
     </html>

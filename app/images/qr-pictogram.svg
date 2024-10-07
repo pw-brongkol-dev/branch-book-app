@@ -1,0 +1,22 @@
+<svg width="68" height="64" viewBox="0 0 68 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="46.3479" y="2" width="19.6522" height="20" rx="4" stroke="black" stroke-width="4" stroke-linecap="square"/>
+<rect x="2" y="2" width="19.6522" height="20" rx="4" stroke="black" stroke-width="4" stroke-linecap="square"/>
+<rect x="2" y="42" width="19.6522" height="20" rx="4" stroke="black" stroke-width="4" stroke-linecap="square"/>
+<mask id="path-4-inside-1_103_524" fill="white">
+<rect x="51.2463" y="7" width="9.85507" height="10" rx="2"/>
+</mask>
+<rect x="51.2463" y="7" width="9.85507" height="10" rx="2" fill="black" stroke="black" stroke-width="8" stroke-linecap="square" mask="url(#path-4-inside-1_103_524)"/>
+<mask id="path-5-inside-2_103_524" fill="white">
+<rect x="6.89844" y="7" width="9.85507" height="10" rx="2"/>
+</mask>
+<rect x="6.89844" y="7" width="9.85507" height="10" rx="2" fill="black" stroke="black" stroke-width="8" stroke-linecap="square" mask="url(#path-5-inside-2_103_524)"/>
+<mask id="path-6-inside-3_103_524" fill="white">
+<rect x="6.89844" y="47" width="9.85507" height="10" rx="2"/>
+</mask>
+<rect x="6.89844" y="47" width="9.85507" height="10" rx="2" fill="black" stroke="black" stroke-width="8" stroke-linecap="square" mask="url(#path-6-inside-3_103_524)"/>
+<path d="M35.9709 5.5V18C35.9709 19.1046 35.0755 20 33.9709 20H31.5651C30.4605 20 29.5651 20.8954 29.5651 22V31.5C29.5651 32.6046 28.6697 33.5 27.5651 33.5H17.739" stroke="black" stroke-width="4" stroke-linecap="square"/>
+<path d="M65.0434 37.5H51.7681C50.6635 37.5 49.7681 36.6046 49.7681 35.5V31.5C49.7681 30.3954 48.8727 29.5 47.7681 29.5H39.4203M39.913 42.5V46.5C39.913 47.6046 39.0176 48.5 37.913 48.5H31.5652C30.4606 48.5 29.5652 49.3954 29.5652 50.5V58" stroke="black" stroke-width="4" stroke-linecap="square"/>
+<path d="M49.7681 53H54.6956" stroke="black" stroke-width="4" stroke-linecap="square"/>
+<path d="M50.261 62H62.5508C63.6554 62 64.5508 61.1046 64.5508 60V49.5" stroke="black" stroke-width="4" stroke-linecap="square"/>
+<path d="M2.95654 34.5H8.37683" stroke="black" stroke-width="4" stroke-linecap="square"/>
+</svg>

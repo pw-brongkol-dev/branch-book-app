@@ -1,4 +1,4 @@
-"use client"
+'use client';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -7,7 +7,12 @@ import { History, BookOpen, Sprout, Trees } from 'lucide-react';
 import RippleButton from './components/RippleButton';
 import { LucideIcon } from 'lucide-react';
 import { useFirestore } from './hooks/useFirestore';
-
+import Footer from './components/Footer';
+import Image from 'next/image';
+import geometricPattern from '@/app/images/geometric-pattern-homepage.svg';
+import treeIcon from '@/app/icons/nature_40dp_white.svg'
+import bookIcon from '@/app/icons/auto_stories_40dp_white.svg'
+ 
 interface PastelIconProps {
   Icon: LucideIcon;
   bgColor: string;
@@ -24,9 +29,9 @@ const PastelIcon: React.FC<PastelIconProps> = ({ Icon, bgColor, iconColor }) => 
 
 export default function Home() {
   const router = useRouter(); // Initialize the router
-  const { getUserById } = useFirestore()
+  const { getUserById } = useFirestore();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userName, setUserName] = useState("")
+  const [userName, setUserName] = useState('');
 
   useEffect(() => {
     const userId = localStorage.getItem('user_id_branch_book_app');
@@ -35,8 +40,8 @@ export default function Home() {
     } else {
       setIsLoggedIn(true);
       getUserById(userId).then((data) => {
-        setUserName(data?.name || "")
-      })
+        setUserName(data?.name || '');
+      });
     }
   }, [router]);
 
@@ -50,41 +55,36 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-background text-foreground p-6">
-      <div className="flex flex-col h-full max-w-md mx-auto">
-        <div className="flex items-center justify-between mb-20">
-          <div className="flex items-center">
-            <Sprout className="h-8 w-8 mr-3 text-green-600" />
-            <h1 className="text-3xl font-bold">Halo {userName}</h1>
-          </div>
-          <button
-            onClick={handleLogout}
-            className="text-red-600 hover:text-red-800 transition-colors"
-          >
-            Keluar
-          </button>
-        </div>
-        <div className="flex flex-col gap-4">
-          <Link href="/tree/tree-datatable" className="w-full">
-            <RippleButton className="w-full bg-neutral-50 active:bg-green-50 active:border-green-500 text-card-foreground border-2 border-slate-200 shadow-sm rounded-3xl p-6 flex flex-col items-center transition-colors">
-              <PastelIcon Icon={Trees} bgColor="bg-green-100" iconColor="text-green-600" />
-              <span className="text-lg font-medium">Data Pohon</span>
-            </RippleButton>
+    <div className="h-full flex flex-col">
+      <div className="flex-1 h-full flex flex-col">
+        <header className="flex-none h-52 relative overflow-hidden">
+          <div className="px-6 h-full flex flex-col justify-center relative z-10">
+            <span className='text-4xl text-gray-700'>Halo {userName}</span>
+            <span className='text-base text-gray-700'>Bagaimana kabarmu hari ini :D</span>
+          </div>  
+          <Image src={geometricPattern} alt="pattern" className="w-full h-full object-cover absolute bottom-0" />
+        </header>
+        <div className='flex-1 flex flex-col h-full p-6 justify-center gap-4'>
+          <Link href={'/tree/scan-qr'}>
+            <div className='p-4 rounded-3xl flex flex-col gap-4 bg-[#D9E7CB] active:bg-[#bed5a5] active:ring-4 ring-[#e0ecd5]'>
+              <div className='w-[76px] h-[76px] rounded-2xl grid place-items-center bg-[#80AE51] '>
+                <Image src={treeIcon} alt='tree icon' width={40} height={40} />
+              </div>
+              <span className='text-2xl text-[#263518] leading-tight'>Riwayat Pemeliharaan<br />Pohon</span>
+            </div>
           </Link>
-          <Link href="/tree/scan-qr" className="w-full">
-            <RippleButton className="w-full bg-neutral-50 active:bg-green-50 active:border-green-500 text-card-foreground border-2 border-slate-200 shadow-sm rounded-3xl p-6 flex flex-col items-center transition-colors">
-              <PastelIcon Icon={History} bgColor="bg-green-100" iconColor="text-green-600" />
-              <span className="text-lg font-medium">Riwayat Pemeliharaan</span>
-            </RippleButton>
+          <Link href={'/digital-book'}>
+            <div className='p-4 rounded-3xl flex flex-col gap-4 bg-violet-200 active:bg-violet-300 active:ring-4 ring-violet-200'>
+              <div className='w-[76px] h-[76px] rounded-2xl grid place-items-center bg-violet-400 '>
+                <Image src={bookIcon} alt='tree icon' width={40} height={40} />
+              </div>
+              <span className='text-2xl text-[#17004D] leading-tight'>Buku Usaha<br />Digital</span>
+            </div>
           </Link>
-          <Link href="/digital-book" className="w-full">
-            <RippleButton className="w-full bg-neutral-50 active:bg-blue-50 active:border-blue-500 text-card-foreground border-2 border-slate-200 shadow-sm rounded-3xl p-6 flex flex-col items-center transition-colors">
-              <PastelIcon Icon={BookOpen} bgColor="bg-blue-100" iconColor="text-blue-600" />
-              <span className="text-lg font-medium">Pembukuan Digital</span>
-            </RippleButton>
-          </Link>
+          <button className='bg-red-200 text-red-900 active:bg-red-300 active:ring-2 active:ring-red-100 px-2 py-1 rounded-xl font-medium' onClick={handleLogout}>Keluar</button>
         </div>
       </div>
-    </main>
+      <Footer />
+    </div>
   );
 }

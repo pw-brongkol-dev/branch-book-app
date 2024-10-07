@@ -21,6 +21,9 @@ import LaporanPerubahanModal from './tables/07-laporan-perubahan-modal';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 
+import docIcon from '@/app/icons/description_40dp_1C1B1F.svg';
+import Image from 'next/image';
+
 export default function ProcessDataReport() {
   const router = useRouter();
   const { getTransactionsByUserId, getAllAccounts } = useFirestore();
@@ -63,13 +66,14 @@ export default function ProcessDataReport() {
   };
 
   return (
-    <div className="w-full h-dvh grid place-items-center">
-      <div className="max-w-md mx-auto p-5 flex flex-col gap-4">
-        <BackButton />
-        <h1 className="text-3xl font-bold">Download Laporan</h1>
+    <div className="relative">
+      <BackButton color="violet" />
+
+      <div className="flex flex-col px-6 pt-4 gap-6">
+        <h2 className="text-3xl text-gray-700">Laporan Keuangan</h2>
         <div className="flex gap-4">
           <div className="flex-1 flex flex-col gap-1">
-            <label>Bulan</label>
+            <label className="font-medium text-sm">Bulan</label>
             <Select value={selectedMonth} onValueChange={(value) => setSelectedMonth(Number(value))}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select Month" />
@@ -84,7 +88,7 @@ export default function ProcessDataReport() {
             </Select>
           </div>
           <div className="flex-1 flex flex-col gap-1">
-            <label>Tahun</label>
+            <label className="font-medium text-sm">Tahun</label>
             <Input
               type="number"
               value={inputYear}
@@ -116,59 +120,82 @@ function ReportDownloads({ data }) {
   const componentRef6 = useRef<React.ElementRef<typeof LaporanPerubahanModal>>(null);
 
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center font-[family-name:var(--font-geist-sans)]">
       <main className="flex flex-col row-start-2 items-center sm:items-start">
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-2 gap-3 w-full">
           <ReactToPrint
             trigger={() => (
-              <button className="flex items-center bg-blue-500 text-white hover:bg-blue-600 rounded-[14px] w-auto h-[60px] text-sm sm:text-base px-2 sm:px-4">
-                <FaFileAlt className="mr-2 pl-2 text-2xl" />
-                <span className="text-left"> Jurnal Umum </span>
+              <button className="w-full text-left bg-violet-200 active:ring-4 active:ring-violet-200 active:bg-violet-300 p-4 rounded-2xl flex flex-col gap-1">
+                <Image src={docIcon} alt="add icon" />
+                <span className="font-medium inline-block leading-5">
+                  Jurnal
+                  <br />
+                  Umum
+                </span>
               </button>
             )}
             content={() => componentRef1.current} // Pastikan ini mengembalikan referensi yang benar
           />
           <ReactToPrint
             trigger={() => (
-              <button className="flex items-center bg-blue-500 text-white hover:bg-blue-600 rounded-[14px] w-auto h-[60px] text-sm sm:text-base px-2 sm:px-4">
-                <FaFileAlt className="mr-2 pl-2 text-2xl" />
-                <span className="text-left"> Neraca Lajur </span>
+              <button className="w-full text-left bg-[#FFE49E] active:ring-4 active:ring-[#ffebb9] active:bg-[#ffdc85] p-4 rounded-2xl flex flex-col gap-1">
+                <Image src={docIcon} alt="add icon" width={40} height={40} />
+                <span className="font-medium inline-block leading-5">
+                  Neraca
+                  <br />
+                  Lajur
+                </span>
               </button>
             )}
             content={() => componentRef2.current} // Pastikan ini
           />
           <ReactToPrint
             trigger={() => (
-              <button className="flex items-center bg-blue-500 text-white hover:bg-blue-600 rounded-[14px] w-auto h-[60px] text-sm sm:text-base px-2 sm:px-4">
-                <FaFileAlt className="mr-2 pl-2 text-2xl" />
-                <span className="text-left"> Neraca Saldo </span>
+              <button className="w-full text-left bg-[#FFE49E] active:ring-4 active:ring-[#ffebb9] active:bg-[#ffdc85] p-4 rounded-2xl flex flex-col gap-1">
+                <Image src={docIcon} alt="add icon" width={40} height={40} />
+                <span className="font-medium inline-block leading-5">
+                  Neraca
+                  <br />
+                  Saldo
+                </span>
               </button>
             )}
             content={() => componentRef3.current} // Pastikan ini mengembalikan referensi yang benar
           />
           <ReactToPrint
             trigger={() => (
-              <button className="flex items-center bg-blue-500 text-white hover:bg-blue-600 rounded-[14px] w-auto h-[60px] text-sm sm:text-base px-2 sm:px-4">
-                <FaFileAlt className="mr-2 pl-2 text-2xl" />
-                <span className="text-left"> Laba Rugi </span>
+              <button className="w-full text-left bg-violet-200 active:ring-4 active:ring-violet-200 active:bg-violet-300 p-4 rounded-2xl flex flex-col gap-1">
+                <Image src={docIcon} alt="add icon" />
+                <span className="font-medium inline-block leading-5">
+                  Laba
+                  <br />
+                  Rugi
+                </span>
               </button>
             )}
             content={() => componentRef4.current}
           />
           <ReactToPrint
             trigger={() => (
-              <button className="flex items-center justify-start bg-blue-500 text-white hover:bg-blue-600 rounded-[14px] w-auto h-[60px] text-sm sm:text-base px-2 sm:px-4">
-                <FaFileAlt className="mr-2 pl-2 text-2xl" />
-                <span className="text-left"> Laporan Posisi Keuangan </span>
+              <button className="w-full text-left bg-violet-200 active:ring-4 active:ring-violet-200 active:bg-violet-300 p-4 rounded-2xl flex flex-col gap-1">
+                <Image src={docIcon} alt="add icon" />
+                <span className="font-medium inline-block leading-5">
+                  Laporan Posisi
+                  <br />
+                  Keuangan
+                </span>
               </button>
             )}
             content={() => componentRef5.current}
           />
           <ReactToPrint
             trigger={() => (
-              <button className="flex items-center bg-blue-500 text-white hover:bg-blue-600 rounded-[14px] w-auto h-[60px] text-sm sm:text-base px-2 sm:px-4">
-                <FaFileAlt className="mr-2 pl-2 text-2xl" />
-                <span className="text-left"> Laporan Perubahan Modal </span>
+              <button className="w-full text-left bg-[#FFE49E] active:ring-4 active:ring-[#ffebb9] active:bg-[#ffdc85] p-4 rounded-2xl flex flex-col gap-1">
+                <Image src={docIcon} alt="add icon" width={40} height={40} />
+                <span className="font-medium inline-block leading-5">
+                  Laporan
+                  <br />
+                  Perubahan Modal
+                </span>
               </button>
             )}
             content={() => componentRef6.current}
@@ -176,37 +203,36 @@ function ReportDownloads({ data }) {
         </div>
 
         {/* Komponen yang ingin dicetak */}
-        <div className="w-2 h-2 overflow-hidden">
+        <div className="w-1 h-1 overflow-hidden">
           <div ref={componentRef1}>
             <JurnalUmum transactions={reportJurnalUmum} />
           </div>
         </div>
-        <div className="w-2 h-2 overflow-hidden">
+        <div className="w-1 h-1 overflow-hidden">
           <div ref={componentRef2}>
             <NeracaLajur accounts={reportNeracaLajur} />
           </div>
         </div>
-        <div className="w-2 h-2 overflow-hidden">
+        <div className="w-1 h-1 overflow-hidden">
           <div ref={componentRef3}>
             <NeracaSaldo report={reportNeracaSaldo} />
           </div>
         </div>
-        <div className="w-2 h-2 overflow-hidden">
+        <div className="w-1 h-1 overflow-hidden">
           <div ref={componentRef4}>
             <LabaRugi report={reportLabaRugi} />
           </div>
         </div>
-        <div className="w-2 h-2 overflow-hidden">
+        <div className="w-1 h-1 overflow-hidden">
           <div ref={componentRef5}>
             <LaporanPosisiKeuangan report={reportLaporanPosisiKeuangan} />
           </div>
         </div>
-        <div className="w-2 h-2 overflow-hidden">
+        <div className="w-1 h-1 overflow-hidden">
           <div ref={componentRef6}>
             <LaporanPerubahanModal report={reportLaporanPerubahanModal} />
           </div>
         </div>
       </main>
-    </div>
   );
 }

@@ -13,7 +13,7 @@ import { Timestamp } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
 
 const InputNota = () => {
-  const router = useRouter()
+  const router = useRouter();
   const { addTransaction, getAllAccounts } = useFirestore();
   const [accounts, setAccounts] = React.useState<Account[]>([]);
   const [selectedAccount, setSelectedAccount] = React.useState<string | undefined>(undefined);
@@ -23,7 +23,7 @@ const InputNota = () => {
     async function fetchAccounts() {
       try {
         const accounts = await getAllAccounts();
-        setAccounts(accounts.sort((a,b) => a.code.localeCompare(b.code)));
+        setAccounts(accounts.sort((a, b) => a.code.localeCompare(b.code)));
       } catch (error) {
         console.error('Error fetching accounts:', error);
       }
@@ -43,9 +43,9 @@ const InputNota = () => {
 
     const userId = localStorage.getItem('user_id_branch_book_app');
 
-    if(!userId) {
-      alert("session expired")
-      router.push("/auth/login")
+    if (!userId) {
+      alert('session expired');
+      router.push('/auth/login');
     }
 
     const data = {
@@ -82,15 +82,16 @@ const InputNota = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
-      <div className='max-w-md mx-auto'>
-      <BackButton />
+    <div className="relative">
+      <BackButton color="violet" />
 
-      <div className="max-w-3xl mx-auto mt-10">
-        <h1 className="text-2xl font-bold mb-5 text-gray-800">Input Nota</h1>
-        <p className="text-base text-gray-600 mb-8">Silakan masukkan detail nota di form berikut ini.</p>
+      <div className="px-6 mt-5">
+        <h1 className="text-2xl text-gray-800">Input Nota</h1>
+        <p className="text-sm text-gray-600">Silakan masukkan detail nota di form berikut ini.</p>
+      </div>
 
-        <form className="space-y-8" onSubmit={onSubmit}>
+      <div className="flex flex-col px-6 mt-8">
+        <form className="flex flex-col gap-5" onSubmit={onSubmit}>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="flex flex-col gap-3">
               <Label htmlFor="date">Tanggal</Label>
@@ -125,15 +126,15 @@ const InputNota = () => {
           </div>
 
           <div className="flex justify-end space-x-4">
-            <Button variant="outline" className="text-gray-600" type="button">
-              Batal
-            </Button>
-            <Button type="submit" disabled={loading}>
+            <button
+              type="submit"
+              disabled={loading}
+              className="py-1.5 w-full bg-violet-500 active:bg-violet-600 text-white font-bold rounded-xl disabled:bg-gray-300"
+            >
               {loading ? 'Menyimpan...' : 'Simpan'}
-            </Button>
+            </button>
           </div>
         </form>
-      </div>
       </div>
     </div>
   );

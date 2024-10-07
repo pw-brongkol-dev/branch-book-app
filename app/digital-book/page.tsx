@@ -8,105 +8,9 @@ import BackButton from '../components/BackButton';
 import Link from 'next/link';
 import { useFirestore } from '../hooks/useFirestore';
 import { useState, useEffect } from 'react';
-
-// const data: Payment[] = [
-//   {
-//     id: 'm5gr84i9',
-//     nominal: 316000,
-//     date: '12 September 2024',
-//     name_account: 'Kas',
-//     ref: ' ',
-//     information: 'Penjualan kopi',
-//   },
-//   {
-//     id: 'm5gr84i9',
-//     nominal: 316000,
-//     date: '12 September 2024',
-//     name_account: 'Kas',
-//     ref: ' ',
-//     information: 'Penjualan kopi',
-//   },
-//   {
-//     id: 'm5gr84i9',
-//     nominal: 316000,
-//     date: '12 September 2024',
-//     name_account: 'Kas',
-//     ref: ' ',
-//     information: 'Penjualan kopi',
-//   },
-//   {
-//     id: 'm5gr84i9',
-//     nominal: 316000,
-//     date: '12 September 2024',
-//     name_account: 'Kas',
-//     ref: ' ',
-//     information: 'Penjualan kopi',
-//   },
-//   {
-//     id: 'm5gr84i9',
-//     nominal: 316000,
-//     date: '12 September 2024',
-//     name_account: 'Kas',
-//     ref: ' ',
-//     information: 'Penjualan kopi',
-//   },
-//   {
-//     id: 'm5gr84i9',
-//     nominal: 316000,
-//     date: '12 September 2024',
-//     name_account: 'Kas',
-//     ref: ' ',
-//     information: 'Penjualan kopi',
-//   },
-//   {
-//     id: 'm5gr84i9',
-//     nominal: 316000,
-//     date: '12 September 2024',
-//     name_account: 'Kas',
-//     ref: ' ',
-//     information: 'Penjualan kopi',
-//   },
-//   {
-//     id: 'm5gr84i9',
-//     nominal: 316000,
-//     date: '12 September 2024',
-//     name_account: 'Kas',
-//     ref: ' ',
-//     information: 'Penjualan kopi',
-//   },
-//   {
-//     id: 'm5gr84i9',
-//     nominal: 316000,
-//     date: '12 September 2024',
-//     name_account: 'Kas',
-//     ref: ' ',
-//     information: 'Penjualan kopi',
-//   },
-//   {
-//     id: 'm5gr84i9',
-//     nominal: 316000,
-//     date: '12 September 2024',
-//     name_account: 'Kas',
-//     ref: ' ',
-//     information: 'Penjualan kopi',
-//   },
-//   {
-//     id: 'm5gr84i9',
-//     nominal: 316000,
-//     date: '12 September 2024',
-//     name_account: 'Kas',
-//     ref: ' ',
-//     information: 'Penjualan kopi',
-//   },
-//   {
-//     id: 'm5gr84i9',
-//     nominal: 316000,
-//     date: '12 September 2024',
-//     name_account: 'Kas',
-//     ref: ' ',
-//     information: 'Penjualan kopi',
-//   },
-// ];
+import addIcon from '@/app/icons/add_40dp_1C1B1F.svg'
+import docIcon from '@/app/icons/description_40dp_1C1B1F.svg'
+import Image from 'next/image';
 
 export type Payment = {
   id: string;
@@ -250,23 +154,30 @@ const TableViewNota = () => {
   }
 
   return (
-    <div className="w-full p-6 bg-gray-100 min-h-screen">
-      <div className='max-w-md mx-auto'>
-      <BackButton />
-      <div className="mt-8">
-        <div className="flex flex-col mb-4 p-4 ">
-          <h1 className="text-2xl font-bold text-gray-800">Daftar Transaksi</h1>
-          <div className="flex justify-end mt-2">
-            <Link href="/digital-book/input-nota">
-              <Button className="bg-blue-600 text-white hover:bg-blue-700 transition duration-300 ease-in-out transform hover:scale-105">Input Nota Transaksi</Button>
-            </Link>
-            <div className="mx-2" /> {/* Tambahkan padding di sini */}
-            <Link href="/digital-book/reports">
-              <Button className="bg-green-600 text-white hover:bg-green-700 transition duration-300 ease-in-out transform hover:scale-105">Unduh Laporan</Button>
-            </Link>
-          </div>
+    <div className='relative'>
+      <BackButton color='violet' />
+
+      <div className='flex flex-col gap-6'>
+
+        <div className='flex px-6 pt-4 gap-2'>
+          <Link href={'/digital-book/input-nota'} className='flex-1'>
+            <div className='bg-[#FFE49E] active:ring-4 active:ring-[#ffebb9] active:bg-[#ffdc85] p-4 rounded-2xl flex flex-col gap-1'>
+              <Image src={addIcon} alt="add icon" width={40} height={40} />
+              <span className='font-medium inline-block leading-5'>Tambah Data<br/>Transaksi</span>
+            </div>
+          </Link>
+          <Link href={'/digital-book/reports'} className='flex-1'>
+            <div className='bg-violet-200 active:ring-4 active:ring-violet-200 active:bg-violet-300 p-4 rounded-2xl flex flex-col gap-1'>
+              <Image src={docIcon} alt="add icon" />
+              <span className='font-medium inline-block leading-5'>Laporan<br/>Keuangan</span>
+            </div>
+          </Link>
         </div>
-        <div className="bg-white shadow-sm rounded-md p-3">
+
+        <div className='flex flex-col gap-2 px-6'>
+          <span className='text-2xl'>Data Transaksi</span>
+          <div>
+          <div className="bg-white shadow-sm rounded-2xl p-3 border border-violet-200 ">
           <Table>
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
@@ -322,10 +233,89 @@ const TableViewNota = () => {
             </Button>
           </div>
         </div>
-      </div>
+          </div>
+        </div>
       </div>
     </div>
-  );
+  )
+
+  // return (
+  //   <div className="w-full p-6 bg-gray-100 min-h-screen">
+  //     <div className='max-w-md mx-auto'>
+  //     <BackButton />
+  //     <div className="mt-8">
+  //       <div className="flex flex-col mb-4 p-4 ">
+  //         <h1 className="text-2xl font-bold text-gray-800">Daftar Transaksi</h1>
+  //         <div className="flex justify-end mt-2">
+  //           <Link href="/digital-book/input-nota">
+  //             <Button className="bg-blue-600 text-white hover:bg-blue-700 transition duration-300 ease-in-out transform hover:scale-105">Input Nota Transaksi</Button>
+  //           </Link>
+  //           <div className="mx-2" /> {/* Tambahkan padding di sini */}
+  //           <Link href="/digital-book/reports">
+  //             <Button className="bg-green-600 text-white hover:bg-green-700 transition duration-300 ease-in-out transform hover:scale-105">Unduh Laporan</Button>
+  //           </Link>
+  //         </div>
+  //       </div>
+  //       <div className="bg-white shadow-sm rounded-md p-3">
+  //         <Table>
+  //           <TableHeader>
+  //             {table.getHeaderGroups().map((headerGroup) => (
+  //               <TableRow key={headerGroup.id}>
+  //                 {headerGroup.headers.map((header) => {
+  //                   return <TableHead key={header.id}>{header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}</TableHead>;
+  //                 })}
+  //               </TableRow>
+  //             ))}
+  //           </TableHeader>
+  //           <TableBody>
+  //             {table.getRowModel().rows?.length ? (
+  //               table.getRowModel().rows.map((row) => (
+  //                 <TableRow key={row.id} data-state={row.getIsSelected() && 'selected'} className="hover:bg-gray-100 transition-colors">
+  //                   {row.getVisibleCells().map((cell) => (
+  //                     <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+  //                   ))}
+  //                 </TableRow>
+  //               ))
+  //             ) : (
+  //               <TableRow>
+  //                 <TableCell colSpan={columns.length} className="h-24 text-center">
+  //                   No results.
+  //                 </TableCell>
+  //               </TableRow>
+  //             )}
+  //           </TableBody>
+  //         </Table>
+  //       </div>
+  //       <div className="flex items-center justify-between space-x-2 py-4">
+  //         <div className="space-x-2">
+  //           <Button
+  //             variant="outline"
+  //             size="sm"
+  //             onClick={() => {
+  //               table.previousPage();
+  //               setPagination((prev) => ({ ...prev, pageIndex: table.getState().pagination.pageIndex - 1 }));
+  //             }}
+  //             disabled={!table.getCanPreviousPage()}
+  //           >
+  //             Previous
+  //           </Button>
+  //           <Button
+  //             variant="outline"
+  //             size="sm"
+  //             onClick={() => {
+  //               table.nextPage();
+  //               setPagination((prev) => ({ ...prev, pageIndex: table.getState().pagination.pageIndex + 1 }));
+  //             }}
+  //             disabled={!table.getCanNextPage()}
+  //           >
+  //             Next
+  //           </Button>
+  //         </div>
+  //       </div>
+  //     </div>
+  //     </div>
+  //   </div>
+  // );
 };
 
 export default TableViewNota;

@@ -114,10 +114,11 @@ const EditTreeForm = ({ params }: { params: { tree_id: string } }) => {
   }, [tree_code]);
 
   return (
-    <div className="container mx-auto px-6 py-12">
-      <div className="flex flex-col w-full max-w-md mx-auto p-4">
-        <BackButton />
-        <h2 className="text-2xl font-bold mb-4 mt-6">Edit Data Pohon</h2>
+    <div>
+      <BackButton color="green" />
+
+      <div className="p-6 flex flex-col gap-4">
+        <h2 className="text-2xl">Edit Data</h2>
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div>
             <label className="block text-sm font-medium mb-2" htmlFor="code">
@@ -163,7 +164,9 @@ const EditTreeForm = ({ params }: { params: { tree_id: string } }) => {
             </label>
             <Input type="date" id="planting_date" name="planting_date" value={treeDetail.planting_date} onChange={handleInputChange} required />
           </div>
-          <Button type="submit">Submit</Button>
+          <button type="submit" className="py-1.5 w-full bg-[#668B41] active:bg-[#547434] text-white font-bold rounded-xl disabled:bg-gray-300">
+            Submit
+          </button>
         </form>
       </div>
     </div>

@@ -212,9 +212,10 @@ const AddTreeForm = () => {
   };
 
   return (
-    <div className="container mx-auto px-6 py-12">
-      <BackButton />
-      <h2 className="text-2xl font-bold mb-4 mt-6">Tambah Data Pohon</h2>
+    <div className="">
+      <BackButton color='green' />
+      <div className='px-6 py-4'>
+      <h2 className="text-2xl mb-4 mt-6">Tambah Data Pohon</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="block text-sm font-medium mb-2" htmlFor="code">
@@ -264,6 +265,7 @@ const AddTreeForm = () => {
           {loading ? 'Loading...' : 'Submit'}
         </Button>
       </form>
+      </div>
     </div>
   );
 };

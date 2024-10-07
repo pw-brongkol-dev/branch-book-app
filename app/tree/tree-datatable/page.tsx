@@ -117,10 +117,11 @@ const TreeDataTablePage = () => {
   ];
 
   return (
-    <div className="container mx-auto px-6 py-12 space-y-6">
-      <BackButton />
+    <div className="">
+      <BackButton color='green' />
+      <div className='px-6 py-4 flex flex-col gap-4'>
       <div className="space-y-4">
-        <h2 className="text-2xl font-bold">Laporan Data Pohon</h2>
+        <h2 className="text-2xl">Laporan Data Pohon</h2>
         <p className="text-muted-foreground">Tabel ini menampilkan data pohon kopi dan durian yang ditanam oleh para petani.</p>
       </div>
 
@@ -172,6 +173,7 @@ const TreeDataTablePage = () => {
       </div>
 
       {error && <p className="text-red-500 mt-4">{error}</p>}
+      </div>
     </div>
   );
 };
