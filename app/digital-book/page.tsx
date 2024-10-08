@@ -22,7 +22,7 @@ export type Payment = {
   information: string;
 };
 
-export const columns: ColumnDef<Payment>[] = [
+const columns: ColumnDef<Payment>[] = [
   {
     header: 'No',
     cell: ({ row, table }) => {
