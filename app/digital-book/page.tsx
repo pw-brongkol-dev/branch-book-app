@@ -11,6 +11,7 @@ import { useState, useEffect } from 'react';
 import addIcon from '@/app/icons/add_40dp_1C1B1F.svg'
 import docIcon from '@/app/icons/description_40dp_1C1B1F.svg'
 import Image from 'next/image';
+import Footer from '../components/Footer';
 
 export type Payment = {
   id: string;
@@ -154,7 +155,7 @@ const TableViewNota = () => {
   }
 
   return (
-    <div className='relative'>
+    <div className='relative min-h-dvh'>
       <BackButton color='violet' />
 
       <div className='flex flex-col gap-6'>
@@ -235,6 +236,9 @@ const TableViewNota = () => {
         </div>
           </div>
         </div>
+      </div>
+      <div className='relative bottom-0'>
+      <Footer />
       </div>
     </div>
   )
