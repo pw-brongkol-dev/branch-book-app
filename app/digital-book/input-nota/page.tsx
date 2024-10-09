@@ -118,6 +118,23 @@ const InputNota = () => {
             </Select>
           </div>
           <div className="flex flex-col gap-3">
+            <Label htmlFor="tipe">Tipe</Label>
+            <Select value={selectedAccount} onValueChange={(value) => setSelectedAccount(value)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Pilih tipe" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="1">Pemasukan</SelectItem>
+                <SelectItem value="1">Pengeluaran</SelectItem>
+                {/* {accounts.map((account) => (
+                  <SelectItem key={account.id} value={account.id}>
+                    {account.code} - {account.name}
+                  </SelectItem>
+                ))} */}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex flex-col gap-3">
             <Label htmlFor="nominal">Nominal</Label>
             <div className="flex items-center">
               <span className="px-3 py-2 bg-gray-200 border border-gray-300 rounded-l-md">Rp</span>
