@@ -15,7 +15,7 @@ const EditTreeForm = ({ params }: { params: { tree_id: string } }) => {
   const { getUserById, getTreeByCode, updateTree, updateUser } = useFirestore();
   const [fetchStatus, setFetchStatus] = useState('idle');
 
-  const [treeDetail, setTreeDetail] = useState<Tree & { id: string }>({
+  const initialTreeState: Tree & { id: string } = {
     id: '',
     user_id: '',
     code: '',
@@ -23,9 +23,10 @@ const EditTreeForm = ({ params }: { params: { tree_id: string } }) => {
     type: '',
     planting_date: new Date(),
     location: '',
-  });
-
-  const [userChanged, setUserChanged] = useState<User>({
+  };
+  const [treeDetail, setTreeDetail] = useState<Tree & { id: string }>(initialTreeState);
+  const [userChanged, setUserChanged] = useState<User & { id: string }>({
+    id: '',
     name: '',
     group_id: '',
   });
@@ -43,16 +44,15 @@ const EditTreeForm = ({ params }: { params: { tree_id: string } }) => {
         ...tree,
         planting_date: tree.planting_date.toDate().toISOString().split('T')[0],
       };
-      console.log('datatree', dataTree);
 
       const dataUser = {
+        id: user.id, // Ensure to get the user ID
         name: user.name,
         group_id: user.group_id,
       };
 
       setTreeDetail(dataTree);
       setUserChanged(dataUser);
-      console.log(dataTree);
       setFetchStatus('success');
     } catch (err) {
       setFetchStatus('error');
@@ -67,7 +67,7 @@ const EditTreeForm = ({ params }: { params: { tree_id: string } }) => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    if (name === 'owner') {
+    if (name === 'name') {
       setUserChanged((prev) => ({ ...prev, name: value }));
     } else {
       setTreeDetail((prev) => ({ ...prev, [name]: value }));
@@ -83,12 +83,11 @@ const EditTreeForm = ({ params }: { params: { tree_id: string } }) => {
     try {
       const treePlantingDate = new Date(treeDetail.planting_date);
       const treePlantingDateTimestamp = Timestamp.fromDate(treePlantingDate);
-      // console.log('ini aman', treeDetail
 
       const { id, ...restTreeDetail } = treeDetail;
       await updateTree(treeDetail.id, {
         ...restTreeDetail,
-        planting_date: treePlantingDateTimestamp, // Ensure planting_date is a Date object
+        planting_date: treePlantingDateTimestamp,
       });
 
       if (userChanged.id) {
@@ -127,10 +126,10 @@ const EditTreeForm = ({ params }: { params: { tree_id: string } }) => {
             <Input id="code" name="code" value={treeDetail.code} onChange={handleInputChange} required />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-2" htmlFor="owner">
+            <label className="block text-sm font-medium mb-2" htmlFor="name">
               Nama Petani
             </label>
-            <Input id="owner" name="owner" value={userChanged.name} onChange={handleInputChange} required />
+            <Input id="name" name="name" value={userChanged.name} onChange={handleInputChange} required />
           </div>
           <div>
             <label className="block text-sm font-medium mb-2" htmlFor="type">
@@ -138,7 +137,7 @@ const EditTreeForm = ({ params }: { params: { tree_id: string } }) => {
             </label>
             <Select onValueChange={handleSelectChange} value={treeDetail.type} required>
               <SelectTrigger>
-                <SelectValue>{treeDetail.type ? treeDetail.type : 'Pilih Jenis Pohon'}</SelectValue>
+                <SelectValue>{treeDetail.type || 'Pilih Jenis Pohon'}</SelectValue>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="Durian">Durian</SelectItem>
