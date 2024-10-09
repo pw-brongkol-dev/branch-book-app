@@ -138,7 +138,7 @@ const TreeDetailsPage = ({ params }: { params: { tree_id: string } }) => {
 
       setFertilizationHistory(sortedFertilizations);
       setTreeDetail(data);
-      generateQRCode()
+      generateQRCode();
       setFetchStatus('success');
     } catch (err) {
       setFetchStatus('error');
