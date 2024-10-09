@@ -39,9 +39,6 @@ export interface Account {
   id: string;
   code: string;
   name: string;
-  type: string;
-  db_cr: string; // Assuming this is for debit/credit
-  pos: string;
 }
 
 export interface Transaction {
@@ -50,9 +47,31 @@ export interface Transaction {
   user_id: string; // Foreign key to User
   date: Timestamp;
   description: string;
-  total_amount: number;
   ref: string; // Assuming this is a reference number or code
+  total_amount: number;
+  type: string;
 }
+
+
+// export interface Account {
+//   id: string;
+//   code: string;
+//   name: string;
+//   type: string;
+//   db_cr: string; // Assuming this is for debit/credit
+//   pos: string;
+// }
+
+
+// export interface Transaction {
+//   // id: string;
+//   account_id: string; // Foreign key to Account
+//   user_id: string; // Foreign key to User
+//   date: Timestamp;
+//   description: string;
+//   total_amount: number;
+//   ref: string; // Assuming this is a reference number or code
+// }
 
 export type GroupWithId = Group & { id: string };
 export type UserWithId = User & { id: string };
