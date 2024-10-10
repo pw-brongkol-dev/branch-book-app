@@ -10,12 +10,12 @@ import Image from 'next/image';
 const LogoRow = () => {
   return (
     <div className="flex flex-row justify-center items-center flex-wrap space-x-4">
-      <Image src={logoKemendikbud} alt="Logo Kemendikbud" width={110} height={110} />
-      <Image src={logoTutWuriHandayani} alt="Logo Tut Wuri Handayani" width={110} height={110} />
-      <Image src={logoUnnes} alt="Logo Unnes" width={110} height={110} />
-      <Image src={logoSTT} alt="Logo STT" width={110} height={110} />
-      <Image src={logoProvinsiJateng} alt="Logo Prov. Jateng" width={110} height={110} />
-      <Image src={logoKabSemarang} alt="Logo Kab. Semarang" width={110} height={110} />
+      <Image src={logoKemendikbud} alt="Logo Kemendikbud" width={65} height={65} />
+      <Image src={logoTutWuriHandayani} alt="Logo Tut Wuri Handayani" width={65} height={65} />
+      <Image src={logoUnnes} alt="Logo Unnes" width={65} height={65} />
+      <Image src={logoSTT} alt="Logo STT" width={65} height={65} />
+      <Image src={logoProvinsiJateng} alt="Logo Prov. Jateng" width={65} height={65} />
+      <Image src={logoKabSemarang} alt="Logo Kab. Semarang" width={65} height={65} />
     </div>
   );
 };
