@@ -77,7 +77,7 @@ export default function Home() {
               </span>
             </div>
           </Link>
-          <Link href={'/digital-book'}>
+          {/* <Link href={'/digital-book'}>
             <div className="p-4 rounded-3xl flex flex-col gap-4 bg-violet-200 active:bg-violet-300 active:ring-4 ring-violet-200">
               <div className="w-[76px] h-[76px] rounded-2xl grid place-items-center bg-violet-400 ">
                 <Image src={bookIcon} alt="tree icon" width={40} height={40} />
@@ -88,7 +88,7 @@ export default function Home() {
                 Digital
               </span>
             </div>
-          </Link>
+          </Link> */}
           <Link href={'/digital-book-v2'}>
             <div className="p-4 rounded-3xl flex flex-col gap-4 bg-violet-200 active:bg-violet-300 active:ring-4 ring-violet-200">
               <div className="w-[76px] h-[76px] rounded-2xl grid place-items-center bg-violet-400 ">
@@ -97,7 +97,7 @@ export default function Home() {
               <span className="text-2xl text-[#17004D] leading-tight">
                 Buku Usaha
                 <br />
-                Digital v2
+                Digital
               </span>
             </div>
           </Link>
