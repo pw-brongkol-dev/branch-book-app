@@ -52,8 +52,21 @@ export default function ProcessDataReport() {
           </div>
         </div>
 
+        <div className="border-t border-gray-300">
+          <div className="flex flex-col py-4">
+            <LaporanLabaRugi />
+          </div>
+        </div>
+
+        <div className="border-t border-gray-300">
+          <div className="flex flex-col py-4">
+            <LaporanPosisiKeuangan />
+          </div>
+        </div>
+
         {/* Langsung menampilkan ReportDownloads dengan data dummy */}
-        <ReportDownloads data={data} />
+        {/* <ReportDownloads data={data} /> */}
+        <div className='h-20'></div>
       </div>
     </div>
   );

@@ -156,7 +156,7 @@ const TableViewBook = () => {
 
       <div className="flex flex-col gap-6">
         <div className="flex px-6 pt-4 gap-2">
-          <Link href={'/digital-book/input-nota'} className="flex-1">
+          <Link href={'/digital-book-v2/input-nota'} className="flex-1">
             <div className="bg-[#FFE49E] active:ring-4 active:ring-[#ffebb9] active:bg-[#ffdc85] p-4 rounded-2xl flex flex-col gap-1">
               <Image src={addIcon} alt="add icon" width={40} height={40} />
               <span className="font-medium inline-block leading-5">
