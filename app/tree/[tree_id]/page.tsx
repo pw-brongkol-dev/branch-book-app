@@ -226,7 +226,7 @@ const TreeDetailsPage = ({ params }: { params: { tree_id: string } }) => {
                         Edit
                       </button>
                     </Link>
-                    <button
+                    {/* <button
                       onClick={() => {
                         handleDelete();
                         closeDropdown();
@@ -235,7 +235,7 @@ const TreeDetailsPage = ({ params }: { params: { tree_id: string } }) => {
                     >
                       <FiTrash className="mr-1" />
                       Delete
-                    </button>
+                    </button> */}
                   </div>
                 </div>
               )}
