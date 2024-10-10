@@ -91,7 +91,7 @@ const TreeDataTablePage = () => {
       render: (user_id: string) => usersMap[user_id] || 'Unknown',
     },
     { title: 'Jenis Pohon', dataIndex: 'type', key: 'type' },
-    { title: 'Aksesi', dataIndex: 'accession', key: 'accession' },
+    { title: 'Aksesi/Jenis', dataIndex: 'accession', key: 'accession' },
     {
       title: 'Lokasi',
       dataIndex: 'location',
@@ -118,14 +118,14 @@ const TreeDataTablePage = () => {
 
   return (
     <div className="">
-      <BackButton color='green' />
-      <div className='px-6 py-4 flex flex-col gap-4'>
-      <div className="space-y-4">
-        <h2 className="text-2xl">Laporan Data Pohon</h2>
-        <p className="text-muted-foreground">Tabel ini menampilkan data pohon kopi dan durian yang ditanam oleh para petani.</p>
-      </div>
+      <BackButton color="green" />
+      <div className="px-6 py-4 flex flex-col gap-4">
+        <div className="space-y-4">
+          <h2 className="text-2xl">Laporan Data Pohon</h2>
+          <p className="text-muted-foreground">Tabel ini menampilkan data pohon kopi dan durian yang ditanam oleh para petani.</p>
+        </div>
 
-      {/* <div className="mb-6">
+        {/* <div className="mb-6">
         <div className="relative">
           <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
@@ -138,41 +138,41 @@ const TreeDataTablePage = () => {
         </div>
       </div> */}
 
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-lg font-semibold">Daftar Pohon</h3>
-        <Link href="/tree/tree-datatable/add-tree">
-          <Button>Tambah Data Pohon</Button>
-        </Link>
-      </div>
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-lg font-semibold">Daftar Pohon</h3>
+          <Link href="/tree/tree-datatable/add-tree">
+            <Button>Tambah Data Pohon</Button>
+          </Link>
+        </div>
 
-      <div className="rounded-md border overflow-hidden">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              {columns.map((column) => (
-                <TableHead key={column.key} className="font-semibold">
-                  {column.title}
-                </TableHead>
-              ))}
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredTrees.map((tree, index) => (
-              <TableRow key={tree.id}>
+        <div className="rounded-md border overflow-hidden">
+          <Table>
+            <TableHeader>
+              <TableRow>
                 {columns.map((column) => (
-                  <TableCell key={`${tree.id}-${column.key}`}>
-                    {column.render
-                      ? column.render(tree[column.dataIndex as keyof Tree] as any, tree, index)
-                      : String(tree[column.dataIndex as keyof Tree] ?? '')}
-                  </TableCell>
+                  <TableHead key={column.key} className="font-semibold">
+                    {column.title}
+                  </TableHead>
                 ))}
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
+            </TableHeader>
+            <TableBody>
+              {filteredTrees.map((tree, index) => (
+                <TableRow key={tree.id}>
+                  {columns.map((column) => (
+                    <TableCell key={`${tree.id}-${column.key}`}>
+                      {column.render
+                        ? column.render(tree[column.dataIndex as keyof Tree] as any, tree, index)
+                        : String(tree[column.dataIndex as keyof Tree] ?? '')}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
 
-      {error && <p className="text-red-500 mt-4">{error}</p>}
+        {error && <p className="text-red-500 mt-4">{error}</p>}
       </div>
     </div>
   );

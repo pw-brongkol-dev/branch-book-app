@@ -256,28 +256,31 @@ const TreeDetailsPage = ({ params }: { params: { tree_id: string } }) => {
 
         <div className="flex flex-col gap-3">
           <h3 className="text-xl text-gray-700 font-medium">Riwayat Pemupukan</h3>
-          <div className="space-y-2">
-            {fertilizationHistory.map((item) => (
-              <button
-                key={item.id}
-                className="text-left flex gap-3 items-start p-2 rounded-2xl active:bg-[#F2F7EE]"
-                onClick={() => toggleCompleted(item.id)}
-              >
-                <input
-                  type="checkbox"
-                  checked={item.is_completed}
-                  // onChange={() => toggleCompleted(item.id)}
-                  className="h-5 w-5 flex-none mt-2 cursor-pointer"
-                  style={{ accentColor: '#668B41' }}
-                />
-                <div className="flex flex-col gap-0.5">
-                  <p className="font-semibold text-[#668B41]">{item.title}</p>
-                  <p className="text-xs text-gray-600">{item.date}</p>
-                  <p className="text-xs text-gray-700">{item.description}</p>
-                </div>
-              </button>
-            ))}
-          </div>
+          {fertilizationHistory.length > 0 ? (
+            <div className="space-y-2">
+              {fertilizationHistory.map((item) => (
+                <button
+                  key={item.id}
+                  className="text-left flex gap-3 items-start p-2 rounded-2xl active:bg-[#F2F7EE]"
+                  onClick={() => toggleCompleted(item.id)}
+                >
+                  <input
+                    type="checkbox"
+                    checked={item.is_completed}
+                    className="h-5 w-5 flex-none mt-2 cursor-pointer"
+                    style={{ accentColor: '#668B41' }}
+                  />
+                  <div className="flex flex-col gap-0.5">
+                    <p className="font-semibold text-[#668B41]">{item.title}</p>
+                    <p className="text-xs text-gray-600">{item.date}</p>
+                    <p className="text-xs text-gray-700">{item.description}</p>
+                  </div>
+                </button>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-gray-600">Tidak ada riwayat pemupukan yang tersedia.</p>
+          )}
         </div>
 
         <div className="flex flex-col gap-3">

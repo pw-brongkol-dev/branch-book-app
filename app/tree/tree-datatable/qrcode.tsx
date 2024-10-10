@@ -36,10 +36,10 @@ const QrCode = forwardRef<HTMLDivElement, QrCodeProps>(({ qrCodeData, treeDetail
             {/* Nama petani dan Aksesi dengan border */}
             <div className="rounded-lg p-4 text-center">
               <h3 className="text-3xl font-medium">
-                <span className="font-semibold">Nama petani:</span> {treeDetail.owner}
+                <span className="font-semibold">Nama Petani:</span> {treeDetail.owner}
               </h3>
               <h3 className="text-3xl font-medium mt-3">
-                <span className="font-semibold">Aksesi:</span> {treeDetail.type}
+                <span className="font-semibold">Aksesi/Jenis:</span> {treeDetail.type}
               </h3>
             </div>
           </div>

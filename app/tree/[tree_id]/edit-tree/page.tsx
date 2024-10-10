@@ -147,7 +147,7 @@ const EditTreeForm = ({ params }: { params: { tree_id: string } }) => {
           </div>
           <div>
             <label className="block text-sm font-medium mb-2" htmlFor="accession">
-              Aksesi
+              Aksesi/Jenis
             </label>
             <Input id="accession" name="accession" value={treeDetail.accession} onChange={handleInputChange} required />
           </div>

@@ -179,7 +179,8 @@ const AddTreeForm = () => {
         }
       }
 
-      if (newTreeId) {
+      // Tambahkan relasi fertilization jika tipe adalah "Durian"
+      if (newTreeId && formData.type === 'Durian') {
         const fertilizationRelations = fertData.map((fertilization) => ({
           fertilization_id: fertilization.id,
           is_completed: false,
@@ -194,6 +195,8 @@ const AddTreeForm = () => {
         }
 
         toast({ title: 'Relasi fertilization berhasil ditambahkan' });
+      } else if (formData.type === 'Kopi') {
+        console.log('Skipping fertilization for Kopi');
       } else {
         console.error('New tree ID is still undefined after tree addition');
         throw new Error('Failed to retrieve tree ID');
@@ -213,58 +216,58 @@ const AddTreeForm = () => {
 
   return (
     <div className="">
-      <BackButton color='green' />
-      <div className='px-6 py-4'>
-      <h2 className="text-2xl mb-4 mt-6">Tambah Data Pohon</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium mb-2" htmlFor="code">
-            Kode Pohon
-          </label>
-          <Input id="code" name="code" placeholder="Kode Pohon" value={formData.code} onChange={handleInputChange} required />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-2" htmlFor="name">
-            Nama Petani
-          </label>
-          <Input id="name" name="name" placeholder="Nama Petani" value={newUser.name} onChange={handleUserInputChange} required />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-2" htmlFor="type">
-            Jenis Pohon
-          </label>
-          <Select value={formData.type} onValueChange={handleTypeChange}>
-            <SelectTrigger>
-              <SelectValue placeholder="Pilih Jenis Pohon" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="Durian">Durian</SelectItem>
-              <SelectItem value="Kopi">Kopi</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-2" htmlFor="accession">
-            Aksesi
-          </label>
-          <Input id="accession" name="accession" placeholder="Aksesi" value={formData.accession} onChange={handleInputChange} required />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-2" htmlFor="location">
-            Lokasi
-          </label>
-          <Input id="location" name="location" placeholder="Lokasi" value={formData.location} onChange={handleInputChange} required />
-        </div>
-        <div>
-          <label className="block text-sm font-medium mb-2" htmlFor="plantingDate">
-            Tanggal Penanaman
-          </label>
-          <Input type="date" id="plantingDate" name="plantingDate" value={formData.plantingDate} onChange={handleInputChange} required />
-        </div>
-        <Button type="submit" disabled={loading}>
-          {loading ? 'Loading...' : 'Submit'}
-        </Button>
-      </form>
+      <BackButton color="green" />
+      <div className="px-6 py-4">
+        <h2 className="text-2xl mb-4 mt-6">Tambah Data Pohon</h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium mb-2" htmlFor="code">
+              Kode Pohon
+            </label>
+            <Input id="code" name="code" placeholder="Kode Pohon" value={formData.code} onChange={handleInputChange} required />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2" htmlFor="name">
+              Nama Petani
+            </label>
+            <Input id="name" name="name" placeholder="Nama Petani" value={newUser.name} onChange={handleUserInputChange} required />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2" htmlFor="type">
+              Jenis Pohon
+            </label>
+            <Select value={formData.type} onValueChange={handleTypeChange}>
+              <SelectTrigger>
+                <SelectValue placeholder="Pilih Jenis Pohon" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Durian">Durian</SelectItem>
+                <SelectItem value="Kopi">Kopi</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2" htmlFor="accession">
+              Aksesi/Jenis
+            </label>
+            <Input id="accession" name="accession" placeholder="Aksesi/Jenis" value={formData.accession} onChange={handleInputChange} required />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2" htmlFor="location">
+              Lokasi
+            </label>
+            <Input id="location" name="location" placeholder="Lokasi" value={formData.location} onChange={handleInputChange} required />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2" htmlFor="plantingDate">
+              Tanggal Penanaman
+            </label>
+            <Input type="date" id="plantingDate" name="plantingDate" value={formData.plantingDate} onChange={handleInputChange} required />
+          </div>
+          <Button type="submit" disabled={loading}>
+            {loading ? 'Loading...' : 'Submit'}
+          </Button>
+        </form>
       </div>
     </div>
   );
