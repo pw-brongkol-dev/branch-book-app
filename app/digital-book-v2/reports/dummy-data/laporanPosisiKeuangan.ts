@@ -1,6 +1,6 @@
 export const dataLaporanPosisiKeuangan = {
     institution: 'UD XXX XXX',
-    document_name: 'LAPORAN PERUBAHAN MODAL',
+    document_name: 'LAPORAN POSISI KEUANGAN',
     date: 'JANUARI 2024',
     data: {
         items: [
