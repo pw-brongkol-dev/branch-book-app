@@ -11,19 +11,44 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Input } from '@/components/ui/input';
 import Image from 'next/image';
 import docIcon from '@/app/icons/description_40dp_1C1B1F.svg';
+import { generateReportData } from './generateReportData';
 
 export default function ProcessDataReport() {
   const router = useRouter();
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1); // Default to current month
   const [inputYear, setInputYear] = useState(new Date().getFullYear()); // Default to current year
-  const data = { transactions: [], accounts: [] }; // Data dummy langsung diinisialisasi
+  const [data, setData] = useState()
+  const {getTransactionsByUserId, getAllAccounts} = useFirestore()
+  const [fetchStatus, setFetchStatus] = useState('idle')
 
   useEffect(() => {
+    handleProcess()
+  }, [router, selectedMonth, inputYear]);
+
+  async function handleProcess() {
     const userId = localStorage.getItem('user_id_branch_book_app');
     if (!userId) {
       router.push('/auth/login');
     }
-  }, [router]);
+    try {
+      setFetchStatus("loading")
+      const transactions = await getTransactionsByUserId(userId, selectedMonth, inputYear);
+      const accounts = await getAllAccounts();
+
+      const reportData = generateReportData({
+        month: selectedMonth,
+        year: inputYear,
+        transactions: transactions,
+        accounts: accounts,
+      });
+      setData(reportData);
+      console.log(reportData);
+      setFetchStatus("success")
+
+    } catch (err) {
+      console.error('error', err);
+    }
+  }
 
   return (
     <div className="relative">
@@ -52,17 +77,27 @@ export default function ProcessDataReport() {
           </div>
         </div>
 
+        { fetchStatus === "idle" ? (
+          <p>please wait...</p>
+        ) : fetchStatus === "loading" ? (
+          <p>loading...</p>
+        ) : fetchStatus === "success" ? (
+        <>
         <div className="border-t border-gray-300">
           <div className="flex flex-col py-4">
-            <LaporanLabaRugi />
+            <LaporanLabaRugi dataLaporanLabaRugi={data.dataLaporanLabaRugi} />
           </div>
         </div>
+        <div className="border-t border-gray-300">
+          <div className="flex flex-col py-4">
+            <LaporanPosisiKeuangan dataLaporanPosisiKeuangan={data.dataLaporanPosisiKeuangan} />
+          </div>
+        </div>
+        </>
+        ) : (
+          <p>Terjadi Kesalahan</p>
+        )}
 
-        <div className="border-t border-gray-300">
-          <div className="flex flex-col py-4">
-            <LaporanPosisiKeuangan />
-          </div>
-        </div>
 
         {/* Langsung menampilkan ReportDownloads dengan data dummy */}
         {/* <ReportDownloads data={data} /> */}

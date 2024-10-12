@@ -1,7 +1,7 @@
 import React from 'react';
-import { dataLaporanPosisiKeuangan } from '../dummy-data/laporanPosisiKeuangan';
+// import { dataLaporanPosisiKeuangan } from '../dummy-data/laporanPosisiKeuangan';
 
-const LaporanPosisiKeuangan = () => {
+const LaporanPosisiKeuangan = ({ dataLaporanPosisiKeuangan }) => {
   const { institution, document_name, date, data } = dataLaporanPosisiKeuangan;
   let rowNumber = 1; // Initialize row number
 

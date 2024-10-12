@@ -21,6 +21,10 @@ import docIcon from '@/app/icons/description_40dp_1C1B1F.svg';
 import Image from 'next/image';
 import Footer from '../components/Footer';
 import { dummyPemasukan, dummyPengeluaran } from './dummyData';
+import { useState, useEffect } from 'react';
+import { useFirestore } from '../hooks/useFirestore';
+import { useRouter } from 'next/navigation';
+import { generateReportData } from './reports/generateReportData';
 
 export type Payment = {
   id: string;
@@ -75,30 +79,70 @@ const columns: ColumnDef<Payment>[] = [
   },
 ];
 
-// Convert dummyPemasukan data to the Payment type
-const pemasukanData: Payment[] = dummyPemasukan.map((item) => ({
-  id: item.No.toString(),
-  nominal: parseFloat(item.Nominal.replace(/[^\d.-]/g, '')),
-  date: item.Tanggal,
-  name_account: item.NamaAkun,
-  ref: item.Ref,
-  information: item.Keterangan,
-}));
-
-// Convert dummyPengeluaran data to the Payment type
-const pengeluaranData: Payment[] = dummyPengeluaran.map((item) => ({
-  id: item.No.toString(),
-  nominal: parseFloat(item.Nominal.replace(/[^\d.-]/g, '')),
-  date: item.Tanggal,
-  name_account: item.NamaAkun,
-  ref: item.Ref,
-  information: item.Keterangan,
-}));
-
 const TableViewBook = () => {
+  const router = useRouter();
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
+
+  const [pemasukanData, setDataPemasukan] = useState([]);
+  const [pengeluaranData, setDataPengeluaran] = useState([]);
+  const [fetchStatus, setFetchStatus] = useState('idle');
+
+  const { getTransactionsByUserId, getAllAccounts } = useFirestore();
+
+  useEffect(() => {
+    handleProccess()
+  }, []);
+
+  async function handleProccess() {
+    const userId = localStorage.getItem('user_id_branch_book_app');
+    if (!userId) {
+      router.push('/auth/login');
+    }
+    try {
+      setFetchStatus('loading');
+      const transactions = await getTransactionsByUserId(userId);
+      const accounts = await getAllAccounts();
+
+      const reportData = generateReportData({
+        month: 0,
+        year: 2000,
+        transactions: transactions,
+        accounts: accounts,
+      });
+
+      const { pemasukan, pengeluaran, totalPemasukan, totalPengeluaran } = reportData;
+
+      // Convert dummyPemasukan data to the Payment type
+      const pemasukanAllData: Payment[] = pemasukan.map((item, index) => ({
+        id: index,
+        nominal: parseFloat(item.total),
+        date: item.date,
+        name_account: item.account_name,
+        ref: item.ref,
+        information: item.description,
+      }));
+
+      // Convert dummyPengeluaran data to the Payment type
+      const pengeluaranAllData: Payment[] = pengeluaran.map((item, index) => ({
+        id: index,
+        nominal: parseFloat(item.total),
+        date: item.date,
+        name_account: item.account_name,
+        ref: item.ref,
+        information: item.description,
+      }));
+
+      setDataPemasukan(pemasukanAllData);
+      setDataPengeluaran(pengeluaranAllData);
+      setFetchStatus('success');
+    } catch (err) {
+      console.error('error', err);
+    }
+  }
+
+  // Convert dummyPemasukan data to the Payment type
 
   const [pemasukanPagination, setPemasukanPagination] = React.useState({
     pageIndex: 0,
@@ -178,6 +222,9 @@ const TableViewBook = () => {
           </Link>
         </div>
 
+        
+
+        {fetchStatus === "success" ? (
         <div className="flex flex-col gap-6">
           {/* Table for Data Pemasukan */}
           <div className="flex flex-col gap-2 px-6">
@@ -218,6 +265,7 @@ const TableViewBook = () => {
             </div>
           </div>
 
+
           {/* Table for Data Pengeluaran */}
           <div className="flex flex-col gap-2 px-6 mt-2">
             <span className="text-2xl">Data Pengeluaran</span>
@@ -257,6 +305,9 @@ const TableViewBook = () => {
             </div>
           </div>
         </div>
+        ) : (
+          <p>loading...</p>
+        )}
 
         <div className="relative bottom-0">
           <Footer />
