@@ -47,6 +47,9 @@ export function generateReportData({ month, year, transactions = [], accounts = 
     );
   }
 
+  console.log("wkwkwkw")
+  console.log(getMergedAcc('Beban Perlengkapan'))
+
   const dataLaporanLabaRugi = {
     institution: 'UD XXX XXX',
     document_name: 'LAPORAN PERUBAHAN MODAL',

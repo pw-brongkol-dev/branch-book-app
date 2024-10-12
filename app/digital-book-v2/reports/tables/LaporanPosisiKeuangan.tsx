@@ -43,7 +43,7 @@ const LaporanPosisiKeuangan = ({ dataLaporanPosisiKeuangan }) => {
                         <td className="border border-gray-300 p-[4px]">
                           <div className="flex items-center justify-between">
                             <span>Rp</span>
-                            <span>{subSubItem.amount > 0 ? `${subSubItem.amount.toLocaleString('id-ID')}` : '-'}</span>
+                            <span>{subSubItem.amount.toLocaleString('id-ID')}</span>
                           </div>
                         </td>
                       </tr>
@@ -54,7 +54,7 @@ const LaporanPosisiKeuangan = ({ dataLaporanPosisiKeuangan }) => {
                     <td className="border border-gray-300 p-[4px]">
                       <div className="flex items-center justify-between">
                         <span>Rp</span>
-                        <span>{subItem.total.amount > 0 ? `${subItem.total.amount.toLocaleString('id-ID')}` : '-'}</span>
+                        <span>{subItem.total.amount.toLocaleString('id-ID')}</span>
                       </div>
                     </td>
                   </tr>

@@ -35,7 +35,7 @@ const LaporanLabarugi = ({ dataLaporanLabaRugi }) => {
                   <td className="border border-gray-300 p-[4px]">
                     <div className="flex items-center justify-between">
                       <span>Rp</span>
-                      <span>{subItem.amount > 0 ? `${subItem.amount.toLocaleString('id-ID')}` : '-'}</span>
+                      <span>{subItem.amount.toLocaleString('id-ID')}</span>
                     </div>
                   </td>
                 </tr>
@@ -47,7 +47,7 @@ const LaporanLabarugi = ({ dataLaporanLabaRugi }) => {
                 <td className="border border-gray-300 p-[4px]">
                   <div className="flex items-center justify-between">
                     <span>Rp</span>
-                    <span>{`${item.total.amount.toLocaleString('id-ID')}`}</span>
+                    <span>{item.total.amount.toLocaleString('id-ID')}</span>
                   </div>
                 </td>
               </tr>
@@ -65,7 +65,7 @@ const LaporanLabarugi = ({ dataLaporanLabaRugi }) => {
             <td className="border border-gray-300 p-[4px]">
               <div className="flex items-center justify-between">
                 <span>Rp</span>
-                <span>{data.total.amount > 0 ? `${data.total.amount.toLocaleString('id-ID')}` : '-'}</span>
+                <span>{data.total.amount.toLocaleString('id-ID')}</span>
               </div>
             </td>
           </tr>
