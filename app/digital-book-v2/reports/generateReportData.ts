@@ -11,6 +11,7 @@ export function generateReportData({ month, year, transactions = [], accounts = 
     const account = accounts.find((acc) => acc.id === transaction.account_id); // Find the account by account_id
 
     const data = {
+      id: transaction.id,
       date: transaction.date.toDate().toLocaleDateString('id-ID', {
         year: 'numeric',
         month: 'long',

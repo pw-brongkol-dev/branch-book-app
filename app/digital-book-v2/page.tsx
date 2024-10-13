@@ -20,7 +20,7 @@ import addIcon from '@/app/icons/add_40dp_1C1B1F.svg';
 import docIcon from '@/app/icons/description_40dp_1C1B1F.svg';
 import Image from 'next/image';
 import Footer from '../components/Footer';
-import { dummyPemasukan, dummyPengeluaran } from './dummyData';
+// import { dummyPemasukan, dummyPengeluaran } from './dummyData';
 import { useState, useEffect } from 'react';
 import { useFirestore } from '../hooks/useFirestore';
 import { useRouter } from 'next/navigation';
@@ -79,6 +79,30 @@ const columns: ColumnDef<Payment>[] = [
   },
 ];
 
+
+interface ConfirmationModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+}
+
+const ConfirmationModal: React.FC<ConfirmationModalProps> = ({ isOpen, onClose, onConfirm }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+      <div className="bg-white p-6 rounded shadow-md">
+        <h2 className="text-lg font-bold">Confirm Deletion</h2>
+        <p>Are you sure you want to delete this item?</p>
+        <div className="flex justify-end space-x-2 mt-4">
+          <button onClick={onClose} className="px-4 py-2 bg-gray-300 rounded">Cancel</button>
+          <button onClick={onConfirm} className="px-4 py-2 bg-red-500 text-white rounded">Delete</button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const TableViewBook = () => {
   const router = useRouter();
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -88,8 +112,10 @@ const TableViewBook = () => {
   const [pemasukanData, setDataPemasukan] = useState([]);
   const [pengeluaranData, setDataPengeluaran] = useState([]);
   const [fetchStatus, setFetchStatus] = useState('idle');
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<Payment | null>(null);
 
-  const { getTransactionsByUserId, getAllAccounts } = useFirestore();
+  const { getTransactionsByUserId, getAllAccounts, deleteTransaction } = useFirestore();
 
   useEffect(() => {
     handleProccess()
@@ -112,11 +138,11 @@ const TableViewBook = () => {
         accounts: accounts,
       });
 
-      const { pemasukan, pengeluaran, totalPemasukan, totalPengeluaran } = reportData;
+      const { pemasukan, pengeluaran } = reportData;
 
       // Convert dummyPemasukan data to the Payment type
-      const pemasukanAllData: Payment[] = pemasukan.map((item, index) => ({
-        id: index,
+      const pemasukanAllData: Payment[] = pemasukan.map((item) => ({
+        id: item.id, // this should be document id from firebase
         nominal: parseFloat(item.total),
         date: item.date,
         name_account: item.account_name,
@@ -125,8 +151,8 @@ const TableViewBook = () => {
       }));
 
       // Convert dummyPengeluaran data to the Payment type
-      const pengeluaranAllData: Payment[] = pengeluaran.map((item, index) => ({
-        id: index,
+      const pengeluaranAllData: Payment[] = pengeluaran.map((item) => ({
+        id: item.id, // this should be document id from firebase
         nominal: parseFloat(item.total),
         date: item.date,
         name_account: item.account_name,
@@ -141,6 +167,27 @@ const TableViewBook = () => {
       console.error('error', err);
     }
   }
+
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteTransaction(id);
+      // Refresh data after deletion
+      handleProccess();
+    } catch (error) {
+      console.error('Error deleting transaction:', error);
+    }
+  };
+
+  const openModal = (item: Payment) => {
+    console.log(item)
+    setItemToDelete(item);
+    setModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+    setItemToDelete(null);
+  };
 
   // Convert dummyPemasukan data to the Payment type
 
@@ -222,8 +269,6 @@ const TableViewBook = () => {
           </Link>
         </div>
 
-        
-
         {fetchStatus === "success" ? (
         <div className="flex flex-col gap-6">
           {/* Table for Data Pemasukan */}
@@ -240,6 +285,7 @@ const TableViewBook = () => {
                             {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                           </TableHead>
                         ))}
+                        <TableHead>Actions</TableHead>
                       </TableRow>
                     ))}
                   </TableHeader>
@@ -249,6 +295,9 @@ const TableViewBook = () => {
                         {row.getVisibleCells().map((cell) => (
                           <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
                         ))}
+                        <TableCell>
+                          <button onClick={() => openModal(row.original)} className="text-red-500">Delete</button>
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -265,7 +314,6 @@ const TableViewBook = () => {
             </div>
           </div>
 
-
           {/* Table for Data Pengeluaran */}
           <div className="flex flex-col gap-2 px-6 mt-2">
             <span className="text-2xl">Data Pengeluaran</span>
@@ -280,6 +328,7 @@ const TableViewBook = () => {
                             {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                           </TableHead>
                         ))}
+                        <TableHead>Actions</TableHead>
                       </TableRow>
                     ))}
                   </TableHeader>
@@ -289,6 +338,9 @@ const TableViewBook = () => {
                         {row.getVisibleCells().map((cell) => (
                           <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
                         ))}
+                        <TableCell>
+                          <button onClick={() => openModal(row.original)} className="text-red-500">Delete</button>
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -308,6 +360,17 @@ const TableViewBook = () => {
         ) : (
           <p>loading...</p>
         )}
+
+        <ConfirmationModal
+          isOpen={isModalOpen}
+          onClose={closeModal}
+          onConfirm={() => {
+            if (itemToDelete) {
+              handleDelete(itemToDelete.id);
+            }
+            closeModal();
+          }}
+        />
 
         <div className="relative bottom-0">
           <Footer />
