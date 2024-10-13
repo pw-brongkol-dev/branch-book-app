@@ -53,7 +53,7 @@ export function generateReportData({ month, year, transactions = [], accounts = 
 
   const dataLaporanLabaRugi = {
     institution: 'UD XXX XXX',
-    document_name: 'LAPORAN PERUBAHAN MODAL',
+    document_name: 'LAPORAN LABA RUGI',
     date: date,
     data: {
       items: [
