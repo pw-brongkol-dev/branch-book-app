@@ -164,7 +164,7 @@ const EditTreeForm = ({ params }: { params: { tree_id: string } }) => {
             <Input type="date" id="planting_date" name="planting_date" value={treeDetail.planting_date} onChange={handleInputChange} required />
           </div>
           <button type="submit" className="py-1.5 w-full bg-[#668B41] active:bg-[#547434] text-white font-bold rounded-xl disabled:bg-gray-300">
-            Submit
+            Simpan
           </button>
         </form>
       </div>

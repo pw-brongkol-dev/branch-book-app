@@ -92,11 +92,11 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({ isOpen, onClose, 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
       <div className="bg-white p-6 rounded shadow-md">
-        <h2 className="text-lg font-bold">Confirm Deletion</h2>
-        <p>Are you sure you want to delete this item?</p>
+        <h2 className="text-lg font-bold">Konfirmasi</h2>
+        <p>Apakah Anda yakin ingin menghapus item ini?</p>
         <div className="flex justify-end space-x-2 mt-4">
-          <button onClick={onClose} className="px-4 py-2 bg-gray-300 rounded">Cancel</button>
-          <button onClick={onConfirm} className="px-4 py-2 bg-red-500 text-white rounded">Delete</button>
+          <button onClick={onClose} className="px-4 py-2 bg-gray-300 rounded">Batal</button>
+          <button onClick={onConfirm} className="px-4 py-2 bg-red-500 text-white rounded">Hapus</button>
         </div>
       </div>
     </div>
@@ -296,7 +296,7 @@ const TableViewBook = () => {
                           <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
                         ))}
                         <TableCell>
-                          <button onClick={() => openModal(row.original)} className="text-red-500">Delete</button>
+                          <button onClick={() => openModal(row.original)} className="text-red-500">Hapus</button>
                         </TableCell>
                       </TableRow>
                     ))}
@@ -339,7 +339,7 @@ const TableViewBook = () => {
                           <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
                         ))}
                         <TableCell>
-                          <button onClick={() => openModal(row.original)} className="text-red-500">Delete</button>
+                          <button onClick={() => openModal(row.original)} className="text-red-500">Hapus</button>
                         </TableCell>
                       </TableRow>
                     ))}

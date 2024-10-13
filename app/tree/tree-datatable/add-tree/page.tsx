@@ -262,7 +262,7 @@ const AddTreeForm = () => {
           <Input type="date" id="plantingDate" name="plantingDate" value={formData.plantingDate} onChange={handleInputChange} required />
         </div>
         <Button type="submit" disabled={loading}>
-          {loading ? 'Loading...' : 'Submit'}
+          {loading ? 'Loading...' : 'Simpan'}
         </Button>
       </form>
       </div>
