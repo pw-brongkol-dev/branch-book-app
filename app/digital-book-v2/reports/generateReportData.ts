@@ -111,6 +111,10 @@ export function generateReportData({ month, year, transactions = [], accounts = 
               name: 'Beban Bunga Bank',
               amount: getMergedAcc('Beban Bunga Bank'),
             },
+            {
+              name: 'Beban Lain-Lain',
+              amount: getMergedAcc('Beban Lain-Lain'),
+            },
           ],
           total: {
             name: 'Total Beban-Beban Usaha',
