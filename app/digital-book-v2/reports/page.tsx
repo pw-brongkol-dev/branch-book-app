@@ -18,7 +18,8 @@ export default function ProcessDataReport() {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1); // Default to current month
   const [inputYear, setInputYear] = useState(new Date().getFullYear()); // Default to current year
   const [data, setData] = useState()
-  const {getTransactionsByUserId, getAllAccounts} = useFirestore()
+  const [data2, setData2] = useState()
+  const {getTransactionsByUserId, getTransactionsRangeByUserId, getAllAccounts} = useFirestore()
   const [fetchStatus, setFetchStatus] = useState('idle')
 
   useEffect(() => {
@@ -33,6 +34,7 @@ export default function ProcessDataReport() {
     try {
       setFetchStatus("loading")
       const transactions = await getTransactionsByUserId(userId, selectedMonth, inputYear);
+      const transactionsToNow = await getTransactionsRangeByUserId(userId, selectedMonth, inputYear)
       const accounts = await getAllAccounts();
 
       const reportData = generateReportData({
@@ -41,7 +43,17 @@ export default function ProcessDataReport() {
         transactions: transactions,
         accounts: accounts,
       });
+
+      const reportData2 = generateReportData({
+        month: selectedMonth,
+        year: inputYear,
+        transactions: transactionsToNow,
+        accounts: accounts
+      })
+
       setData(reportData);
+      setData2(reportData2)
+      
       console.log(reportData);
       setFetchStatus("success")
 
@@ -90,7 +102,7 @@ export default function ProcessDataReport() {
         </div>
         <div className="border-t border-gray-300">
           <div className="flex flex-col py-4">
-            <LaporanPosisiKeuangan dataLaporanPosisiKeuangan={data.dataLaporanPosisiKeuangan} />
+            <LaporanPosisiKeuangan dataLaporanPosisiKeuangan={data2.dataLaporanPosisiKeuangan} />
           </div>
         </div>
         </>

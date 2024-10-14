@@ -17,6 +17,7 @@ import {
   UpdateData,
   Query,
 } from 'firebase/firestore';
+import { startOfMonth, endOfMonth } from 'date-fns'; // Import date-fns for date manipulation
 
 // Import your interfaces here
 import {
@@ -246,6 +247,60 @@ export const useFirestore = () => {
       throw err;
     }
   };
+  
+  const getTransactionsRangeByUserId = async (
+    userId: string,
+    endMonth: number,
+    endYear: number
+  ): Promise<TransactionWithId[]> => {
+    setLoading(true);
+    try {
+      // Create an array to hold all the transactions
+      const transactions: TransactionWithId[] = [];
+  
+      // Fetch all transactions for the user
+      const allTransactionsQuery = query(
+        collection(db, 'transactions'),
+        where('user_id', '==', userId)
+      );
+  
+      const allTransactionsSnapshot = await getDocs(allTransactionsQuery);
+      const allTransactions = allTransactionsSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as TransactionWithId[];
+  
+      // Determine the earliest transaction date
+      const earliestTransactionDate = allTransactions.reduce((earliest, transaction) => {
+        const transactionDate = transaction.date.toDate(); // Assuming date is a Firestore Timestamp
+        return earliest ? (transactionDate < earliest ? transactionDate : earliest) : transactionDate;
+      }, null as Date | null);
+  
+      if (!earliestTransactionDate) {
+        setLoading(false);
+        return []; // No transactions found
+      }
+  
+      // Set the start date to the earliest transaction date
+      const startDate = earliestTransactionDate;
+  
+      // Set the end date based on the provided month and year
+      const endDate = endOfMonth(new Date(endYear, endMonth - 1)); // End of the selected month
+  
+      // Filter transactions based on the date range
+      const filteredTransactions = allTransactions.filter((transaction) => {
+        const transactionDate = transaction.date.toDate(); // Assuming date is a Firestore Timestamp
+        return transactionDate >= startDate && transactionDate <= endDate;
+      });
+  
+      setLoading(false);
+      return filteredTransactions;
+    } catch (err) {
+      setError('Failed to fetch transactions by user ID and date range');
+      setLoading(false);
+      throw err;
+    }
+  };
 
   // Specific methods for each interface
   const groupMethods = {
@@ -298,6 +353,7 @@ export const useFirestore = () => {
     updateTransaction: (id: string, transaction: Partial<Transaction>) => update<TransactionWithId>('transactions', id, transaction),
     deleteTransaction: (id: string) => remove('transactions', id),
     getTransactionsByUserId, // Add this line
+    getTransactionsRangeByUserId, // New method added here
   };
 
   const relTreeFertilizationMethods = {
