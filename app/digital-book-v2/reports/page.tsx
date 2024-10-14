@@ -19,7 +19,7 @@ export default function ProcessDataReport() {
   const [inputYear, setInputYear] = useState(new Date().getFullYear()); // Default to current year
   const [data, setData] = useState()
   const [data2, setData2] = useState()
-  const {getTransactionsByUserId, getTransactionsRangeByUserId, getAllAccounts} = useFirestore()
+  const {getTransactionsByUserId, getTransactionsRangeByUserId, getAllAccounts, getUserById} = useFirestore()
   const [fetchStatus, setFetchStatus] = useState('idle')
 
   useEffect(() => {
@@ -36,19 +36,22 @@ export default function ProcessDataReport() {
       const transactions = await getTransactionsByUserId(userId, selectedMonth, inputYear);
       const transactionsToNow = await getTransactionsRangeByUserId(userId, selectedMonth, inputYear)
       const accounts = await getAllAccounts();
+      const user = await getUserById(userId)
 
       const reportData = generateReportData({
         month: selectedMonth,
         year: inputYear,
         transactions: transactions,
         accounts: accounts,
+        institution: user.name.toUpperCase()
       });
 
       const reportData2 = generateReportData({
         month: selectedMonth,
         year: inputYear,
         transactions: transactionsToNow,
-        accounts: accounts
+        accounts: accounts,
+        institution: user.name.toUpperCase()
       })
 
       setData(reportData);

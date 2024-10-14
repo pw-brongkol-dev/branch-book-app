@@ -1,4 +1,4 @@
-export function generateReportData({ month, year, transactions = [], accounts = [] }) {
+export function generateReportData({ month, year, transactions = [], accounts = [], institution = "UD XXXX" }) {
   const localMonth = new Date(0, month - 1).toLocaleString('default', { month: 'long' });
   const date = `${localMonth.toUpperCase()} ${year}`;
 
@@ -52,7 +52,7 @@ export function generateReportData({ month, year, transactions = [], accounts = 
   console.log(getMergedAcc('Beban Perlengkapan'))
 
   const dataLaporanLabaRugi = {
-    institution: 'UD XXX XXX',
+    institution: institution,
     document_name: 'LAPORAN LABA RUGI',
     date: date,
     data: {
@@ -130,7 +130,7 @@ export function generateReportData({ month, year, transactions = [], accounts = 
   dataLaporanLabaRugi.data.total.amount = dataLaporanLabaRugi.data.items[0].total.amount + dataLaporanLabaRugi.data.items[1].total.amount;
 
   const dataLaporanPosisiKeuangan = {
-    institution: 'UD XXX XXX',
+    institution: institution,
     document_name: 'LAPORAN POSISI KEUANGAN',
     date: date,
     data: {
