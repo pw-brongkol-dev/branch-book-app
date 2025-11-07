@@ -35,9 +35,15 @@ import {
   FertilizationWithId,
   RelTreeFertilization,
   RelTreeFertilizationWithId,
+  TransactionGroup,
+  TransactionGroupWithId,
+  AccountGroup,
+  AccountGroupWithId,
+  ProductGroup,
+  ProductGroupWithId,
 } from '../db/interfaces';
 
-type CollectionName = 'groups' | 'users' | 'accounts' | 'trees' | 'fertilizations' | 'transactions' | 'rel_tree_fertilizations';
+type CollectionName = 'groups' | 'users' | 'accounts' | 'trees' | 'fertilizations' | 'transactions' | 'rel_tree_fertilizations' | 'transactions_group' | 'accounts_group' | 'products_group';
 
 export const useFirestore = () => {
   const [loading, setLoading] = useState(false);
@@ -376,6 +382,119 @@ export const useFirestore = () => {
     },
   };
 
+  // ========== KELOMPOK METHODS ==========
+
+  const getTransactionsGroupByUserId = async (userId: string, month?: number, year?: number): Promise<TransactionGroupWithId[]> => {
+    setLoading(true);
+    try {
+      let transactionsQuery = query(collection(db, 'transactions_group'), where('user_id', '==', userId));
+
+      if (month && year) {
+        const startDate = new Date(year, month - 1, 1); // Start of the month
+        const endDate = new Date(year, month, 0, 23, 59, 59, 999); // End of the month
+        transactionsQuery = query(
+          transactionsQuery,
+          where('date', '>=', startDate),
+          where('date', '<=', endDate)
+        );
+      }
+
+      const querySnapshot = await getDocs(transactionsQuery);
+      const transactions = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as TransactionGroupWithId[];
+      setLoading(false);
+      return transactions;
+    } catch (err) {
+      setError('Failed to fetch group transactions by user ID');
+      setLoading(false);
+      throw err;
+    }
+  };
+
+  const getTransactionsGroupRangeByUserId = async (
+    userId: string,
+    endMonth: number,
+    endYear: number
+  ): Promise<TransactionGroupWithId[]> => {
+    setLoading(true);
+    try {
+      // Fetch all transactions for the group (user)
+      const allTransactionsQuery = query(
+        collection(db, 'transactions_group'),
+        where('user_id', '==', userId)
+      );
+
+      const allTransactionsSnapshot = await getDocs(allTransactionsQuery);
+      const allTransactions = allTransactionsSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as TransactionGroupWithId[];
+
+      // Determine the earliest transaction date
+      const earliestTransactionDate = allTransactions.reduce((earliest, transaction) => {
+        const transactionDate = transaction.date.toDate();
+        return earliest ? (transactionDate < earliest ? transactionDate : earliest) : transactionDate;
+      }, null as Date | null);
+
+      if (!earliestTransactionDate) {
+        setLoading(false);
+        return [];
+      }
+
+      // Set the start date to the earliest transaction date
+      const startDate = earliestTransactionDate;
+
+      // Set the end date based on the provided month and year
+      const endDate = endOfMonth(new Date(endYear, endMonth - 1));
+
+      // Filter transactions based on the date range
+      const filteredTransactions = allTransactions.filter((transaction) => {
+        const transactionDate = transaction.date.toDate();
+        return transactionDate >= startDate && transactionDate <= endDate;
+      });
+
+      setLoading(false);
+      return filteredTransactions;
+    } catch (err) {
+      setError('Failed to fetch group transactions by user ID and date range');
+      setLoading(false);
+      throw err;
+    }
+  };
+
+  const transactionGroupMethods = {
+    getAllTransactionsGroup: () => getAll<TransactionGroupWithId>('transactions_group'),
+    getTransactionGroupById: (id: string) => getById<TransactionGroupWithId>('transactions_group', id),
+    getTransactionsGroupByUserId,
+    getTransactionsGroupRangeByUserId,
+    addTransactionGroup: (transaction: TransactionGroup) => add<TransactionGroup>('transactions_group', transaction),
+    updateTransactionGroup: (id: string, transaction: Partial<TransactionGroup>) => 
+      update<TransactionGroupWithId>('transactions_group', id, transaction),
+    deleteTransactionGroup: (id: string) => remove('transactions_group', id),
+  };
+
+  const accountGroupMethods = {
+    getAllAccountsGroup: () => getAll<AccountGroupWithId>('accounts_group'),
+    getAccountGroupById: (id: string) => getById<AccountGroupWithId>('accounts_group', id),
+    addAccountGroup: (account: AccountGroup) => add<AccountGroup>('accounts_group', account),
+    updateAccountGroup: (id: string, account: Partial<AccountGroup>) => 
+      update<AccountGroupWithId>('accounts_group', id, account),
+    deleteAccountGroup: (id: string) => remove('accounts_group', id),
+  };
+
+  const productGroupMethods = {
+    getAllProductsGroup: () => getAll<ProductGroupWithId>('products_group'),
+    getProductGroupById: (id: string) => getById<ProductGroupWithId>('products_group', id),
+    getProductsGroupByUserId: (userId: string) => 
+      getAll<ProductGroupWithId>('products_group', 'user_id', userId),
+    addProductGroup: (product: ProductGroup) => add<ProductGroup>('products_group', product),
+    updateProductGroup: (id: string, product: Partial<ProductGroup>) => 
+      update<ProductGroupWithId>('products_group', id, product),
+    deleteProductGroup: (id: string) => remove('products_group', id),
+  };
+
   return {
     loading,
     error,
@@ -386,5 +505,8 @@ export const useFirestore = () => {
     ...fertilizationMethods,
     ...transactionMethods,
     ...relTreeFertilizationMethods,
+    ...transactionGroupMethods,
+    ...accountGroupMethods,
+    ...productGroupMethods,
   };
 };

@@ -101,6 +101,18 @@ export default function Home() {
               </span>
             </div>
           </Link>
+          <Link href={'/digital-book-kelompok'}>
+            <div className="p-4 rounded-3xl flex flex-col gap-4 bg-blue-200 active:bg-blue-300 active:ring-4 ring-blue-200">
+              <div className="w-[76px] h-[76px] rounded-2xl grid place-items-center bg-blue-400 ">
+                <Image src={bookIcon} alt="book icon" width={40} height={40} />
+              </div>
+              <span className="text-2xl text-[#001A4D] leading-tight">
+                Buku Usaha
+                <br />
+                Digital Kelompok
+              </span>
+            </div>
+          </Link>
           <button
             className="bg-red-200 text-red-900 active:bg-red-300 active:ring-2 active:ring-red-100 px-2 py-1 rounded-xl font-medium"
             onClick={handleLogout}
