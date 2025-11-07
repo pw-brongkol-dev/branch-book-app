@@ -14,6 +14,7 @@ import {
 } from '@tanstack/react-table';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import BackButton from '../components/BackButton';
 import Link from 'next/link';
 import addIcon from '@/app/icons/add_40dp_1C1B1F.svg';
@@ -120,6 +121,8 @@ const TableViewBookKelompok = () => {
   const [kelompokId, setKelompokId] = useState('');
   const [pemasukanData, setDataPemasukan] = useState<PaymentGroup[]>([]);
   const [pengeluaranData, setDataPengeluaran] = useState<PaymentGroup[]>([]);
+  const [products, setProducts] = useState<any[]>([]);
+  const [selectedProduct, setSelectedProduct] = useState<string>('all');
   const [fetchStatus, setFetchStatus] = useState('idle');
   const [isModalOpen, setModalOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<PaymentGroup | null>(null);
@@ -170,6 +173,8 @@ const TableViewBookKelompok = () => {
       const transactions = await getTransactionsGroupByUserId(kelompokId);
       const accounts = await getAllAccountsGroup();
       const products = await getProductsGroupByUserId(kelompokId);
+
+      setProducts(products);
 
       // Get all group members for created_by names
       const allUsers = await getUserById(userId); // This should be getAllUsers but we'll use what we have
@@ -241,8 +246,29 @@ const TableViewBookKelompok = () => {
     pageSize: 5,
   });
 
+  // Filter data based on selected product
+  const filteredPemasukanData = React.useMemo(() => {
+    if (selectedProduct === 'all') {
+      return pemasukanData;
+    }
+    return pemasukanData.filter(item => {
+      const product = products.find(p => p.id === selectedProduct);
+      return item.product_name === product?.name;
+    });
+  }, [pemasukanData, selectedProduct, products]);
+
+  const filteredPengeluaranData = React.useMemo(() => {
+    if (selectedProduct === 'all') {
+      return pengeluaranData;
+    }
+    return pengeluaranData.filter(item => {
+      const product = products.find(p => p.id === selectedProduct);
+      return item.product_name === product?.name;
+    });
+  }, [pengeluaranData, selectedProduct, products]);
+
   const pemasukanTable = useReactTable({
-    data: pemasukanData,
+    data: filteredPemasukanData,
     columns,
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
@@ -262,7 +288,7 @@ const TableViewBookKelompok = () => {
   });
 
   const pengeluaranTable = useReactTable({
-    data: pengeluaranData,
+    data: filteredPengeluaranData,
     columns,
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
@@ -304,16 +330,6 @@ const TableViewBookKelompok = () => {
               </span>
             </div>
           </Link>
-          <Link href={'/digital-book-kelompok/products'} className="flex-1">
-            <div className="bg-teal-200 active:ring-4 active:ring-teal-200 active:bg-teal-300 p-4 rounded-2xl flex flex-col gap-1">
-              <Image src={addIcon} alt="products icon" width={40} height={40} />
-              <span className="font-medium inline-block leading-5">
-                Kelola
-                <br />
-                Produk
-              </span>
-            </div>
-          </Link>
           <Link href={'/digital-book-kelompok/reports'} className="flex-1">
             <div className="bg-blue-200 active:ring-4 active:ring-blue-200 active:bg-blue-300 p-4 rounded-2xl flex flex-col gap-1">
               <Image src={docIcon} alt="reports icon" />
@@ -324,6 +340,26 @@ const TableViewBookKelompok = () => {
               </span>
             </div>
           </Link>
+        </div>
+
+        {/* Filter Produk */}
+        <div className="px-6">
+          <div className="flex flex-col gap-2">
+            <label className="text-sm font-medium text-gray-700">Filter Produk</label>
+            <Select value={selectedProduct} onValueChange={(value) => setSelectedProduct(value)}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Pilih produk" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Semua Produk</SelectItem>
+                {products.map((product) => (
+                  <SelectItem key={product.id} value={product.id}>
+                    {product.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
         {fetchStatus === 'success' ? (

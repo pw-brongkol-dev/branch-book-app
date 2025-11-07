@@ -20,17 +20,20 @@ export default function ProcessDataReportKelompok() {
   const [data, setData] = useState<any>(null)
   const [data2, setData2] = useState<any>(null)
   const [kelompokName, setKelompokName] = useState('KELOMPOK TANI')
+  const [products, setProducts] = useState<any[]>([]);
+  const [selectedProduct, setSelectedProduct] = useState<string>('all');
   const {
     getUserById,
     getTransactionsGroupByUserId,
     getTransactionsGroupRangeByUserId,
-    getAllAccountsGroup
+    getAllAccountsGroup,
+    getProductsGroupByUserId,
   } = useFirestore()
   const [fetchStatus, setFetchStatus] = useState('idle')
 
   useEffect(() => {
     handleProcess()
-  }, [router, selectedMonth, inputYear]);
+  }, [router, selectedMonth, inputYear, selectedProduct]);
 
   async function handleProcess() {
     const userId = localStorage.getItem('user_id_branch_book_app');
@@ -55,9 +58,18 @@ export default function ProcessDataReportKelompok() {
       setKelompokName(user.name.toUpperCase());
 
       // Fetch transactions and accounts
-      const transactions = await getTransactionsGroupByUserId(kelompokId, selectedMonth, inputYear);
-      const transactionsToNow = await getTransactionsGroupRangeByUserId(kelompokId, selectedMonth, inputYear)
+      let transactions = await getTransactionsGroupByUserId(kelompokId, selectedMonth, inputYear);
+      let transactionsToNow = await getTransactionsGroupRangeByUserId(kelompokId, selectedMonth, inputYear)
       const accounts = await getAllAccountsGroup();
+      const products = await getProductsGroupByUserId(kelompokId);
+
+      setProducts(products);
+
+      // Filter by product if not "all"
+      if (selectedProduct !== 'all') {
+        transactions = transactions.filter(t => t.product_id === selectedProduct);
+        transactionsToNow = transactionsToNow.filter(t => t.product_id === selectedProduct);
+      }
 
       const reportData = generateReportDataGroup({
         month: selectedMonth,
@@ -92,25 +104,45 @@ export default function ProcessDataReportKelompok() {
       <BackButton color="blue" />
       <div className="flex flex-col px-6 pt-4 gap-6">
         <h2 className="text-3xl text-gray-700">Laporan Keuangan Kelompok</h2>
-        <div className="flex gap-4">
-          <div className="flex-1 flex flex-col gap-1">
-            <label className="font-medium text-sm">Bulan</label>
-            <Select value={selectedMonth.toString()} onValueChange={(value) => setSelectedMonth(Number(value))}>
+        
+        <div className="flex flex-col gap-4">
+          <div className="flex gap-4">
+            <div className="flex-1 flex flex-col gap-1">
+              <label className="font-medium text-sm">Bulan</label>
+              <Select value={selectedMonth.toString()} onValueChange={(value) => setSelectedMonth(Number(value))}>
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Pilih Bulan" />
+                </SelectTrigger>
+                <SelectContent>
+                  {[...Array(12)].map((_, index) => (
+                    <SelectItem key={index} value={(index + 1).toString()}>
+                      {new Date(0, index).toLocaleString('default', { month: 'long' })}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex-1 flex flex-col gap-1">
+              <label className="font-medium text-sm">Tahun</label>
+              <Input type="number" value={inputYear} onChange={(e) => setInputYear(Number(e.target.value))} min="2000" />
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label className="font-medium text-sm">Filter Produk</label>
+            <Select value={selectedProduct} onValueChange={(value) => setSelectedProduct(value)}>
               <SelectTrigger className="w-full">
-                <SelectValue placeholder="Pilih Bulan" />
+                <SelectValue placeholder="Pilih produk" />
               </SelectTrigger>
               <SelectContent>
-                {[...Array(12)].map((_, index) => (
-                  <SelectItem key={index} value={(index + 1).toString()}>
-                    {new Date(0, index).toLocaleString('default', { month: 'long' })}
+                <SelectItem value="all">Semua Produk</SelectItem>
+                {products.map((product) => (
+                  <SelectItem key={product.id} value={product.id}>
+                    {product.name}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
-          </div>
-          <div className="flex-1 flex flex-col gap-1">
-            <label className="font-medium text-sm">Tahun</label>
-            <Input type="number" value={inputYear} onChange={(e) => setInputYear(Number(e.target.value))} min="2000" />
           </div>
         </div>
 
