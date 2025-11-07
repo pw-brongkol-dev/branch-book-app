@@ -38,20 +38,27 @@ const InputNotaKelompok = () => {
 
       try {
         const user = await getUserById(currentUserId);
-        if (!user || !user.group_id) {
+        const kelompokId = user.id;
+
+        if (!user || !kelompokId) {
           alert('Anda belum terdaftar di kelompok manapun.');
           router.push('/');
           return;
         }
 
-        setKelompokId(user.group_id);
+        setKelompokId(kelompokId);
 
         // Fetch accounts and products
         const accountsData = await getAllAccountsGroup();
-        const productsData = await getProductsGroupByUserId(user.group_id);
+        const productsData = await getProductsGroupByUserId(kelompokId);
 
         setAccounts(accountsData.sort((a, b) => a.code.localeCompare(b.code)));
         setProducts(productsData);
+        
+        // Set default product to first product if available
+        if (productsData.length > 0) {
+          setSelectedProduct(productsData[0].id);
+        }
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -74,6 +81,11 @@ const InputNotaKelompok = () => {
       return;
     }
 
+    if (!selectedProduct) {
+      alert('Pilih produk terlebih dahulu.');
+      return;
+    }
+
     const currentUserId = localStorage.getItem('user_id_branch_book_app');
     if (!currentUserId) {
       alert('session expired');
@@ -88,7 +100,7 @@ const InputNotaKelompok = () => {
       date: formData.get('date') ? Timestamp.fromDate(new Date(formData.get('date') as string)) : Timestamp.now(),
       description: formData.get('description') as string,
       account_id: selectedAccount,
-      product_id: selectedProduct && selectedProduct !== 'no-product' ? selectedProduct : undefined,
+      product_id: selectedProduct,
       total_amount: totalAmount,
       ref: formData.get('ref') as string || '',
       type: selectedTipe as 'pemasukan' | 'pengeluaran',
@@ -177,13 +189,12 @@ const InputNotaKelompok = () => {
           </div>
 
           <div className="flex flex-col gap-3">
-            <Label htmlFor="product">Produk (Opsional)</Label>
+            <Label htmlFor="product">Produk</Label>
             <Select value={selectedProduct} onValueChange={(value) => setSelectedProduct(value)}>
               <SelectTrigger>
-                <SelectValue placeholder="Pilih produk (opsional)" />
+                <SelectValue placeholder="Pilih produk" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="no-product">Tidak ada produk</SelectItem>
                 {products.map((product) => (
                   <SelectItem key={product.id} value={product.id}>
                     {product.name}
