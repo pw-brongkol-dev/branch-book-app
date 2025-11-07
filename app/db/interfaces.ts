@@ -9,6 +9,7 @@ export interface User {
   // id: string;
   name: string;
   group_id: string;
+  is_group?: boolean; // Flag untuk menandai user sebagai kelompok
 }
 
 export interface Tree {
@@ -52,6 +53,42 @@ export interface Transaction {
   type: string;
 }
 
+// ========== KELOMPOK INTERFACES ==========
+
+export interface TransactionGroup {
+  // id: string;
+  user_id: string; // Foreign key to User (kelompok dengan is_group: true)
+  account_id: string; // Foreign key to AccountGroup
+  product_id?: string; // Foreign key to ProductGroup (optional)
+  date: Timestamp;
+  description: string;
+  ref: string;
+  quantity?: number; // Jumlah barang (optional, jika ada produk)
+  unit_price?: number; // Harga satuan (optional, jika ada produk)
+  total_amount: number;
+  type: 'pemasukan' | 'pengeluaran';
+  created_by: string; // user_id anggota yang menginput
+  created_at: Timestamp;
+  updated_at?: Timestamp;
+}
+
+export interface AccountGroup {
+  // id: string;
+  code: string;
+  name: string;
+  category: 'aset' | 'kewajiban' | 'modal' | 'pendapatan' | 'beban';
+  sub_category?: string;
+  is_active: boolean;
+  created_at: Timestamp;
+}
+
+export interface ProductGroup {
+  // id: string;
+  user_id: string; // Foreign key to User (kelompok dengan is_group: true)
+  name: string;
+  created_at: Timestamp;
+}
+
 
 // export interface Account {
 //   id: string;
@@ -80,3 +117,6 @@ export type FertilizationWithId = Fertilization & { id: string };
 export type RelTreeFertilizationWithId = RelTreeFertilization & { id: string };
 export type AccountWithId = Account & { id: string };
 export type TransactionWithId = Transaction & { id: string };
+export type TransactionGroupWithId = TransactionGroup & { id: string };
+export type AccountGroupWithId = AccountGroup & { id: string };
+export type ProductGroupWithId = ProductGroup & { id: string };
