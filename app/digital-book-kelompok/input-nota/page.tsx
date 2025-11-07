@@ -28,11 +28,6 @@ const InputNotaKelompok = () => {
   const [loading, setLoading] = React.useState(false);
   const [kelompokId, setKelompokId] = React.useState<string>('');
 
-  // Auto-calculate total
-  const [quantity, setQuantity] = React.useState<number>(0);
-  const [unitPrice, setUnitPrice] = React.useState<number>(0);
-  const [calculatedTotal, setCalculatedTotal] = React.useState<number>(0);
-
   React.useEffect(() => {
     async function initialize() {
       const currentUserId = localStorage.getItem('user_id_branch_book_app');
@@ -64,13 +59,6 @@ const InputNotaKelompok = () => {
     initialize();
   }, []);
 
-  // Auto-calculate total when quantity or unit price changes
-  React.useEffect(() => {
-    if (selectedProduct && selectedProduct !== 'no-product') {
-      setCalculatedTotal(quantity * unitPrice);
-    }
-  }, [quantity, unitPrice, selectedProduct]);
-
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = event.currentTarget;
@@ -93,27 +81,17 @@ const InputNotaKelompok = () => {
       return;
     }
 
-    // Determine total amount
-    let totalAmount = 0;
-    if (selectedProduct && selectedProduct !== 'no-product') {
-      totalAmount = calculatedTotal;
-    } else {
-      totalAmount = parseInt(formData.get('total_amount') as string) || 0;
-    }
+    const totalAmount = parseInt(formData.get('total_amount') as string) || 0;
 
     const data = {
       user_id: kelompokId,
-      created_by: currentUserId,
       date: formData.get('date') ? Timestamp.fromDate(new Date(formData.get('date') as string)) : Timestamp.now(),
       description: formData.get('description') as string,
       account_id: selectedAccount,
       product_id: selectedProduct && selectedProduct !== 'no-product' ? selectedProduct : undefined,
-      quantity: selectedProduct && selectedProduct !== 'no-product' ? quantity : undefined,
-      unit_price: selectedProduct && selectedProduct !== 'no-product' ? unitPrice : undefined,
       total_amount: totalAmount,
       ref: formData.get('ref') as string || '',
       type: selectedTipe as 'pemasukan' | 'pengeluaran',
-      created_at: Timestamp.now(),
     };
 
     if (!data.date || !data.description || !data.total_amount) {
@@ -130,9 +108,6 @@ const InputNotaKelompok = () => {
       setSelectedAccount(undefined);
       setSelectedProduct(undefined);
       setSelectedTipe(undefined);
-      setQuantity(0);
-      setUnitPrice(0);
-      setCalculatedTotal(0);
 
       toast({
         title: 'Transaksi Ditambahkan',
@@ -218,62 +193,20 @@ const InputNotaKelompok = () => {
             </Select>
           </div>
 
-          {selectedProduct && selectedProduct !== 'no-product' && (
-            <>
-              <div className="flex flex-col gap-3">
-                <Label htmlFor="quantity">Quantity</Label>
-                <Input
-                  id="quantity"
-                  name="quantity"
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  placeholder="Masukkan jumlah"
-                  value={quantity || ''}
-                  onChange={(e) => setQuantity(parseFloat(e.target.value) || 0)}
-                />
-              </div>
-              <div className="flex flex-col gap-3">
-                <Label htmlFor="unit_price">Harga Satuan</Label>
-                <div className="flex items-center">
-                  <span className="px-3 py-2 bg-gray-200 border border-gray-300 rounded-l-md">Rp</span>
-                  <Input
-                    id="unit_price"
-                    name="unit_price"
-                    type="number"
-                    min="0"
-                    placeholder="Masukkan harga satuan"
-                    value={unitPrice || ''}
-                    onChange={(e) => setUnitPrice(parseFloat(e.target.value) || 0)}
-                    className="rounded-l-none"
-                  />
-                </div>
-              </div>
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                <Label>Total (Otomatis)</Label>
-                <p className="text-lg font-bold text-blue-700">
-                  Rp {calculatedTotal.toLocaleString('id-ID')}
-                </p>
-              </div>
-            </>
-          )}
-
-          {(!selectedProduct || selectedProduct === 'no-product') && (
-            <div className="flex flex-col gap-3">
-              <Label htmlFor="total_amount">Total Nominal</Label>
-              <div className="flex items-center">
-                <span className="px-3 py-2 bg-gray-200 border border-gray-300 rounded-l-md">Rp</span>
-                <Input
-                  id="total_amount"
-                  name="total_amount"
-                  type="number"
-                  placeholder="Masukkan nominal"
-                  min="0"
-                  className="rounded-l-none"
-                />
-              </div>
+          <div className="flex flex-col gap-3">
+            <Label htmlFor="total_amount">Total Nominal</Label>
+            <div className="flex items-center">
+              <span className="px-3 py-2 bg-gray-200 border border-gray-300 rounded-l-md">Rp</span>
+              <Input
+                id="total_amount"
+                name="total_amount"
+                type="number"
+                placeholder="Masukkan nominal"
+                min="0"
+                className="rounded-l-none"
+              />
             </div>
-          )}
+          </div>
 
           <div className="flex flex-col gap-3">
             <Label htmlFor="description">Keterangan</Label>

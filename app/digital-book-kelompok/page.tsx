@@ -30,11 +30,8 @@ export type PaymentGroup = {
   date: string;
   name_account: string;
   product_name: string;
-  quantity: number | null;
-  unit_price: number | null;
   ref: string;
   information: string;
-  created_by_name: string;
 };
 
 const columns: ColumnDef<PaymentGroup>[] = [
@@ -64,28 +61,6 @@ const columns: ColumnDef<PaymentGroup>[] = [
     accessorKey: 'name_account',
     header: 'Nama Akun',
     cell: ({ row }) => <div className="text-xs">{row.getValue('name_account')}</div>,
-  },
-  {
-    accessorKey: 'quantity',
-    header: 'Qty',
-    cell: ({ row }) => {
-      const qty = row.getValue('quantity') as number | null;
-      return <div className="text-xs text-right">{qty || '-'}</div>;
-    },
-  },
-  {
-    accessorKey: 'unit_price',
-    header: 'Harga Satuan',
-    cell: ({ row }) => {
-      const price = row.getValue('unit_price');
-      if (!price) return <div className="text-xs text-right">-</div>;
-      const formatted = new Intl.NumberFormat('id-ID', {
-        style: 'currency',
-        currency: 'IDR',
-        minimumFractionDigits: 0,
-      }).format(price as number);
-      return <div className="text-xs text-right">{formatted}</div>;
-    },
   },
   {
     accessorKey: 'nominal',
@@ -206,7 +181,6 @@ const TableViewBookKelompok = () => {
       for (const transaction of transactions) {
         const account = accounts.find((acc) => acc.id === transaction.account_id);
         const product = products.find((prod) => prod.id === transaction.product_id);
-        const creator = await getUserById(transaction.created_by);
 
         const data: PaymentGroup = {
           id: transaction.id,
@@ -218,11 +192,8 @@ const TableViewBookKelompok = () => {
           }),
           name_account: account ? account.name : '',
           product_name: product ? product.name : '',
-          quantity: transaction.quantity || null,
-          unit_price: transaction.unit_price || null,
           ref: transaction.ref,
           information: transaction.description,
-          created_by_name: creator ? creator.name : 'Unknown',
         };
 
         if (transaction.type === 'pemasukan') {

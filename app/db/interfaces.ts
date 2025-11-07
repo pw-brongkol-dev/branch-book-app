@@ -63,23 +63,14 @@ export interface TransactionGroup {
   date: Timestamp;
   description: string;
   ref: string;
-  quantity?: number; // Jumlah barang (optional, jika ada produk)
-  unit_price?: number; // Harga satuan (optional, jika ada produk)
   total_amount: number;
   type: 'pemasukan' | 'pengeluaran';
-  created_by: string; // user_id anggota yang menginput
-  created_at: Timestamp;
-  updated_at?: Timestamp;
 }
 
 export interface AccountGroup {
   // id: string;
   code: string;
   name: string;
-  category: 'aset' | 'kewajiban' | 'modal' | 'pendapatan' | 'beban';
-  sub_category?: string;
-  is_active: boolean;
-  created_at: Timestamp;
 }
 
 export interface ProductGroup {

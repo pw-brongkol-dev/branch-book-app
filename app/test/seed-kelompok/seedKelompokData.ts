@@ -5,35 +5,32 @@ import { Timestamp } from 'firebase/firestore';
  * Jalankan fungsi ini untuk populate accounts_group collection
  */
 export const accountsGroupSeedData = [
-  // ASET
-  { code: '101', name: 'Kas', category: 'aset' as const, sub_category: 'aset lancar', is_active: true },
-  { code: '102', name: 'Persediaan', category: 'aset' as const, sub_category: 'aset lancar', is_active: true },
-  { code: '121', name: 'Lahan Pertanian', category: 'aset' as const, sub_category: 'aset tetap', is_active: true },
-  { code: '122', name: 'Mesin', category: 'aset' as const, sub_category: 'aset tetap', is_active: true },
-  { code: '123', name: 'Peralatan', category: 'aset' as const, sub_category: 'aset tetap', is_active: true },
-
+  // ASET LANCAR
+  { code: '101', name: 'Kas' },
+  { code: '102', name: 'Piutang Usaha' },
+  { code: '103', name: 'Persediaan' },
+  
+  // ASET TETAP
+  { code: '111', name: 'Bangunan' },
+  { code: '112', name: 'Mesin' },
+  { code: '113', name: 'Peralatan' },
+  
   // KEWAJIBAN
-  { code: '201', name: 'Utang Usaha', category: 'kewajiban' as const, sub_category: 'kewajiban lancar', is_active: true },
-  { code: '202', name: 'Utang Bank', category: 'kewajiban' as const, sub_category: 'kewajiban jangka panjang', is_active: true },
-
+  { code: '201', name: 'Utang Usaha' },
+  { code: '210', name: 'Utang Bank' },
+  
   // MODAL
-  { code: '301', name: 'Modal Pemilik', category: 'modal' as const, is_active: true },
-  { code: '302', name: 'Modal Sumbangan', category: 'modal' as const, is_active: true },
-
+  { code: '301', name: 'Modal Pemilik' },
+  { code: '302', name: 'Modal Sumbangan' },
+  
   // PENDAPATAN
-  { code: '401', name: 'Penjualan', category: 'pendapatan' as const, is_active: true },
-
-  // BEBAN
-  { code: '501', name: 'Beban Perlengkapan', category: 'beban' as const, is_active: true },
-  { code: '502', name: 'Beban Obat Hama', category: 'beban' as const, is_active: true },
-  { code: '503', name: 'Beban Pembelian Bahan Bakar', category: 'beban' as const, is_active: true },
-  { code: '504', name: 'Beban Pembelian Bibit', category: 'beban' as const, is_active: true },
-  { code: '505', name: 'Beban Gaji dan Upah', category: 'beban' as const, is_active: true },
-  { code: '506', name: 'Beban Pupuk', category: 'beban' as const, is_active: true },
-  { code: '507', name: 'Beban Listrik dan Air', category: 'beban' as const, is_active: true },
-  { code: '508', name: 'Beban Pajak Tanah (PBB)', category: 'beban' as const, is_active: true },
-  { code: '509', name: 'Beban Bunga Bank', category: 'beban' as const, is_active: true },
-  { code: '510', name: 'Beban Lain-Lain', category: 'beban' as const, is_active: true },
+  { code: '401', name: 'Penjualan' },
+  
+  // BEBAN/BIAYA
+  { code: '501', name: 'Biaya Bahan Baku' },
+  { code: '502', name: 'Biaya Listrik dan Air' },
+  { code: '503', name: 'Biaya Transportasi' },
+  { code: '504', name: 'Gaji Karyawan' },
 ];
 
 /**

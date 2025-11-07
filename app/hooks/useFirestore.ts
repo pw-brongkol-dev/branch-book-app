@@ -478,8 +478,6 @@ export const useFirestore = () => {
   const accountGroupMethods = {
     getAllAccountsGroup: () => getAll<AccountGroupWithId>('accounts_group'),
     getAccountGroupById: (id: string) => getById<AccountGroupWithId>('accounts_group', id),
-    getAccountsGroupByCategory: (category: string) => 
-      getAll<AccountGroupWithId>('accounts_group', 'category', category),
     addAccountGroup: (account: AccountGroup) => add<AccountGroup>('accounts_group', account),
     updateAccountGroup: (id: string, account: Partial<AccountGroup>) => 
       update<AccountGroupWithId>('accounts_group', id, account),
